@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Vault, Activity, Wallet } from 'lucide-react'
-import { Button } from './button'
+import { LayoutDashboard, Vault, Activity } from 'lucide-react'
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
 
 const navLinks = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -51,10 +51,9 @@ export function Nav() {
           </div>
         </div>
 
-        <Button variant="ghost" size="sm" className="gap-2">
-          <Wallet className="h-4 w-4" />
-          Connect Wallet
-        </Button>
+        <div className="[&_button]:!bg-slate-700 [&_button]:!text-slate-50 [&_button]:!rounded-lg [&_button]:!font-sans [&_button]:!text-sm [&_button]:!h-8 [&_button]:!px-3 [&_button]:hover:!bg-slate-600 [&_button]:!transition-colors [&_button]:!duration-150">
+          <WalletMultiButton />
+        </div>
       </div>
     </nav>
   )

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Nav } from "@/components";
+import { SolanaProvider } from "@/providers/solana-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,10 +29,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
-        <Nav />
-        <main className="mx-auto max-w-7xl px-6 pt-24 pb-16">
-          {children}
-        </main>
+        <SolanaProvider>
+          <Nav />
+          <main className="mx-auto max-w-7xl px-6 pt-24 pb-16">
+            {children}
+          </main>
+        </SolanaProvider>
       </body>
     </html>
   );
