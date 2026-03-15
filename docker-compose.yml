@@ -1,0 +1,23 @@
+name: nanuqfi-app
+
+services:
+  app:
+    image: ghcr.io/nanuqfi/nanuqfi-app:latest
+    container_name: nanuqfi-app
+    restart: unless-stopped
+    ports:
+      - "9001:3000"
+    environment:
+      - NEXT_PUBLIC_RPC_URL=${NEXT_PUBLIC_RPC_URL:-https://api.devnet.solana.com}
+      - NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID=${NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID:-2QtJ5kmxLuW2jYCFpJMtzZ7PCnKdoMwkeueYoDUi5z5P}
+      - NEXT_PUBLIC_KEEPER_API_URL=${NEXT_PUBLIC_KEEPER_API_URL:-https://keeper.nanuqfi.xyz}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
