@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { Card, Stat, Badge, Button } from '@/components'
+import { Card, Stat, Badge } from '@/components'
 import {
   mockVaults,
   formatUsd,
