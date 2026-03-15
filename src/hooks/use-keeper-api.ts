@@ -1,0 +1,166 @@
+'use client'
+
+import { useState, useEffect, useCallback, useRef } from 'react'
+
+const KEEPER_API =
+  process.env.NEXT_PUBLIC_KEEPER_API_URL ?? 'https://keeper.nanuqfi.xyz'
+
+const KEEPER_POLL_INTERVAL = 30_000
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+export interface KeeperHealthData {
+  uptime: number
+  lastCycle: string
+  rpcStatus: string
+  version?: string
+}
+
+export interface VaultData {
+  tvl: number
+  apy: number
+  weights: Record<string, number>
+  drawdown: number
+  sharePrice?: number
+}
+
+export interface KeeperDecisionData {
+  id: string
+  timestamp: string
+  action: string
+  summary: string
+  weightChanges: { source: string; from: number; to: number }[]
+  aiInvolved: boolean
+  reason: string
+}
+
+export interface YieldEstimate {
+  source: string
+  apy: number
+  protocol: string
+}
+
+interface KeeperHookResult<T> {
+  data: T | null
+  loading: boolean
+  error: Error | null
+  isStale: boolean
+}
+
+// ─── Generic Fetcher ─────────────────────────────────────────────────────────
+
+async function fetchKeeper<T>(path: string): Promise<T> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 10_000)
+
+  try {
+    const res = await fetch(`${KEEPER_API}${path}`, {
+      signal: controller.signal,
+    })
+    if (!res.ok) {
+      throw new Error(`Keeper API ${res.status}: ${res.statusText}`)
+    }
+    return res.json() as Promise<T>
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
+// ─── Generic Hook Factory ────────────────────────────────────────────────────
+
+function useKeeperData<T>(
+  path: string,
+  pollInterval: number = KEEPER_POLL_INTERVAL
+): KeeperHookResult<T> {
+  const [data, setData] = useState<T | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<Error | null>(null)
+  const [isStale, setIsStale] = useState(false)
+  const mountedRef = useRef(true)
+  const lastDataRef = useRef<T | null>(null)
+
+  const doFetch = useCallback(async () => {
+    try {
+      const result = await fetchKeeper<T>(path)
+      if (!mountedRef.current) return
+
+      setData(result)
+      lastDataRef.current = result
+      setError(null)
+      setIsStale(false)
+    } catch (err) {
+      if (!mountedRef.current) return
+
+      const fetchError =
+        err instanceof Error ? err : new Error(String(err))
+      setError(fetchError)
+
+      // Keep last-known data but mark as stale
+      if (lastDataRef.current) {
+        setData(lastDataRef.current)
+        setIsStale(true)
+      }
+    } finally {
+      if (mountedRef.current) setLoading(false)
+    }
+  }, [path])
+
+  useEffect(() => {
+    mountedRef.current = true
+    doFetch()
+
+    const interval = setInterval(doFetch, pollInterval)
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') doFetch()
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+
+    return () => {
+      mountedRef.current = false
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
+  }, [doFetch, pollInterval])
+
+  return { data, loading, error, isStale }
+}
+
+// ─── Exported Hooks ──────────────────────────────────────────────────────────
+
+/**
+ * Keeper health status — uptime, last cycle, RPC connectivity.
+ * Polls every 30s.
+ */
+export function useKeeperHealth(): KeeperHookResult<KeeperHealthData> {
+  return useKeeperData<KeeperHealthData>('/health')
+}
+
+/**
+ * Vault data from keeper perspective — TVL, APY, weights, drawdown.
+ * Polls every 30s.
+ */
+export function useVaultData(
+  riskLevel: string
+): KeeperHookResult<VaultData> {
+  return useKeeperData<VaultData>(`/vaults/${riskLevel}`)
+}
+
+/**
+ * Recent keeper decisions for a vault — rebalances, guardrail triggers, etc.
+ * Polls every 30s.
+ */
+export function useKeeperDecisions(
+  riskLevel: string
+): KeeperHookResult<KeeperDecisionData[]> {
+  return useKeeperData<KeeperDecisionData[]>(
+    `/vaults/${riskLevel}/decisions`
+  )
+}
+
+/**
+ * Current yield estimates per source from the keeper's perspective.
+ * Polls every 30s.
+ */
+export function useYieldEstimates(): KeeperHookResult<YieldEstimate[]> {
+  return useKeeperData<YieldEstimate[]>('/yields')
+}
