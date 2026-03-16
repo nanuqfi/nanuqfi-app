@@ -10,12 +10,14 @@
 ## Quick Reference
 
 **Tech Stack:** Next.js 15 (App Router), React 19, Tailwind CSS 4, TypeScript
-**Deployment:** Vercel
+**Deployment:** Docker → VPS reclabs3, port 9001, app.nanuqfi.com
+**Tests:** 12 passing (error mapping)
 
 **Key Commands:**
 ```bash
 pnpm dev                        # local dev server (http://localhost:3000)
-pnpm build                      # production build (SSG)
+pnpm build                      # production build (standalone for Docker)
+pnpm test                       # run tests
 pnpm lint                       # ESLint
 ```
 
@@ -26,12 +28,16 @@ pnpm lint                       # ESLint
 | Path | Description |
 |------|-------------|
 | `src/components/` | Custom component system (Button, Card, Badge, ProgressBar, Stat, Nav) |
-| `src/components/index.ts` | Barrel exports |
-| `src/lib/mock-data.ts` | Mock vault data + formatting utilities |
-| `src/app/page.tsx` | Dashboard — TVL, APY, vault summaries |
-| `src/app/vaults/page.tsx` | Vault list with allocation breakdowns |
-| `src/app/vaults/[riskLevel]/page.tsx` | Vault detail — transparency layer (guardrails, keeper decisions) |
-| `src/app/activity/page.tsx` | Keeper decision timeline |
+| `src/providers/solana-provider.tsx` | Wallet adapter + connection provider |
+| `src/hooks/use-allocator.ts` | On-chain data hooks (PDAs, balances, positions) |
+| `src/hooks/use-keeper-api.ts` | Keeper REST API polling hooks |
+| `src/lib/transactions.ts` | Transaction builders (deposit, request_withdraw, withdraw) |
+| `src/lib/errors.ts` | Anchor error code → human message mapping |
+| `src/lib/mock-data.ts` | Mock data + formatting utilities (formatUsd, formatApy) |
+| `src/app/page.tsx` | Dashboard — real TVL, APY from on-chain + keeper API |
+| `src/app/vaults/page.tsx` | Vault list with real data |
+| `src/app/vaults/[riskLevel]/page.tsx` | Vault detail — deposit/withdraw + transparency layer |
+| `src/app/activity/page.tsx` | Keeper decision timeline (real keeper API) |
 | `docs/brand-guidelines.md` | Brand colors, typography, spacing, motion, voice |
 
 ---
