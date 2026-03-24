@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 
 const KEEPER_API =
-  process.env.NEXT_PUBLIC_KEEPER_API_URL ?? 'https://keeper.nanuqfi.xyz'
+  process.env.NEXT_PUBLIC_KEEPER_API_URL ?? 'https://keeper.nanuqfi.com'
 
 const KEEPER_POLL_INTERVAL = 30_000
 
@@ -132,7 +132,7 @@ function useKeeperData<T>(
  * Polls every 30s.
  */
 export function useKeeperHealth(): KeeperHookResult<KeeperHealthData> {
-  return useKeeperData<KeeperHealthData>('/health')
+  return useKeeperData<KeeperHealthData>('/v1/health')
 }
 
 /**
@@ -142,7 +142,7 @@ export function useKeeperHealth(): KeeperHookResult<KeeperHealthData> {
 export function useVaultData(
   riskLevel: string
 ): KeeperHookResult<VaultData> {
-  return useKeeperData<VaultData>(`/vaults/${riskLevel}`)
+  return useKeeperData<VaultData>(`/v1/vaults/${riskLevel}`)
 }
 
 /**
@@ -153,7 +153,7 @@ export function useKeeperDecisions(
   riskLevel: string
 ): KeeperHookResult<KeeperDecisionData[]> {
   return useKeeperData<KeeperDecisionData[]>(
-    `/vaults/${riskLevel}/decisions`
+    `/v1/vaults/${riskLevel}/decisions`
   )
 }
 
@@ -162,5 +162,5 @@ export function useKeeperDecisions(
  * Polls every 30s.
  */
 export function useYieldEstimates(): KeeperHookResult<YieldEstimate[]> {
-  return useKeeperData<YieldEstimate[]>('/yields')
+  return useKeeperData<YieldEstimate[]>('/v1/yields')
 }

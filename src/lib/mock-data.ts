@@ -179,7 +179,7 @@ export function formatPct(value: number): string {
 
 // Utility: format relative time
 export function formatRelativeTime(timestamp: string): string {
-  const now = new Date('2026-03-15T12:00:00Z')
+  const now = new Date()
   const then = new Date(timestamp)
   const diffMs = now.getTime() - then.getTime()
   const diffMins = Math.floor(diffMs / 60_000)

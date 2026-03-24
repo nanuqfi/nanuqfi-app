@@ -16,7 +16,10 @@ import {
 
 const ANCHOR_DISCRIMINATOR_SIZE = 8
 
-const USDC_MINT = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
+const USDC_MINT = new PublicKey(
+  process.env.NEXT_PUBLIC_USDC_MINT ??
+    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+)
 
 export interface AllocatorAccount {
   admin: PublicKey
@@ -65,144 +68,114 @@ export interface UserPositionAccount {
   bump: number
 }
 
-function parseAllocator(data: Buffer): AllocatorAccount {
+// ─── Binary Helpers (browser-safe, no Node.js Buffer) ───────────────────────
+
+function toBytes(data: Uint8Array | ArrayBuffer): Uint8Array {
+  return data instanceof Uint8Array ? data : new Uint8Array(data)
+}
+
+function readPubkey(bytes: Uint8Array, offset: number): PublicKey {
+  return new PublicKey(bytes.slice(offset, offset + 32))
+}
+
+function readU64(view: DataView, offset: number): bigint {
+  return view.getBigUint64(offset, true)
+}
+
+function readU32(view: DataView, offset: number): number {
+  return view.getUint32(offset, true)
+}
+
+function readU16(view: DataView, offset: number): number {
+  return view.getUint16(offset, true)
+}
+
+// ─── Parsers ────────────────────────────────────────────────────────────────
+
+function parseAllocator(raw: Uint8Array | ArrayBuffer): AllocatorAccount {
+  const bytes = toBytes(raw)
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
   let offset = ANCHOR_DISCRIMINATOR_SIZE
-  const admin = new PublicKey(data.subarray(offset, offset + 32))
-  offset += 32
-  const keeperAuthority = new PublicKey(data.subarray(offset, offset + 32))
-  offset += 32
-  const totalTvl = data.readBigUInt64LE(offset)
-  offset += 8
-  const halted = data[offset] === 1
-  offset += 1
-  const bump = data[offset]!
+
+  const admin = readPubkey(bytes, offset); offset += 32
+  const keeperAuthority = readPubkey(bytes, offset); offset += 32
+  const totalTvl = readU64(view, offset); offset += 8
+  const halted = bytes[offset] === 1; offset += 1
+  const bump = bytes[offset]!
 
   return { admin, keeperAuthority, totalTvl, halted, bump }
 }
 
-function parseRiskVault(data: Buffer): RiskVaultAccount {
+function parseRiskVault(raw: Uint8Array | ArrayBuffer): RiskVaultAccount {
+  const bytes = toBytes(raw)
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
   let offset = ANCHOR_DISCRIMINATOR_SIZE
 
-  const allocator = new PublicKey(data.subarray(offset, offset + 32))
-  offset += 32
+  const allocator = readPubkey(bytes, offset); offset += 32
+  const riskLevel = bytes[offset]!; offset += 1
+  const driftVault = readPubkey(bytes, offset); offset += 32
+  const shareMint = readPubkey(bytes, offset); offset += 32
 
-  // RiskLevel enum — Borsh encodes as 1-byte variant index
-  const riskLevel = data[offset]!
-  offset += 1
-
-  const driftVault = new PublicKey(data.subarray(offset, offset + 32))
-  offset += 32
-  const shareMint = new PublicKey(data.subarray(offset, offset + 32))
-  offset += 32
-
-  const totalShares = data.readBigUInt64LE(offset)
-  offset += 8
-  const totalAssets = data.readBigUInt64LE(offset)
-  offset += 8
-  const peakEquity = data.readBigUInt64LE(offset)
-  offset += 8
-  const currentEquity = data.readBigUInt64LE(offset)
-  offset += 8
-  const equity24hAgo = data.readBigUInt64LE(offset)
-  offset += 8
-  const lastRebalanceSlot = data.readBigUInt64LE(offset)
-  offset += 8
-  const rebalanceCounter = data.readUInt32LE(offset)
-  offset += 4
-  const lastMgmtFeeSlot = data.readBigUInt64LE(offset)
-  offset += 8
+  const totalShares = readU64(view, offset); offset += 8
+  const totalAssets = readU64(view, offset); offset += 8
+  const peakEquity = readU64(view, offset); offset += 8
+  const currentEquity = readU64(view, offset); offset += 8
+  const equity24hAgo = readU64(view, offset); offset += 8
+  const lastRebalanceSlot = readU64(view, offset); offset += 8
+  const rebalanceCounter = readU32(view, offset); offset += 4
+  const lastMgmtFeeSlot = readU64(view, offset); offset += 8
 
   // Vec<u16> — 4-byte length prefix + N * 2 bytes
-  const weightsLen = data.readUInt32LE(offset)
-  offset += 4
+  const weightsLen = readU32(view, offset); offset += 4
   const currentWeights: number[] = []
   for (let i = 0; i < weightsLen; i++) {
-    currentWeights.push(data.readUInt16LE(offset))
-    offset += 2
+    currentWeights.push(readU16(view, offset)); offset += 2
   }
 
-  const maxPerpAllocationBps = data.readUInt16LE(offset)
-  offset += 2
-  const maxLendingAllocationBps = data.readUInt16LE(offset)
-  offset += 2
-  const maxSingleAssetBps = data.readUInt16LE(offset)
-  offset += 2
-  const maxDrawdownBps = data.readUInt16LE(offset)
-  offset += 2
-  const maxLeverageBps = data.readUInt16LE(offset)
-  offset += 2
-  const redemptionPeriodSlots = data.readBigUInt64LE(offset)
-  offset += 8
-  const depositCap = data.readBigUInt64LE(offset)
-  offset += 8
-  const bump = data[offset]!
+  const maxPerpAllocationBps = readU16(view, offset); offset += 2
+  const maxLendingAllocationBps = readU16(view, offset); offset += 2
+  const maxSingleAssetBps = readU16(view, offset); offset += 2
+  const maxDrawdownBps = readU16(view, offset); offset += 2
+  const maxLeverageBps = readU16(view, offset); offset += 2
+  const redemptionPeriodSlots = readU64(view, offset); offset += 8
+  const depositCap = readU64(view, offset); offset += 8
+  const bump = bytes[offset]!
 
-  // Derive share price: totalAssets * 1e6 / totalShares (or 1.0 if no shares)
   const sharePrice =
     totalShares > 0n
       ? Number((totalAssets * 1_000_000n) / totalShares) / 1_000_000
       : 1.0
 
   return {
-    allocator,
-    riskLevel,
-    driftVault,
-    shareMint,
-    totalShares,
-    totalAssets,
-    peakEquity,
-    currentEquity,
-    equity24hAgo,
-    lastRebalanceSlot,
-    rebalanceCounter,
-    lastMgmtFeeSlot,
-    currentWeights,
-    maxPerpAllocationBps,
-    maxLendingAllocationBps,
-    maxSingleAssetBps,
-    maxDrawdownBps,
-    maxLeverageBps,
-    redemptionPeriodSlots,
-    depositCap,
-    bump,
-    sharePrice,
+    allocator, riskLevel, driftVault, shareMint,
+    totalShares, totalAssets, peakEquity, currentEquity, equity24hAgo,
+    lastRebalanceSlot, rebalanceCounter, lastMgmtFeeSlot, currentWeights,
+    maxPerpAllocationBps, maxLendingAllocationBps, maxSingleAssetBps,
+    maxDrawdownBps, maxLeverageBps, redemptionPeriodSlots, depositCap,
+    bump, sharePrice,
   }
 }
 
-function parseUserPosition(data: Buffer): UserPositionAccount {
+function parseUserPosition(raw: Uint8Array | ArrayBuffer): UserPositionAccount {
+  const bytes = toBytes(raw)
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
   let offset = ANCHOR_DISCRIMINATOR_SIZE
 
-  const user = new PublicKey(data.subarray(offset, offset + 32))
-  offset += 32
-  const riskVault = new PublicKey(data.subarray(offset, offset + 32))
-  offset += 32
-  const shares = data.readBigUInt64LE(offset)
-  offset += 8
-  const depositedUsdc = data.readBigUInt64LE(offset)
-  offset += 8
-  const entrySlot = data.readBigUInt64LE(offset)
-  offset += 8
-  const highWaterMarkPrice = data.readBigUInt64LE(offset)
-  offset += 8
-  const pendingWithdrawalShares = data.readBigUInt64LE(offset)
-  offset += 8
-  const withdrawRequestSlot = data.readBigUInt64LE(offset)
-  offset += 8
-  const requestTimeSharePrice = data.readBigUInt64LE(offset)
-  offset += 8
-  const bump = data[offset]!
+  const user = readPubkey(bytes, offset); offset += 32
+  const riskVault = readPubkey(bytes, offset); offset += 32
+  const shares = readU64(view, offset); offset += 8
+  const depositedUsdc = readU64(view, offset); offset += 8
+  const entrySlot = readU64(view, offset); offset += 8
+  const highWaterMarkPrice = readU64(view, offset); offset += 8
+  const pendingWithdrawalShares = readU64(view, offset); offset += 8
+  const withdrawRequestSlot = readU64(view, offset); offset += 8
+  const requestTimeSharePrice = readU64(view, offset); offset += 8
+  const bump = bytes[offset]!
 
   return {
-    user,
-    riskVault,
-    shares,
-    depositedUsdc,
-    entrySlot,
-    highWaterMarkPrice,
-    pendingWithdrawalShares,
-    withdrawRequestSlot,
-    requestTimeSharePrice,
-    bump,
+    user, riskVault, shares, depositedUsdc, entrySlot,
+    highWaterMarkPrice, pendingWithdrawalShares, withdrawRequestSlot,
+    requestTimeSharePrice, bump,
   }
 }
 
@@ -239,7 +212,7 @@ export function useAllocatorState(): HookResult<AllocatorAccount> {
         return
       }
 
-      setData(parseAllocator(Buffer.from(info.data)))
+      setData(parseAllocator(info.data))
       setError(null)
     } catch (err) {
       if (!mountedRef.current) return
@@ -291,7 +264,7 @@ export function useRiskVault(riskLevel: number): HookResult<RiskVaultAccount> {
         return
       }
 
-      setData(parseRiskVault(Buffer.from(info.data)))
+      setData(parseRiskVault(info.data))
       setError(null)
     } catch (err) {
       if (!mountedRef.current) return
@@ -354,7 +327,7 @@ export function useUserPosition(
         return
       }
 
-      setData(parseUserPosition(Buffer.from(info.data)))
+      setData(parseUserPosition(info.data))
       setError(null)
     } catch (err) {
       if (!mountedRef.current) return
@@ -416,7 +389,9 @@ export function useUsdcBalance(): HookResult<bigint> {
       }
 
       // SPL Token account data layout: amount is at offset 64, 8 bytes LE
-      const amount = Buffer.from(info.data).readBigUInt64LE(64)
+      const bytes = toBytes(info.data)
+      const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
+      const amount = view.getBigUint64(64, true)
       setData(amount)
       setError(null)
     } catch (err) {

@@ -4,9 +4,10 @@ import { useState, useMemo } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Bot, Cpu, Clock, ShieldCheck, Wallet, AlertCircle } from 'lucide-react'
-import { Transaction } from '@solana/web3.js'
+import { Transaction, PublicKey } from '@solana/web3.js'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnection } from '@solana/wallet-adapter-react'
+import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
 import { Card, Badge, Button, ProgressBar, Stat } from '@/components'
 import { useRiskVault, useUserPosition, useUsdcBalance } from '@/hooks/use-allocator'
 import { useVaultData, useKeeperDecisions } from '@/hooks/use-keeper-api'
@@ -14,6 +15,7 @@ import {
   buildDepositInstruction,
   buildRequestWithdrawInstruction,
   buildWithdrawInstruction,
+  getTreasuryPDA,
 } from '@/lib/transactions'
 import { parseAllocatorError } from '@/lib/errors'
 import {
@@ -55,9 +57,11 @@ function Skeleton({ className = '' }: { className?: string }) {
 
 function DepositForm({
   riskLevelNum,
+  shareMint,
   onSuccess,
 }: {
   riskLevelNum: number
+  shareMint: import('@solana/web3.js').PublicKey | null
   onSuccess: () => void
 }) {
   const { publicKey, sendTransaction } = useWallet()
@@ -74,7 +78,7 @@ function DepositForm({
 
   async function handleDeposit() {
     const amount = Number(depositAmount)
-    if (!publicKey || !amount || amount <= 0) return
+    if (!publicKey || !amount || amount <= 0 || !shareMint) return
 
     setLoading(true)
     setError(null)
@@ -84,9 +88,19 @@ function DepositForm({
       const ix = await buildDepositInstruction(
         publicKey,
         riskLevelNum,
-        BigInt(Math.round(amount * 1e6))
+        BigInt(Math.round(amount * 1e6)),
+        shareMint
       )
-      const tx = new Transaction().add(ix)
+      const tx = new Transaction()
+
+      // Create user's share ATA if it doesn't exist (first-time depositor)
+      const userSharesAta = await getAssociatedTokenAddress(shareMint, publicKey)
+      const ataInfo = await connection.getAccountInfo(userSharesAta)
+      if (!ataInfo) {
+        tx.add(createAssociatedTokenAccountInstruction(publicKey, userSharesAta, publicKey, shareMint))
+      }
+
+      tx.add(ix)
       const sig = await sendTransaction(tx, connection)
       await connection.confirmTransaction(sig, 'confirmed')
       setSuccess(true)
@@ -202,7 +216,18 @@ function WithdrawSection({
     setSuccess(false)
 
     try {
-      const ix = await buildWithdrawInstruction(publicKey, riskLevelNum)
+      const shareMintKey = vault.data?.shareMint
+      if (!shareMintKey) throw new Error('Vault data not loaded')
+
+      // Read treasury USDC address from on-chain treasury account
+      const [treasuryPda] = getTreasuryPDA()
+      const treasuryInfo = await connection.getAccountInfo(treasuryPda)
+      // Treasury layout: 8 disc + 32 allocator + 32 usdc_token_account (offset 40)
+      const treasuryUsdc = treasuryInfo
+        ? new PublicKey(treasuryInfo.data.subarray(40, 72))
+        : undefined
+
+      const ix = await buildWithdrawInstruction(publicKey, riskLevelNum, shareMintKey, treasuryUsdc)
       const tx = new Transaction().add(ix)
       const sig = await sendTransaction(tx, connection)
       await connection.confirmTransaction(sig, 'confirmed')
@@ -547,7 +572,7 @@ function VaultDetailContent({
             </h2>
           }>
             <div className="space-y-6">
-              <DepositForm riskLevelNum={riskLevelNum} onSuccess={handleRefresh} />
+              <DepositForm riskLevelNum={riskLevelNum} shareMint={onChain.data?.shareMint ?? null} onSuccess={handleRefresh} />
               <WithdrawSection
                 riskLevelNum={riskLevelNum}
                 riskLevel={riskLevel}

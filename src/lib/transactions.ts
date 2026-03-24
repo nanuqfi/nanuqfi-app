@@ -14,18 +14,45 @@ const PROGRAM_ID = new PublicKey(
 )
 
 const USDC_MINT = new PublicKey(
-  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+  process.env.NEXT_PUBLIC_USDC_MINT ??
+    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
 )
+
+// ─── Browser-Safe Helpers ────────────────────────────────────────────────────
+
+const enc = new TextEncoder()
+
+function toSeed(s: string): Uint8Array {
+  return enc.encode(s)
+}
+
+function concatBytes(...arrays: Uint8Array[]): Uint8Array {
+  const len = arrays.reduce((acc, a) => acc + a.length, 0)
+  const result = new Uint8Array(len)
+  let offset = 0
+  for (const a of arrays) {
+    result.set(a, offset)
+    offset += a.length
+  }
+  return result
+}
+
+function writeU64LE(value: bigint): Uint8Array {
+  const buf = new Uint8Array(8)
+  const view = new DataView(buf.buffer)
+  view.setBigUint64(0, value, true)
+  return buf
+}
 
 // ─── PDA Derivation ──────────────────────────────────────────────────────────
 
 export function getAllocatorPDA(): [PublicKey, number] {
-  return PublicKey.findProgramAddressSync([Buffer.from('allocator')], PROGRAM_ID)
+  return PublicKey.findProgramAddressSync([toSeed('allocator')], PROGRAM_ID)
 }
 
 export function getRiskVaultPDA(riskLevel: number): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
-    [Buffer.from('vault'), Buffer.from([riskLevel])],
+    [toSeed('vault'), Uint8Array.from([riskLevel])],
     PROGRAM_ID
   )
 }
@@ -35,58 +62,36 @@ export function getUserPositionPDA(
   riskVault: PublicKey
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
-    [Buffer.from('position'), user.toBuffer(), riskVault.toBuffer()],
+    [toSeed('position'), user.toBytes(), riskVault.toBytes()],
     PROGRAM_ID
   )
 }
 
 export function getTreasuryPDA(): [PublicKey, number] {
-  return PublicKey.findProgramAddressSync([Buffer.from('treasury')], PROGRAM_ID)
-}
-
-export function getShareMintPDA(riskLevel: number): [PublicKey, number] {
-  return PublicKey.findProgramAddressSync(
-    [Buffer.from('shares'), Buffer.from([riskLevel])],
-    PROGRAM_ID
-  )
+  return PublicKey.findProgramAddressSync([toSeed('treasury')], PROGRAM_ID)
 }
 
 // ─── Anchor Instruction Discriminator ────────────────────────────────────────
 // SHA-256 of "global:<instruction_name>" truncated to 8 bytes.
 // Pre-computed to avoid async crypto in hot paths.
 
-const DISCRIMINATORS: Record<string, Buffer> = {
-  deposit: Buffer.from([242, 35, 198, 137, 82, 225, 242, 182]),
-  request_withdraw: Buffer.from([137, 95, 187, 96, 250, 138, 31, 182]),
-  withdraw: Buffer.from([183, 18, 70, 156, 148, 109, 161, 34]),
+const DISCRIMINATORS: Record<string, Uint8Array> = {
+  deposit: Uint8Array.from([242, 35, 198, 137, 82, 225, 242, 182]),
+  request_withdraw: Uint8Array.from([137, 95, 187, 96, 250, 138, 31, 182]),
+  withdraw: Uint8Array.from([183, 18, 70, 156, 148, 109, 161, 34]),
 }
 
-/**
- * Compute an Anchor instruction discriminator at runtime.
- * Uses Web Crypto API (available in both browser and Node 18+).
- */
-async function computeDiscriminator(name: string): Promise<Buffer> {
-  const data = new TextEncoder().encode(`global:${name}`)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  return Buffer.from(hashBuffer).subarray(0, 8)
+async function computeDiscriminator(name: string): Promise<Uint8Array> {
+  const data = enc.encode(`global:${name}`)
+  const hash = await crypto.subtle.digest('SHA-256', data)
+  return new Uint8Array(hash).slice(0, 8)
 }
 
-/**
- * Get discriminator — uses pre-computed values, falls back to runtime computation.
- */
-async function getDiscriminator(name: string): Promise<Buffer> {
+async function getDiscriminator(name: string): Promise<Uint8Array> {
   if (DISCRIMINATORS[name]) return DISCRIMINATORS[name]!
   const disc = await computeDiscriminator(name)
   DISCRIMINATORS[name] = disc
   return disc
-}
-
-// ─── Instruction Data Serialization ──────────────────────────────────────────
-
-function serializeU64(value: bigint): Buffer {
-  const buf = Buffer.alloc(8)
-  buf.writeBigUInt64LE(value)
-  return buf
 }
 
 // ─── Transaction Builders ────────────────────────────────────────────────────
@@ -97,11 +102,13 @@ function serializeU64(value: bigint): Buffer {
  * @param userWallet - The depositing user's wallet public key
  * @param riskLevel - 0 = conservative, 1 = moderate, 2 = aggressive
  * @param amount - USDC amount in smallest unit (6 decimals)
+ * @param shareMint - The vault's share mint address (read from RiskVault.shareMint)
  */
 export async function buildDepositInstruction(
   userWallet: PublicKey,
   riskLevel: number,
-  amount: bigint
+  amount: bigint,
+  shareMint: PublicKey
 ): Promise<TransactionInstruction> {
   if (riskLevel < 0 || riskLevel > 2) {
     throw new Error(`Invalid risk level: ${riskLevel}. Must be 0, 1, or 2.`)
@@ -113,17 +120,13 @@ export async function buildDepositInstruction(
   const [allocator] = getAllocatorPDA()
   const [riskVault] = getRiskVaultPDA(riskLevel)
   const [userPosition] = getUserPositionPDA(userWallet, riskVault)
-  const [shareMint] = getShareMintPDA(riskLevel)
 
   const userUsdc = await getAssociatedTokenAddress(USDC_MINT, userWallet)
   const userShares = await getAssociatedTokenAddress(shareMint, userWallet)
-
-  // Vault USDC account — ATA owned by the allocator PDA
   const vaultUsdc = await getAssociatedTokenAddress(USDC_MINT, allocator, true)
 
-  // Instruction data: 8-byte discriminator + 8-byte u64 amount
   const discriminator = await getDiscriminator('deposit')
-  const data = Buffer.concat([discriminator, serializeU64(amount)])
+  const data = concatBytes(discriminator, writeU64LE(amount))
 
   return new TransactionInstruction({
     programId: PROGRAM_ID,
@@ -139,7 +142,7 @@ export async function buildDepositInstruction(
       { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
       { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
     ],
-    data,
+    data: data as Buffer,
   })
 }
 
@@ -168,7 +171,7 @@ export async function buildRequestWithdrawInstruction(
   const [userPosition] = getUserPositionPDA(userWallet, riskVault)
 
   const discriminator = await getDiscriminator('request_withdraw')
-  const data = Buffer.concat([discriminator, serializeU64(shares)])
+  const data = concatBytes(discriminator, writeU64LE(shares))
 
   return new TransactionInstruction({
     programId: PROGRAM_ID,
@@ -178,7 +181,7 @@ export async function buildRequestWithdrawInstruction(
       { pubkey: userPosition, isSigner: false, isWritable: true },
       { pubkey: userWallet, isSigner: true, isWritable: false },
     ],
-    data,
+    data: data as Buffer,
   })
 }
 
@@ -188,10 +191,13 @@ export async function buildRequestWithdrawInstruction(
  *
  * @param userWallet - The withdrawing user's wallet public key
  * @param riskLevel - 0 = conservative, 1 = moderate, 2 = aggressive
+ * @param shareMint - The vault's share mint address (read from RiskVault.shareMint)
  */
 export async function buildWithdrawInstruction(
   userWallet: PublicKey,
-  riskLevel: number
+  riskLevel: number,
+  shareMint: PublicKey,
+  treasuryUsdcAccount?: PublicKey
 ): Promise<TransactionInstruction> {
   if (riskLevel < 0 || riskLevel > 2) {
     throw new Error(`Invalid risk level: ${riskLevel}. Must be 0, 1, or 2.`)
@@ -201,20 +207,14 @@ export async function buildWithdrawInstruction(
   const [riskVault] = getRiskVaultPDA(riskLevel)
   const [userPosition] = getUserPositionPDA(userWallet, riskVault)
   const [treasury] = getTreasuryPDA()
-  const [shareMint] = getShareMintPDA(riskLevel)
 
   const userUsdc = await getAssociatedTokenAddress(USDC_MINT, userWallet)
   const userShares = await getAssociatedTokenAddress(shareMint, userWallet)
   const vaultUsdc = await getAssociatedTokenAddress(USDC_MINT, allocator, true)
-  const treasuryUsdc = await getAssociatedTokenAddress(
-    USDC_MINT,
-    treasury,
-    true
-  )
+  // Treasury USDC must match on-chain treasury.usdc_token_account — not a derived ATA
+  const treasuryUsdc = treasuryUsdcAccount ?? await getAssociatedTokenAddress(USDC_MINT, treasury, true)
 
   const discriminator = await getDiscriminator('withdraw')
-  // No args — withdraw uses pending_withdrawal_shares from on-chain state
-  const data = discriminator
 
   return new TransactionInstruction({
     programId: PROGRAM_ID,
@@ -231,7 +231,7 @@ export async function buildWithdrawInstruction(
       { pubkey: userWallet, isSigner: true, isWritable: false },
       { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
     ],
-    data,
+    data: discriminator as Buffer,
   })
 }
 
