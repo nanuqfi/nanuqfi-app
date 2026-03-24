@@ -17,7 +17,8 @@ export function SolanaProvider({ children }: { children: React.ReactNode }) {
     new SolflareWalletAdapter(),
   ], [])
 
-  useEffect(() => setMounted(true), [])
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: prevents hydration mismatch with wallet adapter
+  useEffect(() => { setMounted(true) }, [])
 
   return (
     <ConnectionProvider endpoint={RPC_URL}>
