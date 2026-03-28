@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 
 const KEEPER_API =
   process.env.NEXT_PUBLIC_KEEPER_API_URL ?? 'https://keeper.nanuqfi.com'
@@ -145,16 +145,74 @@ export function useVaultData(
   return useKeeperData<VaultData>(`/v1/vaults/${riskLevel}`)
 }
 
+// ─── Raw Decision Transform ─────────────────────────────────────────────────
+
+/** Shape returned by keeper /v1/vaults/:level/decisions */
+interface RawDecisionLog {
+  timestamp: number
+  action: string
+  previousWeights: Record<string, number>
+  newWeights: Record<string, number>
+  algoScores: Record<string, number>
+  aiInvolved: boolean
+  guardrailPassed: boolean
+}
+
+function formatSourceName(slug: string): string {
+  return slug.replace(/^drift-/, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+}
+
+function transformDecision(d: RawDecisionLog): KeeperDecisionData {
+  const allSources = new Set([
+    ...Object.keys(d.newWeights ?? {}),
+    ...Object.keys(d.previousWeights ?? {}),
+  ])
+
+  const weightChanges = Array.from(allSources)
+    .filter(s => (d.newWeights?.[s] ?? 0) > 0 || (d.previousWeights?.[s] ?? 0) > 0)
+    .map(source => ({
+      source,
+      from: Math.round((d.previousWeights?.[source] ?? 0) / 100),
+      to: Math.round((d.newWeights?.[source] ?? 0) / 100),
+    }))
+    .sort((a, b) => b.to - a.to)
+
+  const topWeights = Object.entries(d.newWeights ?? {})
+    .filter(([, w]) => w > 0)
+    .sort(([, a], [, b]) => b - a)
+
+  const summary = topWeights.length > 0
+    ? topWeights.map(([s, w]) => `${(w / 100).toFixed(1)}% ${formatSourceName(s)}`).join(', ')
+    : 'Keeper cycle completed'
+
+  return {
+    id: String(d.timestamp),
+    timestamp: new Date(d.timestamp).toISOString(),
+    action: d.action ?? 'Rebalance',
+    summary,
+    weightChanges,
+    aiInvolved: d.aiInvolved ?? true,
+    reason: d.guardrailPassed !== false ? 'All guardrails passed' : 'Guardrail triggered',
+  }
+}
+
 /**
  * Recent keeper decisions for a vault — rebalances, guardrail triggers, etc.
- * Polls every 30s.
+ * Polls every 30s. Transforms raw DecisionLog to display format.
  */
 export function useKeeperDecisions(
   riskLevel: string
 ): KeeperHookResult<KeeperDecisionData[]> {
-  return useKeeperData<KeeperDecisionData[]>(
+  const raw = useKeeperData<RawDecisionLog[]>(
     `/v1/vaults/${riskLevel}/decisions`
   )
+
+  const data = useMemo(
+    () => raw.data?.map(transformDecision) ?? null,
+    [raw.data]
+  )
+
+  return { ...raw, data }
 }
 
 /**

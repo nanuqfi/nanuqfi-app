@@ -107,7 +107,7 @@ export default function DashboardPage() {
     : getWeightedApy()
 
   const keeperStatus = keeperHealth.data
-    ? keeperHealth.data.rpcStatus === 'connected' ? 'Online' : 'Degraded'
+    ? keeperHealth.data.rpcStatus === 'healthy' ? 'Online' : 'Degraded'
     : keeperHealth.loading ? '...' : 'Offline'
 
   return (
