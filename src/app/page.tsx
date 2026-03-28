@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ShieldAlert } from 'lucide-react'
 import { Card, Stat, Badge } from '@/components'
 import { useAllocatorState, useRiskVault } from '@/hooks/use-allocator'
 import { useVaultData, useKeeperHealth } from '@/hooks/use-keeper-api'
@@ -118,6 +118,18 @@ export default function DashboardPage() {
           Yield, Routed. Real-time protocol overview.
         </p>
       </div>
+
+      {allocator.data?.halted && (
+        <div className="flex items-center gap-3 rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-red-400">
+          <ShieldAlert className="h-5 w-5 shrink-0" />
+          <div>
+            <p className="font-semibold">Protocol Halted</p>
+            <p className="text-sm text-red-400/80">
+              Emergency halt is active. Deposits are paused while the team investigates.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <Card>
