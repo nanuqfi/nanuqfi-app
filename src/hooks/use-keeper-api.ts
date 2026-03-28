@@ -222,3 +222,39 @@ export function useKeeperDecisions(
 export function useYieldEstimates(): KeeperHookResult<YieldEstimate[]> {
   return useKeeperData<YieldEstimate[]>('/v1/yields')
 }
+
+// ─── Market Scan ────────────────────────────────────────────────────────────
+
+export interface MarketScanOpportunity {
+  protocol: string
+  strategy: string
+  asset: string
+  apy: number
+  tvl: number
+  risk: 'low' | 'medium' | 'high'
+  source: string
+}
+
+export interface MarketScanData {
+  timestamp: number
+  opportunities: MarketScanOpportunity[]
+  bestByRisk: {
+    low: MarketScanOpportunity | null
+    medium: MarketScanOpportunity | null
+    high: MarketScanOpportunity | null
+  }
+  driftComparison: {
+    driftBestApy: number
+    marketBestApy: number
+    driftRank: number
+    totalScanned: number
+  }
+}
+
+/**
+ * DeFi market yield scan — cross-protocol opportunities + Drift comparison.
+ * Polls every 30s.
+ */
+export function useMarketScan(): KeeperHookResult<MarketScanData> {
+  return useKeeperData<MarketScanData>('/v1/market-scan')
+}

@@ -1,9 +1,10 @@
 'use client'
 
 import { useMemo } from 'react'
-import { Bot, Cpu, Clock, AlertTriangle } from 'lucide-react'
+import { Bot, Cpu, Clock, AlertTriangle, Globe } from 'lucide-react'
 import { Card, Badge } from '@/components'
-import { useKeeperDecisions } from '@/hooks/use-keeper-api'
+import { useKeeperDecisions, useMarketScan } from '@/hooks/use-keeper-api'
+import type { MarketScanOpportunity } from '@/hooks/use-keeper-api'
 import {
   mockDecisions,
   formatRelativeTime,
@@ -44,6 +45,127 @@ interface DecisionDisplay {
   weightChanges: { source: string; from: number; to: number }[]
   aiInvolved: boolean
   reason: string
+}
+
+// ─── Activity Page ──────────────────────────────────────────────────────────
+
+// ─── Market Scan Section ───────────────────────────────────────────────────
+
+function MarketScanSection() {
+  const scan = useMarketScan()
+
+  if (scan.loading) {
+    return (
+      <Card>
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-20 w-full" />
+          <Skeleton className="h-20 w-full" />
+        </div>
+      </Card>
+    )
+  }
+
+  // Handle the "no scan yet" response shape
+  const data = scan.data && 'opportunities' in scan.data ? scan.data : null
+
+  if (!data) {
+    return (
+      <Card>
+        <div className="flex items-center gap-3 text-slate-400">
+          <Globe className="h-5 w-5" />
+          <span>Market scan not yet available. Waiting for keeper cycle.</span>
+        </div>
+      </Card>
+    )
+  }
+
+  const top5 = data.opportunities.slice(0, 5)
+  const { driftComparison } = data
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold tracking-tight">DeFi Yield Scanner</h2>
+        <span className="text-xs text-slate-500">
+          {data.timestamp ? new Date(data.timestamp).toLocaleString() : ''}
+        </span>
+      </div>
+
+      {/* Drift vs Market */}
+      <Card>
+        <div className="flex flex-wrap gap-6">
+          <div className="space-y-1">
+            <span className="text-xs text-slate-500 uppercase tracking-wider">Protocols Scanned</span>
+            <p className="font-mono text-2xl font-bold">{driftComparison.totalScanned}</p>
+          </div>
+          <div className="space-y-1">
+            <span className="text-xs text-slate-500 uppercase tracking-wider">Market Best APY</span>
+            <p className="font-mono text-2xl font-bold text-emerald-400">
+              {(driftComparison.marketBestApy * 100).toFixed(1)}%
+            </p>
+          </div>
+          <div className="space-y-1">
+            <span className="text-xs text-slate-500 uppercase tracking-wider">Drift Best APY</span>
+            <p className="font-mono text-2xl font-bold">
+              {(driftComparison.driftBestApy * 100).toFixed(1)}%
+            </p>
+          </div>
+          <div className="space-y-1">
+            <span className="text-xs text-slate-500 uppercase tracking-wider">Drift Rank</span>
+            <p className="font-mono text-2xl font-bold text-sky-400">
+              #{driftComparison.driftRank} / {driftComparison.totalScanned}
+            </p>
+          </div>
+        </div>
+      </Card>
+
+      {/* Top Opportunities */}
+      {top5.length > 0 && (
+        <Card>
+          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-400">
+            Top Opportunities
+          </h3>
+          <div className="divide-y divide-slate-700">
+            {top5.map((opp: MarketScanOpportunity, i: number) => (
+              <div key={i} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-700 text-xs font-bold text-slate-300">
+                    {i + 1}
+                  </span>
+                  <div>
+                    <p className="text-sm font-medium text-slate-200">{opp.asset}</p>
+                    <p className="text-xs text-slate-500">{opp.protocol} / {opp.strategy}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 text-right">
+                  <div>
+                    <p className="font-mono text-sm font-bold text-emerald-400">
+                      {(opp.apy * 100).toFixed(2)}%
+                    </p>
+                    <p className="text-xs text-slate-500">APY</p>
+                  </div>
+                  <div>
+                    <p className="font-mono text-sm text-slate-300">
+                      ${(opp.tvl / 1e6).toFixed(1)}M
+                    </p>
+                    <p className="text-xs text-slate-500">TVL</p>
+                  </div>
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                    opp.risk === 'low' ? 'bg-emerald-500/10 text-emerald-400' :
+                    opp.risk === 'medium' ? 'bg-amber-500/10 text-amber-400' :
+                    'bg-red-500/10 text-red-400'
+                  }`}>
+                    {opp.risk}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+    </div>
+  )
 }
 
 // ─── Activity Page ──────────────────────────────────────────────────────────
@@ -171,6 +293,8 @@ export default function ActivityPage() {
           </div>
         )}
       </Card>
+
+      <MarketScanSection />
     </div>
   )
 }
