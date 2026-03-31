@@ -1,0 +1,2533 @@
+{
+  "generatedAt": "2026-03-31T01:30:27.106Z",
+  "period": {
+    "start": "2026-01-01",
+    "end": "2026-03-31",
+    "days": 90
+  },
+  "dataSource": "Synthetic mean-reversion random walk (Ornstein-Uhlenbeck process). Calibrated to observed Drift Protocol rate ranges: USDC lending 2-8%, SOL funding -5% to +30%, SOL borrow 3-10%, JitoSOL staking 6-8%. Seeded PRNG (seed=42) for reproducibility. Drift Data API and DeFi Llama were attempted but lacked sufficient USDC lending history.",
+  "baseline": {
+    "strategy": "USDC lending only",
+    "apy": 0.055,
+    "totalReturn": 0.013294,
+    "dailyReturns": [
+      {
+        "date": "2026-01-01",
+        "return": -0.000552,
+        "cumulative": -0.000552
+      },
+      {
+        "date": "2026-01-02",
+        "return": -0.00043,
+        "cumulative": -0.000982
+      },
+      {
+        "date": "2026-01-03",
+        "return": -0.0001,
+        "cumulative": -0.001082
+      },
+      {
+        "date": "2026-01-04",
+        "return": 0.000757,
+        "cumulative": -0.000326
+      },
+      {
+        "date": "2026-01-05",
+        "return": -0.000132,
+        "cumulative": -0.000458
+      },
+      {
+        "date": "2026-01-06",
+        "return": 0.001745,
+        "cumulative": 0.001287
+      },
+      {
+        "date": "2026-01-07",
+        "return": -0.000232,
+        "cumulative": 0.001054
+      },
+      {
+        "date": "2026-01-08",
+        "return": -0.000048,
+        "cumulative": 0.001006
+      },
+      {
+        "date": "2026-01-09",
+        "return": 0.000754,
+        "cumulative": 0.001761
+      },
+      {
+        "date": "2026-01-10",
+        "return": -0.000701,
+        "cumulative": 0.001059
+      },
+      {
+        "date": "2026-01-11",
+        "return": 0.000054,
+        "cumulative": 0.001113
+      },
+      {
+        "date": "2026-01-12",
+        "return": 0.000669,
+        "cumulative": 0.001783
+      },
+      {
+        "date": "2026-01-13",
+        "return": -0.000649,
+        "cumulative": 0.001133
+      },
+      {
+        "date": "2026-01-14",
+        "return": 0.000014,
+        "cumulative": 0.001147
+      },
+      {
+        "date": "2026-01-15",
+        "return": -0.000033,
+        "cumulative": 0.001114
+      },
+      {
+        "date": "2026-01-16",
+        "return": 0.00043,
+        "cumulative": 0.001545
+      },
+      {
+        "date": "2026-01-17",
+        "return": 0.000053,
+        "cumulative": 0.001597
+      },
+      {
+        "date": "2026-01-18",
+        "return": -0.000048,
+        "cumulative": 0.001549
+      },
+      {
+        "date": "2026-01-19",
+        "return": -0.000367,
+        "cumulative": 0.001181
+      },
+      {
+        "date": "2026-01-20",
+        "return": -0.000182,
+        "cumulative": 0.000999
+      },
+      {
+        "date": "2026-01-21",
+        "return": 0.000576,
+        "cumulative": 0.001576
+      },
+      {
+        "date": "2026-01-22",
+        "return": 0.000315,
+        "cumulative": 0.001892
+      },
+      {
+        "date": "2026-01-23",
+        "return": 0.000092,
+        "cumulative": 0.001983
+      },
+      {
+        "date": "2026-01-24",
+        "return": -0.000375,
+        "cumulative": 0.001607
+      },
+      {
+        "date": "2026-01-25",
+        "return": 0.000248,
+        "cumulative": 0.001856
+      },
+      {
+        "date": "2026-01-26",
+        "return": 0.000169,
+        "cumulative": 0.002025
+      },
+      {
+        "date": "2026-01-27",
+        "return": 0.000564,
+        "cumulative": 0.002591
+      },
+      {
+        "date": "2026-01-28",
+        "return": 0.000409,
+        "cumulative": 0.003001
+      },
+      {
+        "date": "2026-01-29",
+        "return": -0.000113,
+        "cumulative": 0.002888
+      },
+      {
+        "date": "2026-01-30",
+        "return": 0.000241,
+        "cumulative": 0.00313
+      },
+      {
+        "date": "2026-01-31",
+        "return": 0.000503,
+        "cumulative": 0.003634
+      },
+      {
+        "date": "2026-02-01",
+        "return": -0.000146,
+        "cumulative": 0.003487
+      },
+      {
+        "date": "2026-02-02",
+        "return": -0.000645,
+        "cumulative": 0.00284
+      },
+      {
+        "date": "2026-02-03",
+        "return": 0.000102,
+        "cumulative": 0.002943
+      },
+      {
+        "date": "2026-02-04",
+        "return": 0.000593,
+        "cumulative": 0.003537
+      },
+      {
+        "date": "2026-02-05",
+        "return": -0.000263,
+        "cumulative": 0.003273
+      },
+      {
+        "date": "2026-02-06",
+        "return": -0.00049,
+        "cumulative": 0.002782
+      },
+      {
+        "date": "2026-02-07",
+        "return": 0.000982,
+        "cumulative": 0.003767
+      },
+      {
+        "date": "2026-02-08",
+        "return": -0.00039,
+        "cumulative": 0.003375
+      },
+      {
+        "date": "2026-02-09",
+        "return": 0.000049,
+        "cumulative": 0.003424
+      },
+      {
+        "date": "2026-02-10",
+        "return": 0.000349,
+        "cumulative": 0.003774
+      },
+      {
+        "date": "2026-02-11",
+        "return": -0.000428,
+        "cumulative": 0.003344
+      },
+      {
+        "date": "2026-02-12",
+        "return": 0.001043,
+        "cumulative": 0.004391
+      },
+      {
+        "date": "2026-02-13",
+        "return": 0.001,
+        "cumulative": 0.005395
+      },
+      {
+        "date": "2026-02-14",
+        "return": -0.000025,
+        "cumulative": 0.005369
+      },
+      {
+        "date": "2026-02-15",
+        "return": 0.000874,
+        "cumulative": 0.006247
+      },
+      {
+        "date": "2026-02-16",
+        "return": 0.000263,
+        "cumulative": 0.006512
+      },
+      {
+        "date": "2026-02-17",
+        "return": 0.000161,
+        "cumulative": 0.006674
+      },
+      {
+        "date": "2026-02-18",
+        "return": 0.000601,
+        "cumulative": 0.007279
+      },
+      {
+        "date": "2026-02-19",
+        "return": -0.000212,
+        "cumulative": 0.007066
+      },
+      {
+        "date": "2026-02-20",
+        "return": 0.000262,
+        "cumulative": 0.007329
+      },
+      {
+        "date": "2026-02-21",
+        "return": 0.001111,
+        "cumulative": 0.008448
+      },
+      {
+        "date": "2026-02-22",
+        "return": 0.000154,
+        "cumulative": 0.008603
+      },
+      {
+        "date": "2026-02-23",
+        "return": 0.000547,
+        "cumulative": 0.009155
+      },
+      {
+        "date": "2026-02-24",
+        "return": 0.000834,
+        "cumulative": 0.009996
+      },
+      {
+        "date": "2026-02-25",
+        "return": -0.000875,
+        "cumulative": 0.009112
+      },
+      {
+        "date": "2026-02-26",
+        "return": 0.00035,
+        "cumulative": 0.009465
+      },
+      {
+        "date": "2026-02-27",
+        "return": -0.000045,
+        "cumulative": 0.009419
+      },
+      {
+        "date": "2026-02-28",
+        "return": -0.00039,
+        "cumulative": 0.009026
+      },
+      {
+        "date": "2026-03-01",
+        "return": -0.000012,
+        "cumulative": 0.009014
+      },
+      {
+        "date": "2026-03-02",
+        "return": -0.000273,
+        "cumulative": 0.008738
+      },
+      {
+        "date": "2026-03-03",
+        "return": 0.000543,
+        "cumulative": 0.009286
+      },
+      {
+        "date": "2026-03-04",
+        "return": 0.000741,
+        "cumulative": 0.010034
+      },
+      {
+        "date": "2026-03-05",
+        "return": 0.000549,
+        "cumulative": 0.010589
+      },
+      {
+        "date": "2026-03-06",
+        "return": -0.000908,
+        "cumulative": 0.009671
+      },
+      {
+        "date": "2026-03-07",
+        "return": 0.000171,
+        "cumulative": 0.009843
+      },
+      {
+        "date": "2026-03-08",
+        "return": 0.000694,
+        "cumulative": 0.010544
+      },
+      {
+        "date": "2026-03-09",
+        "return": -0.000613,
+        "cumulative": 0.009925
+      },
+      {
+        "date": "2026-03-10",
+        "return": 0.000196,
+        "cumulative": 0.010123
+      },
+      {
+        "date": "2026-03-11",
+        "return": -0.000154,
+        "cumulative": 0.009967
+      },
+      {
+        "date": "2026-03-12",
+        "return": -0.000386,
+        "cumulative": 0.009577
+      },
+      {
+        "date": "2026-03-13",
+        "return": 0.000003,
+        "cumulative": 0.00958
+      },
+      {
+        "date": "2026-03-14",
+        "return": 0.000642,
+        "cumulative": 0.010228
+      },
+      {
+        "date": "2026-03-15",
+        "return": 0.000181,
+        "cumulative": 0.010411
+      },
+      {
+        "date": "2026-03-16",
+        "return": 0.000231,
+        "cumulative": 0.010645
+      },
+      {
+        "date": "2026-03-17",
+        "return": 0.000538,
+        "cumulative": 0.01119
+      },
+      {
+        "date": "2026-03-18",
+        "return": -0.000486,
+        "cumulative": 0.010698
+      },
+      {
+        "date": "2026-03-19",
+        "return": 0.000588,
+        "cumulative": 0.011292
+      },
+      {
+        "date": "2026-03-20",
+        "return": 0.000271,
+        "cumulative": 0.011567
+      },
+      {
+        "date": "2026-03-21",
+        "return": -0.000007,
+        "cumulative": 0.011559
+      },
+      {
+        "date": "2026-03-22",
+        "return": 0.000011,
+        "cumulative": 0.011571
+      },
+      {
+        "date": "2026-03-23",
+        "return": -0.00011,
+        "cumulative": 0.01146
+      },
+      {
+        "date": "2026-03-24",
+        "return": -0.000238,
+        "cumulative": 0.011219
+      },
+      {
+        "date": "2026-03-25",
+        "return": 0.000473,
+        "cumulative": 0.011698
+      },
+      {
+        "date": "2026-03-26",
+        "return": 0.000473,
+        "cumulative": 0.012177
+      },
+      {
+        "date": "2026-03-27",
+        "return": 0.001066,
+        "cumulative": 0.013256
+      },
+      {
+        "date": "2026-03-28",
+        "return": 0.000523,
+        "cumulative": 0.013786
+      },
+      {
+        "date": "2026-03-29",
+        "return": 0.00031,
+        "cumulative": 0.0141
+      },
+      {
+        "date": "2026-03-30",
+        "return": 0.000455,
+        "cumulative": 0.014561
+      },
+      {
+        "date": "2026-03-31",
+        "return": -0.001249,
+        "cumulative": 0.013294
+      }
+    ]
+  },
+  "moderate": {
+    "apy": 0.1608,
+    "maxDrawdown": 0.018942,
+    "sharpeRatio": 2.95,
+    "sortinoRatio": 4.86,
+    "totalReturn": 0.03745,
+    "winRate": 0.5667,
+    "alphaOverBaseline": 0.1058,
+    "dailyReturns": [
+      {
+        "date": "2026-01-01",
+        "return": 0.000478,
+        "cumulative": 0.000478,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 5041,
+          "drift-basis": 3348,
+          "drift-jito-dn": 1611
+        }
+      },
+      {
+        "date": "2026-01-02",
+        "return": 0.000614,
+        "cumulative": 0.001092,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 8490,
+          "drift-basis": 1034,
+          "drift-jito-dn": 476
+        }
+      },
+      {
+        "date": "2026-01-03",
+        "return": -0.000473,
+        "cumulative": 0.000619,
+        "drawdown": 0.000473,
+        "weights": {
+          "drift-lending": 9074,
+          "drift-basis": 264,
+          "drift-jito-dn": 662
+        }
+      },
+      {
+        "date": "2026-01-04",
+        "return": -0.000887,
+        "cumulative": -0.000269,
+        "drawdown": 0.00136,
+        "weights": {
+          "drift-lending": 6598,
+          "drift-basis": 3054,
+          "drift-jito-dn": 348
+        }
+      },
+      {
+        "date": "2026-01-05",
+        "return": -0.000075,
+        "cumulative": -0.000344,
+        "drawdown": 0.001434,
+        "weights": {
+          "drift-lending": 7007,
+          "drift-basis": 2393,
+          "drift-jito-dn": 600
+        }
+      },
+      {
+        "date": "2026-01-06",
+        "return": 0.001256,
+        "cumulative": 0.000911,
+        "drawdown": 0.00018,
+        "weights": {
+          "drift-lending": 6812,
+          "drift-basis": 2744,
+          "drift-jito-dn": 444
+        }
+      },
+      {
+        "date": "2026-01-07",
+        "return": -0.001529,
+        "cumulative": -0.000619,
+        "drawdown": 0.00171,
+        "weights": {
+          "drift-lending": 8341,
+          "drift-basis": 839,
+          "drift-jito-dn": 820
+        }
+      },
+      {
+        "date": "2026-01-08",
+        "return": 0.001222,
+        "cumulative": 0.000602,
+        "drawdown": 0.000489,
+        "weights": {
+          "drift-lending": 6663,
+          "drift-basis": 2229,
+          "drift-jito-dn": 1108
+        }
+      },
+      {
+        "date": "2026-01-09",
+        "return": -0.001007,
+        "cumulative": -0.000405,
+        "drawdown": 0.001495,
+        "weights": {
+          "drift-lending": 5084,
+          "drift-basis": 3496,
+          "drift-jito-dn": 1420
+        }
+      },
+      {
+        "date": "2026-01-10",
+        "return": -0.000947,
+        "cumulative": -0.001351,
+        "drawdown": 0.002441,
+        "weights": {
+          "drift-lending": 5909,
+          "drift-basis": 3128,
+          "drift-jito-dn": 963
+        }
+      },
+      {
+        "date": "2026-01-11",
+        "return": -0.003319,
+        "cumulative": -0.004666,
+        "drawdown": 0.005752,
+        "weights": {
+          "drift-lending": 5971,
+          "drift-basis": 3587,
+          "drift-jito-dn": 442
+        }
+      },
+      {
+        "date": "2026-01-12",
+        "return": 0.003623,
+        "cumulative": -0.00106,
+        "drawdown": 0.00215,
+        "weights": {
+          "drift-lending": 4492,
+          "drift-basis": 4949,
+          "drift-jito-dn": 559
+        }
+      },
+      {
+        "date": "2026-01-13",
+        "return": -0.001019,
+        "cumulative": -0.002078,
+        "drawdown": 0.003167,
+        "weights": {
+          "drift-lending": 4708,
+          "drift-basis": 4894,
+          "drift-jito-dn": 398
+        }
+      },
+      {
+        "date": "2026-01-14",
+        "return": -0.001072,
+        "cumulative": -0.003148,
+        "drawdown": 0.004236,
+        "weights": {
+          "drift-lending": 4143,
+          "drift-basis": 5273,
+          "drift-jito-dn": 584
+        }
+      },
+      {
+        "date": "2026-01-15",
+        "return": 0.000574,
+        "cumulative": -0.002576,
+        "drawdown": 0.003664,
+        "weights": {
+          "drift-lending": 3685,
+          "drift-basis": 5480,
+          "drift-jito-dn": 835
+        }
+      },
+      {
+        "date": "2026-01-16",
+        "return": 0.001281,
+        "cumulative": -0.001298,
+        "drawdown": 0.002388,
+        "weights": {
+          "drift-lending": 2773,
+          "drift-basis": 6172,
+          "drift-jito-dn": 1055
+        }
+      },
+      {
+        "date": "2026-01-17",
+        "return": -0.001812,
+        "cumulative": -0.003107,
+        "drawdown": 0.004195,
+        "weights": {
+          "drift-lending": 3218,
+          "drift-basis": 6244,
+          "drift-jito-dn": 538
+        }
+      },
+      {
+        "date": "2026-01-18",
+        "return": 0.000412,
+        "cumulative": -0.002696,
+        "drawdown": 0.003784,
+        "weights": {
+          "drift-lending": 4454,
+          "drift-basis": 4698,
+          "drift-jito-dn": 848
+        }
+      },
+      {
+        "date": "2026-01-19",
+        "return": -0.005777,
+        "cumulative": -0.008457,
+        "drawdown": 0.009539,
+        "weights": {
+          "drift-lending": 4024,
+          "drift-basis": 5727,
+          "drift-jito-dn": 249
+        }
+      },
+      {
+        "date": "2026-01-20",
+        "return": 0.002543,
+        "cumulative": -0.005935,
+        "drawdown": 0.00702,
+        "weights": {
+          "drift-lending": 4740,
+          "drift-basis": 4717,
+          "drift-jito-dn": 543
+        }
+      },
+      {
+        "date": "2026-01-21",
+        "return": -0.000337,
+        "cumulative": -0.00627,
+        "drawdown": 0.007354,
+        "weights": {
+          "drift-lending": 5684,
+          "drift-basis": 3395,
+          "drift-jito-dn": 921
+        }
+      },
+      {
+        "date": "2026-01-22",
+        "return": 0.000122,
+        "cumulative": -0.006149,
+        "drawdown": 0.007233,
+        "weights": {
+          "drift-lending": 5602,
+          "drift-basis": 3332,
+          "drift-jito-dn": 1066
+        }
+      },
+      {
+        "date": "2026-01-23",
+        "return": 0.003007,
+        "cumulative": -0.003161,
+        "drawdown": 0.004248,
+        "weights": {
+          "drift-lending": 4281,
+          "drift-basis": 4496,
+          "drift-jito-dn": 1223
+        }
+      },
+      {
+        "date": "2026-01-24",
+        "return": 0.001485,
+        "cumulative": -0.00168,
+        "drawdown": 0.002769,
+        "weights": {
+          "drift-lending": 4188,
+          "drift-basis": 5087,
+          "drift-jito-dn": 725
+        }
+      },
+      {
+        "date": "2026-01-25",
+        "return": -0.001367,
+        "cumulative": -0.003045,
+        "drawdown": 0.004132,
+        "weights": {
+          "drift-lending": 4804,
+          "drift-basis": 3776,
+          "drift-jito-dn": 1420
+        }
+      },
+      {
+        "date": "2026-01-26",
+        "return": 0.000633,
+        "cumulative": -0.002413,
+        "drawdown": 0.003501,
+        "weights": {
+          "drift-lending": 5778,
+          "drift-basis": 2270,
+          "drift-jito-dn": 1952
+        }
+      },
+      {
+        "date": "2026-01-27",
+        "return": 0.000272,
+        "cumulative": -0.002142,
+        "drawdown": 0.00323,
+        "weights": {
+          "drift-lending": 3880,
+          "drift-basis": 4466,
+          "drift-jito-dn": 1654
+        }
+      },
+      {
+        "date": "2026-01-28",
+        "return": -0.000877,
+        "cumulative": -0.003017,
+        "drawdown": 0.004104,
+        "weights": {
+          "drift-lending": 2802,
+          "drift-basis": 5820,
+          "drift-jito-dn": 1378
+        }
+      },
+      {
+        "date": "2026-01-29",
+        "return": -0.000527,
+        "cumulative": -0.003542,
+        "drawdown": 0.004629,
+        "weights": {
+          "drift-lending": 3669,
+          "drift-basis": 4922,
+          "drift-jito-dn": 1409
+        }
+      },
+      {
+        "date": "2026-01-30",
+        "return": -0.003686,
+        "cumulative": -0.007215,
+        "drawdown": 0.008298,
+        "weights": {
+          "drift-lending": 3684,
+          "drift-basis": 5524,
+          "drift-jito-dn": 792
+        }
+      },
+      {
+        "date": "2026-01-31",
+        "return": 0.000616,
+        "cumulative": -0.006603,
+        "drawdown": 0.007686,
+        "weights": {
+          "drift-lending": 3224,
+          "drift-basis": 6284,
+          "drift-jito-dn": 492
+        }
+      },
+      {
+        "date": "2026-02-01",
+        "return": 0.000448,
+        "cumulative": -0.006158,
+        "drawdown": 0.007242,
+        "weights": {
+          "drift-lending": 3355,
+          "drift-basis": 6482,
+          "drift-jito-dn": 163
+        }
+      },
+      {
+        "date": "2026-02-02",
+        "return": -0.002021,
+        "cumulative": -0.008167,
+        "drawdown": 0.009249,
+        "weights": {
+          "drift-lending": 4145,
+          "drift-basis": 5454,
+          "drift-jito-dn": 401
+        }
+      },
+      {
+        "date": "2026-02-03",
+        "return": -0.001221,
+        "cumulative": -0.009378,
+        "drawdown": 0.010458,
+        "weights": {
+          "drift-lending": 5446,
+          "drift-basis": 4509,
+          "drift-jito-dn": 45
+        }
+      },
+      {
+        "date": "2026-02-04",
+        "return": 0.001197,
+        "cumulative": -0.008191,
+        "drawdown": 0.009273,
+        "weights": {
+          "drift-lending": 4733,
+          "drift-basis": 5267
+        }
+      },
+      {
+        "date": "2026-02-05",
+        "return": 0.002611,
+        "cumulative": -0.005602,
+        "drawdown": 0.006687,
+        "weights": {
+          "drift-lending": 4456,
+          "drift-basis": 5544
+        }
+      },
+      {
+        "date": "2026-02-06",
+        "return": -0.002678,
+        "cumulative": -0.008265,
+        "drawdown": 0.009347,
+        "weights": {
+          "drift-lending": 5047,
+          "drift-basis": 4953
+        }
+      },
+      {
+        "date": "2026-02-07",
+        "return": -0.002461,
+        "cumulative": -0.010706,
+        "drawdown": 0.011785,
+        "weights": {
+          "drift-lending": 5177,
+          "drift-basis": 4823
+        }
+      },
+      {
+        "date": "2026-02-08",
+        "return": -0.000119,
+        "cumulative": -0.010823,
+        "drawdown": 0.011902,
+        "weights": {
+          "drift-lending": 5270,
+          "drift-basis": 4730
+        }
+      },
+      {
+        "date": "2026-02-09",
+        "return": 0.0001,
+        "cumulative": -0.010724,
+        "drawdown": 0.011803,
+        "weights": {
+          "drift-lending": 4172,
+          "drift-basis": 5828
+        }
+      },
+      {
+        "date": "2026-02-10",
+        "return": -0.001207,
+        "cumulative": -0.011918,
+        "drawdown": 0.012996,
+        "weights": {
+          "drift-lending": 3528,
+          "drift-basis": 6425,
+          "drift-jito-dn": 47
+        }
+      },
+      {
+        "date": "2026-02-11",
+        "return": -0.006024,
+        "cumulative": -0.017871,
+        "drawdown": 0.018942,
+        "weights": {
+          "drift-lending": 3468,
+          "drift-basis": 6532
+        }
+      },
+      {
+        "date": "2026-02-12",
+        "return": 0.001989,
+        "cumulative": -0.015917,
+        "drawdown": 0.016991,
+        "weights": {
+          "drift-lending": 3389,
+          "drift-basis": 6611
+        }
+      },
+      {
+        "date": "2026-02-13",
+        "return": 0.008029,
+        "cumulative": -0.008016,
+        "drawdown": 0.009098,
+        "weights": {
+          "drift-lending": 3067,
+          "drift-basis": 6933
+        }
+      },
+      {
+        "date": "2026-02-14",
+        "return": 0.004974,
+        "cumulative": -0.003083,
+        "drawdown": 0.00417,
+        "weights": {
+          "drift-lending": 3739,
+          "drift-basis": 6261
+        }
+      },
+      {
+        "date": "2026-02-15",
+        "return": -0.007689,
+        "cumulative": -0.010748,
+        "drawdown": 0.011827,
+        "weights": {
+          "drift-lending": 4472,
+          "drift-basis": 5528
+        }
+      },
+      {
+        "date": "2026-02-16",
+        "return": 0.002189,
+        "cumulative": -0.008583,
+        "drawdown": 0.009665,
+        "weights": {
+          "drift-lending": 4298,
+          "drift-basis": 5702
+        }
+      },
+      {
+        "date": "2026-02-17",
+        "return": 0.005745,
+        "cumulative": -0.002887,
+        "drawdown": 0.003975,
+        "weights": {
+          "drift-lending": 4383,
+          "drift-basis": 5617
+        }
+      },
+      {
+        "date": "2026-02-18",
+        "return": 0.005694,
+        "cumulative": 0.00279,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 3559,
+          "drift-basis": 6351,
+          "drift-jito-dn": 90
+        }
+      },
+      {
+        "date": "2026-02-19",
+        "return": 0.002276,
+        "cumulative": 0.005073,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 3195,
+          "drift-basis": 6572,
+          "drift-jito-dn": 233
+        }
+      },
+      {
+        "date": "2026-02-20",
+        "return": 0.004752,
+        "cumulative": 0.009849,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 3921,
+          "drift-basis": 5824,
+          "drift-jito-dn": 255
+        }
+      },
+      {
+        "date": "2026-02-21",
+        "return": 0.000672,
+        "cumulative": 0.010528,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 3116,
+          "drift-basis": 6489,
+          "drift-jito-dn": 395
+        }
+      },
+      {
+        "date": "2026-02-22",
+        "return": 0.00417,
+        "cumulative": 0.014742,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 3252,
+          "drift-basis": 6324,
+          "drift-jito-dn": 424
+        }
+      },
+      {
+        "date": "2026-02-23",
+        "return": -0.001159,
+        "cumulative": 0.013566,
+        "drawdown": 0.001159,
+        "weights": {
+          "drift-lending": 3469,
+          "drift-basis": 6305,
+          "drift-jito-dn": 226
+        }
+      },
+      {
+        "date": "2026-02-24",
+        "return": 0.000377,
+        "cumulative": 0.013948,
+        "drawdown": 0.000782,
+        "weights": {
+          "drift-lending": 5122,
+          "drift-basis": 4379,
+          "drift-jito-dn": 499
+        }
+      },
+      {
+        "date": "2026-02-25",
+        "return": 0.000651,
+        "cumulative": 0.014608,
+        "drawdown": 0.000132,
+        "weights": {
+          "drift-lending": 5623,
+          "drift-basis": 3614,
+          "drift-jito-dn": 763
+        }
+      },
+      {
+        "date": "2026-02-26",
+        "return": 0.00287,
+        "cumulative": 0.017519,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 4637,
+          "drift-basis": 5028,
+          "drift-jito-dn": 335
+        }
+      },
+      {
+        "date": "2026-02-27",
+        "return": 0.004204,
+        "cumulative": 0.021797,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 4455,
+          "drift-basis": 5177,
+          "drift-jito-dn": 368
+        }
+      },
+      {
+        "date": "2026-02-28",
+        "return": 0.000541,
+        "cumulative": 0.022349,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 3478,
+          "drift-basis": 6241,
+          "drift-jito-dn": 281
+        }
+      },
+      {
+        "date": "2026-03-01",
+        "return": -0.005295,
+        "cumulative": 0.016936,
+        "drawdown": 0.005295,
+        "weights": {
+          "drift-lending": 2788,
+          "drift-basis": 6548,
+          "drift-jito-dn": 664
+        }
+      },
+      {
+        "date": "2026-03-02",
+        "return": 0.00603,
+        "cumulative": 0.023068,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 2840,
+          "drift-basis": 6328,
+          "drift-jito-dn": 832
+        }
+      },
+      {
+        "date": "2026-03-03",
+        "return": -0.002639,
+        "cumulative": 0.020368,
+        "drawdown": 0.002639,
+        "weights": {
+          "drift-lending": 3335,
+          "drift-basis": 6044,
+          "drift-jito-dn": 621
+        }
+      },
+      {
+        "date": "2026-03-04",
+        "return": 0.002856,
+        "cumulative": 0.023283,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 3006,
+          "drift-basis": 6342,
+          "drift-jito-dn": 652
+        }
+      },
+      {
+        "date": "2026-03-05",
+        "return": 0.007949,
+        "cumulative": 0.031417,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 3970,
+          "drift-basis": 5644,
+          "drift-jito-dn": 386
+        }
+      },
+      {
+        "date": "2026-03-06",
+        "return": -0.000474,
+        "cumulative": 0.030928,
+        "drawdown": 0.000474,
+        "weights": {
+          "drift-lending": 4361,
+          "drift-basis": 5456,
+          "drift-jito-dn": 183
+        }
+      },
+      {
+        "date": "2026-03-07",
+        "return": 0.000443,
+        "cumulative": 0.031385,
+        "drawdown": 0.000032,
+        "weights": {
+          "drift-lending": 4694,
+          "drift-basis": 5107,
+          "drift-jito-dn": 199
+        }
+      },
+      {
+        "date": "2026-03-08",
+        "return": 0.003262,
+        "cumulative": 0.034749,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 5028,
+          "drift-basis": 4740,
+          "drift-jito-dn": 232
+        }
+      },
+      {
+        "date": "2026-03-09",
+        "return": 0.00011,
+        "cumulative": 0.034863,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 5486,
+          "drift-basis": 3763,
+          "drift-jito-dn": 751
+        }
+      },
+      {
+        "date": "2026-03-10",
+        "return": -0.00052,
+        "cumulative": 0.034324,
+        "drawdown": 0.00052,
+        "weights": {
+          "drift-lending": 4635,
+          "drift-basis": 4899,
+          "drift-jito-dn": 466
+        }
+      },
+      {
+        "date": "2026-03-11",
+        "return": -0.002308,
+        "cumulative": 0.031937,
+        "drawdown": 0.002827,
+        "weights": {
+          "drift-lending": 4539,
+          "drift-basis": 4846,
+          "drift-jito-dn": 615
+        }
+      },
+      {
+        "date": "2026-03-12",
+        "return": 0.001385,
+        "cumulative": 0.033366,
+        "drawdown": 0.001446,
+        "weights": {
+          "drift-lending": 4261,
+          "drift-basis": 5203,
+          "drift-jito-dn": 536
+        }
+      },
+      {
+        "date": "2026-03-13",
+        "return": 0.002113,
+        "cumulative": 0.035549,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 3448,
+          "drift-basis": 5732,
+          "drift-jito-dn": 820
+        }
+      },
+      {
+        "date": "2026-03-14",
+        "return": -0.000717,
+        "cumulative": 0.034807,
+        "drawdown": 0.000717,
+        "weights": {
+          "drift-lending": 3670,
+          "drift-basis": 5619,
+          "drift-jito-dn": 711
+        }
+      },
+      {
+        "date": "2026-03-15",
+        "return": 0.001439,
+        "cumulative": 0.036297,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 3822,
+          "drift-basis": 5264,
+          "drift-jito-dn": 914
+        }
+      },
+      {
+        "date": "2026-03-16",
+        "return": 0.001451,
+        "cumulative": 0.037801,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 3042,
+          "drift-basis": 6200,
+          "drift-jito-dn": 758
+        }
+      },
+      {
+        "date": "2026-03-17",
+        "return": -0.000022,
+        "cumulative": 0.037777,
+        "drawdown": 0.000022,
+        "weights": {
+          "drift-lending": 4190,
+          "drift-basis": 5225,
+          "drift-jito-dn": 585
+        }
+      },
+      {
+        "date": "2026-03-18",
+        "return": -0.000949,
+        "cumulative": 0.036792,
+        "drawdown": 0.000972,
+        "weights": {
+          "drift-lending": 4736,
+          "drift-basis": 4636,
+          "drift-jito-dn": 628
+        }
+      },
+      {
+        "date": "2026-03-19",
+        "return": -0.000934,
+        "cumulative": 0.035824,
+        "drawdown": 0.001905,
+        "weights": {
+          "drift-lending": 7094,
+          "drift-basis": 2019,
+          "drift-jito-dn": 887
+        }
+      },
+      {
+        "date": "2026-03-20",
+        "return": 0.00063,
+        "cumulative": 0.036476,
+        "drawdown": 0.001276,
+        "weights": {
+          "drift-lending": 5406,
+          "drift-basis": 4071,
+          "drift-jito-dn": 523
+        }
+      },
+      {
+        "date": "2026-03-21",
+        "return": -0.001183,
+        "cumulative": 0.03525,
+        "drawdown": 0.002457,
+        "weights": {
+          "drift-lending": 4379,
+          "drift-basis": 4594,
+          "drift-jito-dn": 1027
+        }
+      },
+      {
+        "date": "2026-03-22",
+        "return": 0.00012,
+        "cumulative": 0.035374,
+        "drawdown": 0.002338,
+        "weights": {
+          "drift-lending": 4528,
+          "drift-basis": 4348,
+          "drift-jito-dn": 1124
+        }
+      },
+      {
+        "date": "2026-03-23",
+        "return": 0.000653,
+        "cumulative": 0.03605,
+        "drawdown": 0.001687,
+        "weights": {
+          "drift-lending": 4796,
+          "drift-basis": 4454,
+          "drift-jito-dn": 750
+        }
+      },
+      {
+        "date": "2026-03-24",
+        "return": 0.000388,
+        "cumulative": 0.036452,
+        "drawdown": 0.0013,
+        "weights": {
+          "drift-lending": 5265,
+          "drift-basis": 3622,
+          "drift-jito-dn": 1113
+        }
+      },
+      {
+        "date": "2026-03-25",
+        "return": 0.002032,
+        "cumulative": 0.038558,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 3689,
+          "drift-basis": 5374,
+          "drift-jito-dn": 937
+        }
+      },
+      {
+        "date": "2026-03-26",
+        "return": -0.001231,
+        "cumulative": 0.037279,
+        "drawdown": 0.001231,
+        "weights": {
+          "drift-lending": 5536,
+          "drift-basis": 3631,
+          "drift-jito-dn": 833
+        }
+      },
+      {
+        "date": "2026-03-27",
+        "return": 0.001448,
+        "cumulative": 0.038782,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 6616,
+          "drift-basis": 3078,
+          "drift-jito-dn": 306
+        }
+      },
+      {
+        "date": "2026-03-28",
+        "return": 0.000686,
+        "cumulative": 0.039495,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 7719,
+          "drift-basis": 1904,
+          "drift-jito-dn": 377
+        }
+      },
+      {
+        "date": "2026-03-29",
+        "return": -0.000207,
+        "cumulative": 0.03928,
+        "drawdown": 0.000207,
+        "weights": {
+          "drift-lending": 7087,
+          "drift-basis": 1694,
+          "drift-jito-dn": 1219
+        }
+      },
+      {
+        "date": "2026-03-30",
+        "return": -0.000779,
+        "cumulative": 0.03847,
+        "drawdown": 0.000985,
+        "weights": {
+          "drift-lending": 6519,
+          "drift-basis": 2002,
+          "drift-jito-dn": 1479
+        }
+      },
+      {
+        "date": "2026-03-31",
+        "return": -0.000983,
+        "cumulative": 0.03745,
+        "drawdown": 0.001967,
+        "weights": {
+          "drift-lending": 5667,
+          "drift-basis": 3218,
+          "drift-jito-dn": 1115
+        }
+      }
+    ]
+  },
+  "aggressive": {
+    "apy": 0.2047,
+    "maxDrawdown": 0.031563,
+    "sharpeRatio": 1.87,
+    "sortinoRatio": 2.68,
+    "totalReturn": 0.046999,
+    "winRate": 0.6111,
+    "alphaOverBaseline": 0.1497,
+    "dailyReturns": [
+      {
+        "date": "2026-01-01",
+        "return": 0.002001,
+        "cumulative": 0.002001,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 3499,
+          "drift-basis": 2322,
+          "drift-jito-dn": 1083,
+          "drift-funding": 3096
+        }
+      },
+      {
+        "date": "2026-01-02",
+        "return": 0.000463,
+        "cumulative": 0.002465,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 7472,
+          "drift-basis": 909,
+          "drift-jito-dn": 406,
+          "drift-funding": 1213
+        }
+      },
+      {
+        "date": "2026-01-03",
+        "return": 0.000553,
+        "cumulative": 0.003019,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 8784,
+          "drift-basis": 255,
+          "drift-jito-dn": 621,
+          "drift-funding": 340
+        }
+      },
+      {
+        "date": "2026-01-04",
+        "return": -0.000879,
+        "cumulative": 0.002138,
+        "drawdown": 0.000879,
+        "weights": {
+          "drift-lending": 6605,
+          "drift-basis": 3057,
+          "drift-jito-dn": 338,
+          "drift-funding": 0
+        }
+      },
+      {
+        "date": "2026-01-05",
+        "return": -0.000687,
+        "cumulative": 0.00145,
+        "drawdown": 0.001565,
+        "weights": {
+          "drift-lending": 7021,
+          "drift-basis": 2397,
+          "drift-jito-dn": 582,
+          "drift-funding": 0
+        }
+      },
+      {
+        "date": "2026-01-06",
+        "return": -0.001017,
+        "cumulative": 0.000432,
+        "drawdown": 0.00258,
+        "weights": {
+          "drift-lending": 6821,
+          "drift-basis": 2748,
+          "drift-jito-dn": 431,
+          "drift-funding": 0
+        }
+      },
+      {
+        "date": "2026-01-07",
+        "return": 0.000761,
+        "cumulative": 0.001193,
+        "drawdown": 0.00182,
+        "weights": {
+          "drift-lending": 8362,
+          "drift-basis": 842,
+          "drift-jito-dn": 796,
+          "drift-funding": 0
+        }
+      },
+      {
+        "date": "2026-01-08",
+        "return": 0.000541,
+        "cumulative": 0.001735,
+        "drawdown": 0.00128,
+        "weights": {
+          "drift-lending": 5150,
+          "drift-basis": 1723,
+          "drift-jito-dn": 830,
+          "drift-funding": 2297
+        }
+      },
+      {
+        "date": "2026-01-09",
+        "return": -0.001846,
+        "cumulative": -0.000114,
+        "drawdown": 0.003124,
+        "weights": {
+          "drift-lending": 3479,
+          "drift-basis": 2391,
+          "drift-jito-dn": 941,
+          "drift-funding": 3189
+        }
+      },
+      {
+        "date": "2026-01-10",
+        "return": -0.000287,
+        "cumulative": -0.000401,
+        "drawdown": 0.00341,
+        "weights": {
+          "drift-lending": 4179,
+          "drift-basis": 2212,
+          "drift-jito-dn": 660,
+          "drift-funding": 2949
+        }
+      },
+      {
+        "date": "2026-01-11",
+        "return": 0.003439,
+        "cumulative": 0.003037,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 4044,
+          "drift-basis": 2428,
+          "drift-jito-dn": 290,
+          "drift-funding": 3238
+        }
+      },
+      {
+        "date": "2026-01-12",
+        "return": 0.007044,
+        "cumulative": 0.010102,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 2709,
+          "drift-basis": 2984,
+          "drift-jito-dn": 327,
+          "drift-funding": 3980
+        }
+      },
+      {
+        "date": "2026-01-13",
+        "return": 0.004137,
+        "cumulative": 0.01428,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 2851,
+          "drift-basis": 2963,
+          "drift-jito-dn": 234,
+          "drift-funding": 3952
+        }
+      },
+      {
+        "date": "2026-01-14",
+        "return": -0.006285,
+        "cumulative": 0.007905,
+        "drawdown": 0.006285,
+        "weights": {
+          "drift-lending": 2435,
+          "drift-basis": 3099,
+          "drift-jito-dn": 332,
+          "drift-funding": 4134
+        }
+      },
+      {
+        "date": "2026-01-15",
+        "return": 0.002886,
+        "cumulative": 0.010814,
+        "drawdown": 0.003417,
+        "weights": {
+          "drift-lending": 2133,
+          "drift-basis": 3170,
+          "drift-jito-dn": 468,
+          "drift-funding": 4229
+        }
+      },
+      {
+        "date": "2026-01-16",
+        "return": 0.002529,
+        "cumulative": 0.013371,
+        "drawdown": 0.000897,
+        "weights": {
+          "drift-lending": 1524,
+          "drift-basis": 3391,
+          "drift-jito-dn": 562,
+          "drift-funding": 4523
+        }
+      },
+      {
+        "date": "2026-01-17",
+        "return": -0.00536,
+        "cumulative": 0.007939,
+        "drawdown": 0.006252,
+        "weights": {
+          "drift-lending": 1757,
+          "drift-basis": 3410,
+          "drift-jito-dn": 285,
+          "drift-funding": 4548
+        }
+      },
+      {
+        "date": "2026-01-18",
+        "return": -0.005757,
+        "cumulative": 0.002136,
+        "drawdown": 0.011974,
+        "weights": {
+          "drift-lending": 2743,
+          "drift-basis": 2892,
+          "drift-jito-dn": 506,
+          "drift-funding": 3859
+        }
+      },
+      {
+        "date": "2026-01-19",
+        "return": -0.00401,
+        "cumulative": -0.001883,
+        "drawdown": 0.015936,
+        "weights": {
+          "drift-lending": 2282,
+          "drift-basis": 3248,
+          "drift-jito-dn": 137,
+          "drift-funding": 4333
+        }
+      },
+      {
+        "date": "2026-01-20",
+        "return": -0.000321,
+        "cumulative": -0.002204,
+        "drawdown": 0.016252,
+        "weights": {
+          "drift-lending": 2912,
+          "drift-basis": 2898,
+          "drift-jito-dn": 323,
+          "drift-funding": 3867
+        }
+      },
+      {
+        "date": "2026-01-21",
+        "return": -0.000865,
+        "cumulative": -0.003066,
+        "drawdown": 0.017102,
+        "weights": {
+          "drift-lending": 3921,
+          "drift-basis": 2341,
+          "drift-jito-dn": 616,
+          "drift-funding": 3122
+        }
+      },
+      {
+        "date": "2026-01-22",
+        "return": 0.002399,
+        "cumulative": -0.000675,
+        "drawdown": 0.014745,
+        "weights": {
+          "drift-lending": 3888,
+          "drift-basis": 2312,
+          "drift-jito-dn": 717,
+          "drift-funding": 3083
+        }
+      },
+      {
+        "date": "2026-01-23",
+        "return": 0.000969,
+        "cumulative": 0.000293,
+        "drawdown": 0.01379,
+        "weights": {
+          "drift-lending": 2683,
+          "drift-basis": 2817,
+          "drift-jito-dn": 743,
+          "drift-funding": 3757
+        }
+      },
+      {
+        "date": "2026-01-24",
+        "return": 0.000342,
+        "cumulative": 0.000636,
+        "drawdown": 0.013452,
+        "weights": {
+          "drift-lending": 2498,
+          "drift-basis": 3035,
+          "drift-jito-dn": 419,
+          "drift-funding": 4048
+        }
+      },
+      {
+        "date": "2026-01-25",
+        "return": 0.001306,
+        "cumulative": 0.001943,
+        "drawdown": 0.012164,
+        "weights": {
+          "drift-lending": 3203,
+          "drift-basis": 2519,
+          "drift-jito-dn": 918,
+          "drift-funding": 3360
+        }
+      },
+      {
+        "date": "2026-01-26",
+        "return": -0.001279,
+        "cumulative": 0.000662,
+        "drawdown": 0.013427,
+        "weights": {
+          "drift-lending": 4456,
+          "drift-basis": 1751,
+          "drift-jito-dn": 1459,
+          "drift-funding": 2334
+        }
+      },
+      {
+        "date": "2026-01-27",
+        "return": -0.003735,
+        "cumulative": -0.003076,
+        "drawdown": 0.017112,
+        "weights": {
+          "drift-lending": 2440,
+          "drift-basis": 2807,
+          "drift-jito-dn": 1008,
+          "drift-funding": 3745
+        }
+      },
+      {
+        "date": "2026-01-28",
+        "return": -0.001362,
+        "cumulative": -0.004433,
+        "drawdown": 0.01845,
+        "weights": {
+          "drift-lending": 1581,
+          "drift-basis": 3284,
+          "drift-jito-dn": 754,
+          "drift-funding": 4381
+        }
+      },
+      {
+        "date": "2026-01-29",
+        "return": 0.002068,
+        "cumulative": -0.002375,
+        "drawdown": 0.01642,
+        "weights": {
+          "drift-lending": 2221,
+          "drift-basis": 2978,
+          "drift-jito-dn": 827,
+          "drift-funding": 3974
+        }
+      },
+      {
+        "date": "2026-01-30",
+        "return": -0.000942,
+        "cumulative": -0.003315,
+        "drawdown": 0.017347,
+        "weights": {
+          "drift-lending": 2125,
+          "drift-basis": 3185,
+          "drift-jito-dn": 443,
+          "drift-funding": 4247
+        }
+      },
+      {
+        "date": "2026-01-31",
+        "return": 0.015243,
+        "cumulative": 0.011878,
+        "drawdown": 0.002369,
+        "weights": {
+          "drift-lending": 1756,
+          "drift-basis": 3421,
+          "drift-jito-dn": 259,
+          "drift-funding": 4564
+        }
+      },
+      {
+        "date": "2026-02-01",
+        "return": 0.005697,
+        "cumulative": 0.017643,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 1800,
+          "drift-basis": 3477,
+          "drift-jito-dn": 84,
+          "drift-funding": 4639
+        }
+      },
+      {
+        "date": "2026-02-02",
+        "return": -0.008009,
+        "cumulative": 0.009493,
+        "drawdown": 0.008009,
+        "weights": {
+          "drift-lending": 2401,
+          "drift-basis": 3159,
+          "drift-jito-dn": 225,
+          "drift-funding": 4215
+        }
+      },
+      {
+        "date": "2026-02-03",
+        "return": 0.001072,
+        "cumulative": 0.010575,
+        "drawdown": 0.006945,
+        "weights": {
+          "drift-lending": 3400,
+          "drift-basis": 2816,
+          "drift-jito-dn": 27,
+          "drift-funding": 3757
+        }
+      },
+      {
+        "date": "2026-02-04",
+        "return": 0.003629,
+        "cumulative": 0.014242,
+        "drawdown": 0.003341,
+        "weights": {
+          "drift-lending": 2780,
+          "drift-basis": 3094,
+          "drift-funding": 4126
+        }
+      },
+      {
+        "date": "2026-02-05",
+        "return": 0.007227,
+        "cumulative": 0.021572,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 2562,
+          "drift-basis": 3187,
+          "drift-funding": 4251
+        }
+      },
+      {
+        "date": "2026-02-06",
+        "return": 0.001066,
+        "cumulative": 0.022661,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 3038,
+          "drift-basis": 2983,
+          "drift-funding": 3979
+        }
+      },
+      {
+        "date": "2026-02-07",
+        "return": -0.007089,
+        "cumulative": 0.015412,
+        "drawdown": 0.007089,
+        "weights": {
+          "drift-lending": 3150,
+          "drift-basis": 2935,
+          "drift-funding": 3915
+        }
+      },
+      {
+        "date": "2026-02-08",
+        "return": 0.005442,
+        "cumulative": 0.020938,
+        "drawdown": 0.001685,
+        "weights": {
+          "drift-lending": 3231,
+          "drift-basis": 2900,
+          "drift-funding": 3869
+        }
+      },
+      {
+        "date": "2026-02-09",
+        "return": 0.002301,
+        "cumulative": 0.023288,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 2347,
+          "drift-basis": 3279,
+          "drift-funding": 4374
+        }
+      },
+      {
+        "date": "2026-02-10",
+        "return": -0.000625,
+        "cumulative": 0.022648,
+        "drawdown": 0.000625,
+        "weights": {
+          "drift-lending": 1900,
+          "drift-basis": 3460,
+          "drift-jito-dn": 24,
+          "drift-funding": 4616
+        }
+      },
+      {
+        "date": "2026-02-11",
+        "return": 0.014818,
+        "cumulative": 0.037802,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 1853,
+          "drift-basis": 3491,
+          "drift-funding": 4656
+        }
+      },
+      {
+        "date": "2026-02-12",
+        "return": -0.008484,
+        "cumulative": 0.028998,
+        "drawdown": 0.008484,
+        "weights": {
+          "drift-lending": 1801,
+          "drift-basis": 3513,
+          "drift-funding": 4686
+        }
+      },
+      {
+        "date": "2026-02-13",
+        "return": 0.003706,
+        "cumulative": 0.032811,
+        "drawdown": 0.004809,
+        "weights": {
+          "drift-lending": 1594,
+          "drift-basis": 3602,
+          "drift-funding": 4804
+        }
+      },
+      {
+        "date": "2026-02-14",
+        "return": -0.021116,
+        "cumulative": 0.011002,
+        "drawdown": 0.025824,
+        "weights": {
+          "drift-lending": 2038,
+          "drift-basis": 3412,
+          "drift-funding": 4550
+        }
+      },
+      {
+        "date": "2026-02-15",
+        "return": -0.003685,
+        "cumulative": 0.007277,
+        "drawdown": 0.029413,
+        "weights": {
+          "drift-lending": 2574,
+          "drift-basis": 3182,
+          "drift-funding": 4244
+        }
+      },
+      {
+        "date": "2026-02-16",
+        "return": -0.002214,
+        "cumulative": 0.005046,
+        "drawdown": 0.031563,
+        "weights": {
+          "drift-lending": 2442,
+          "drift-basis": 3239,
+          "drift-funding": 4319
+        }
+      },
+      {
+        "date": "2026-02-17",
+        "return": 0.000413,
+        "cumulative": 0.005461,
+        "drawdown": 0.031163,
+        "weights": {
+          "drift-lending": 2506,
+          "drift-basis": 3211,
+          "drift-funding": 4283
+        }
+      },
+      {
+        "date": "2026-02-18",
+        "return": 0.00043,
+        "cumulative": 0.005894,
+        "drawdown": 0.030746,
+        "weights": {
+          "drift-lending": 1927,
+          "drift-basis": 3439,
+          "drift-jito-dn": 47,
+          "drift-funding": 4587
+        }
+      },
+      {
+        "date": "2026-02-19",
+        "return": 0.012058,
+        "cumulative": 0.018023,
+        "drawdown": 0.019059,
+        "weights": {
+          "drift-lending": 1704,
+          "drift-basis": 3503,
+          "drift-jito-dn": 120,
+          "drift-funding": 4673
+        }
+      },
+      {
+        "date": "2026-02-20",
+        "return": 0.004466,
+        "cumulative": 0.022569,
+        "drawdown": 0.014678,
+        "weights": {
+          "drift-lending": 2208,
+          "drift-basis": 3279,
+          "drift-jito-dn": 139,
+          "drift-funding": 4374
+        }
+      },
+      {
+        "date": "2026-02-21",
+        "return": -0.004034,
+        "cumulative": 0.018443,
+        "drawdown": 0.018653,
+        "weights": {
+          "drift-lending": 1672,
+          "drift-basis": 3480,
+          "drift-jito-dn": 205,
+          "drift-funding": 4643
+        }
+      },
+      {
+        "date": "2026-02-22",
+        "return": -0.002198,
+        "cumulative": 0.016205,
+        "drawdown": 0.02081,
+        "weights": {
+          "drift-lending": 1766,
+          "drift-basis": 3432,
+          "drift-jito-dn": 223,
+          "drift-funding": 4579
+        }
+      },
+      {
+        "date": "2026-02-23",
+        "return": -0.006796,
+        "cumulative": 0.009299,
+        "drawdown": 0.027464,
+        "weights": {
+          "drift-lending": 1885,
+          "drift-basis": 3426,
+          "drift-jito-dn": 119,
+          "drift-funding": 4570
+        }
+      },
+      {
+        "date": "2026-02-24",
+        "return": 0.001907,
+        "cumulative": 0.011224,
+        "drawdown": 0.02561,
+        "weights": {
+          "drift-lending": 3235,
+          "drift-basis": 2767,
+          "drift-jito-dn": 306,
+          "drift-funding": 3692
+        }
+      },
+      {
+        "date": "2026-02-25",
+        "return": 0.004459,
+        "cumulative": 0.015733,
+        "drawdown": 0.021265,
+        "weights": {
+          "drift-lending": 3801,
+          "drift-basis": 2442,
+          "drift-jito-dn": 500,
+          "drift-funding": 3257
+        }
+      },
+      {
+        "date": "2026-02-26",
+        "return": 0.000844,
+        "cumulative": 0.01659,
+        "drawdown": 0.020439,
+        "weights": {
+          "drift-lending": 2778,
+          "drift-basis": 3011,
+          "drift-jito-dn": 194,
+          "drift-funding": 4017
+        }
+      },
+      {
+        "date": "2026-02-27",
+        "return": 0.003936,
+        "cumulative": 0.020591,
+        "drawdown": 0.016583,
+        "weights": {
+          "drift-lending": 2638,
+          "drift-basis": 3064,
+          "drift-jito-dn": 211,
+          "drift-funding": 4087
+        }
+      },
+      {
+        "date": "2026-02-28",
+        "return": 0.006384,
+        "cumulative": 0.027107,
+        "drawdown": 0.010305,
+        "weights": {
+          "drift-lending": 1899,
+          "drift-basis": 3407,
+          "drift-jito-dn": 149,
+          "drift-funding": 4545
+        }
+      },
+      {
+        "date": "2026-03-01",
+        "return": 0.002707,
+        "cumulative": 0.029888,
+        "drawdown": 0.007626,
+        "weights": {
+          "drift-lending": 1490,
+          "drift-basis": 3499,
+          "drift-jito-dn": 344,
+          "drift-funding": 4667
+        }
+      },
+      {
+        "date": "2026-03-02",
+        "return": 0.000775,
+        "cumulative": 0.030686,
+        "drawdown": 0.006857,
+        "weights": {
+          "drift-lending": 1542,
+          "drift-basis": 3436,
+          "drift-jito-dn": 438,
+          "drift-funding": 4584
+        }
+      },
+      {
+        "date": "2026-03-03",
+        "return": 0.005928,
+        "cumulative": 0.036796,
+        "drawdown": 0.000969,
+        "weights": {
+          "drift-lending": 1849,
+          "drift-basis": 3350,
+          "drift-jito-dn": 334,
+          "drift-funding": 4467
+        }
+      },
+      {
+        "date": "2026-03-04",
+        "return": -0.015341,
+        "cumulative": 0.02089,
+        "drawdown": 0.016296,
+        "weights": {
+          "drift-lending": 1631,
+          "drift-basis": 3439,
+          "drift-jito-dn": 342,
+          "drift-funding": 4588
+        }
+      },
+      {
+        "date": "2026-03-05",
+        "return": -0.003927,
+        "cumulative": 0.016881,
+        "drawdown": 0.020158,
+        "weights": {
+          "drift-lending": 2267,
+          "drift-basis": 3222,
+          "drift-jito-dn": 213,
+          "drift-funding": 4298
+        }
+      },
+      {
+        "date": "2026-03-06",
+        "return": 0.006479,
+        "cumulative": 0.023469,
+        "drawdown": 0.01381,
+        "weights": {
+          "drift-lending": 2526,
+          "drift-basis": 3158,
+          "drift-jito-dn": 102,
+          "drift-funding": 4214
+        }
+      },
+      {
+        "date": "2026-03-07",
+        "return": 0.003472,
+        "cumulative": 0.027023,
+        "drawdown": 0.010387,
+        "weights": {
+          "drift-lending": 2793,
+          "drift-basis": 3038,
+          "drift-jito-dn": 115,
+          "drift-funding": 4054
+        }
+      },
+      {
+        "date": "2026-03-08",
+        "return": 0.003572,
+        "cumulative": 0.030691,
+        "drawdown": 0.006852,
+        "weights": {
+          "drift-lending": 3081,
+          "drift-basis": 2905,
+          "drift-jito-dn": 138,
+          "drift-funding": 3876
+        }
+      },
+      {
+        "date": "2026-03-09",
+        "return": 0.001672,
+        "cumulative": 0.032414,
+        "drawdown": 0.005192,
+        "weights": {
+          "drift-lending": 3659,
+          "drift-basis": 2509,
+          "drift-jito-dn": 486,
+          "drift-funding": 3346
+        }
+      },
+      {
+        "date": "2026-03-10",
+        "return": 0.003355,
+        "cumulative": 0.035878,
+        "drawdown": 0.001854,
+        "weights": {
+          "drift-lending": 2806,
+          "drift-basis": 2965,
+          "drift-jito-dn": 273,
+          "drift-funding": 3956
+        }
+      },
+      {
+        "date": "2026-03-11",
+        "return": 0.009417,
+        "cumulative": 0.045633,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 2761,
+          "drift-basis": 2946,
+          "drift-jito-dn": 362,
+          "drift-funding": 3931
+        }
+      },
+      {
+        "date": "2026-03-12",
+        "return": 0.001631,
+        "cumulative": 0.047338,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 2518,
+          "drift-basis": 3074,
+          "drift-jito-dn": 307,
+          "drift-funding": 4101
+        }
+      },
+      {
+        "date": "2026-03-13",
+        "return": -0.00668,
+        "cumulative": 0.040342,
+        "drawdown": 0.00668,
+        "weights": {
+          "drift-lending": 1957,
+          "drift-basis": 3253,
+          "drift-jito-dn": 451,
+          "drift-funding": 4339
+        }
+      },
+      {
+        "date": "2026-03-14",
+        "return": -0.003783,
+        "cumulative": 0.036406,
+        "drawdown": 0.010438,
+        "weights": {
+          "drift-lending": 2100,
+          "drift-basis": 3216,
+          "drift-jito-dn": 394,
+          "drift-funding": 4290
+        }
+      },
+      {
+        "date": "2026-03-15",
+        "return": 0.010645,
+        "cumulative": 0.047439,
+        "drawdown": 0,
+        "weights": {
+          "drift-lending": 2250,
+          "drift-basis": 3097,
+          "drift-jito-dn": 521,
+          "drift-funding": 4132
+        }
+      },
+      {
+        "date": "2026-03-16",
+        "return": -0.004866,
+        "cumulative": 0.042343,
+        "drawdown": 0.004866,
+        "weights": {
+          "drift-lending": 1667,
+          "drift-basis": 3398,
+          "drift-jito-dn": 402,
+          "drift-funding": 4533
+        }
+      },
+      {
+        "date": "2026-03-17",
+        "return": -0.005119,
+        "cumulative": 0.037007,
+        "drawdown": 0.00996,
+        "weights": {
+          "drift-lending": 2472,
+          "drift-basis": 3082,
+          "drift-jito-dn": 335,
+          "drift-funding": 4111
+        }
+      },
+      {
+        "date": "2026-03-18",
+        "return": 0.001257,
+        "cumulative": 0.038311,
+        "drawdown": 0.008715,
+        "weights": {
+          "drift-lending": 2929,
+          "drift-basis": 2868,
+          "drift-jito-dn": 377,
+          "drift-funding": 3826
+        }
+      },
+      {
+        "date": "2026-03-19",
+        "return": -0.001772,
+        "cumulative": 0.03647,
+        "drawdown": 0.010472,
+        "weights": {
+          "drift-lending": 5603,
+          "drift-basis": 1594,
+          "drift-jito-dn": 678,
+          "drift-funding": 2125
+        }
+      },
+      {
+        "date": "2026-03-20",
+        "return": -0.006014,
+        "cumulative": 0.030237,
+        "drawdown": 0.016423,
+        "weights": {
+          "drift-lending": 3506,
+          "drift-basis": 2641,
+          "drift-jito-dn": 329,
+          "drift-funding": 3524
+        }
+      },
+      {
+        "date": "2026-03-21",
+        "return": 0.000919,
+        "cumulative": 0.031183,
+        "drawdown": 0.01552,
+        "weights": {
+          "drift-lending": 2721,
+          "drift-basis": 2854,
+          "drift-jito-dn": 618,
+          "drift-funding": 3807
+        }
+      },
+      {
+        "date": "2026-03-22",
+        "return": -0.000046,
+        "cumulative": 0.031136,
+        "drawdown": 0.015565,
+        "weights": {
+          "drift-lending": 2871,
+          "drift-basis": 2758,
+          "drift-jito-dn": 691,
+          "drift-funding": 3680
+        }
+      },
+      {
+        "date": "2026-03-23",
+        "return": 0.004188,
+        "cumulative": 0.035454,
+        "drawdown": 0.011442,
+        "weights": {
+          "drift-lending": 3012,
+          "drift-basis": 2798,
+          "drift-jito-dn": 456,
+          "drift-funding": 3734
+        }
+      },
+      {
+        "date": "2026-03-24",
+        "return": 0.000665,
+        "cumulative": 0.036143,
+        "drawdown": 0.010784,
+        "weights": {
+          "drift-lending": 3559,
+          "drift-basis": 2448,
+          "drift-jito-dn": 729,
+          "drift-funding": 3264
+        }
+      },
+      {
+        "date": "2026-03-25",
+        "return": 0.004881,
+        "cumulative": 0.041201,
+        "drawdown": 0.005956,
+        "weights": {
+          "drift-lending": 2153,
+          "drift-basis": 3135,
+          "drift-jito-dn": 530,
+          "drift-funding": 4182
+        }
+      },
+      {
+        "date": "2026-03-26",
+        "return": -0.00088,
+        "cumulative": 0.040284,
+        "drawdown": 0.006831,
+        "weights": {
+          "drift-lending": 3738,
+          "drift-basis": 2450,
+          "drift-jito-dn": 545,
+          "drift-funding": 3267
+        }
+      },
+      {
+        "date": "2026-03-27",
+        "return": 0.004672,
+        "cumulative": 0.045144,
+        "drawdown": 0.002191,
+        "weights": {
+          "drift-lending": 4693,
+          "drift-basis": 2184,
+          "drift-jito-dn": 211,
+          "drift-funding": 2912
+        }
+      },
+      {
+        "date": "2026-03-28",
+        "return": 0.000415,
+        "cumulative": 0.045578,
+        "drawdown": 0.001777,
+        "weights": {
+          "drift-lending": 6163,
+          "drift-basis": 1520,
+          "drift-jito-dn": 291,
+          "drift-funding": 2026
+        }
+      },
+      {
+        "date": "2026-03-29",
+        "return": 0.000089,
+        "cumulative": 0.045671,
+        "drawdown": 0.001688,
+        "weights": {
+          "drift-lending": 5800,
+          "drift-basis": 1386,
+          "drift-jito-dn": 966,
+          "drift-funding": 1848
+        }
+      },
+      {
+        "date": "2026-03-30",
+        "return": 0.000624,
+        "cumulative": 0.046324,
+        "drawdown": 0.001064,
+        "weights": {
+          "drift-lending": 5165,
+          "drift-basis": 1586,
+          "drift-jito-dn": 1135,
+          "drift-funding": 2114
+        }
+      },
+      {
+        "date": "2026-03-31",
+        "return": 0.000645,
+        "cumulative": 0.046999,
+        "drawdown": 0.00042,
+        "weights": {
+          "drift-lending": 3976,
+          "drift-basis": 2257,
+          "drift-jito-dn": 758,
+          "drift-funding": 3009
+        }
+      }
+    ]
+  },
+  "disclaimer": "SIMULATED PERFORMANCE — NOT INDICATIVE OF FUTURE RESULTS. This backtest uses synthetic yield data calibrated to observed Drift Protocol rate ranges. It runs the production NanuqFi AlgorithmEngine against historical market conditions. Key simplifications: (1) Daily granularity — sub-daily auto-exit trigger timing not modeled. (2) No slippage, gas/priority fees, or position entry/exit delay. (3) Infinite market depth assumed — no liquidity constraints. (4) No funding rate impact from the protocol's own position size. (5) Past performance is not indicative of future results."
+}
