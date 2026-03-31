@@ -15,11 +15,11 @@ interface LinkItem {
 const DEVNET_TXS: LinkItem[] = [
   {
     label: 'Deposit',
-    href: 'https://solscan.io/tx/PLACEHOLDER?cluster=devnet',
+    href: 'https://solscan.io/tx/2mC3NAxJ9oLMm1wLwoiKj32411DB1Ynf4pHCiW84ATtrVcKin9PKxMV4kp1PR9yTUt1QcmmYmP5ES98HrE2xEdYN?cluster=devnet',
   },
   {
     label: 'Withdrawal',
-    href: 'https://solscan.io/tx/PLACEHOLDER?cluster=devnet',
+    href: 'https://solscan.io/tx/4bsJpDc7CrrzR75vMXqhZ2rTzsVGfcqnRHoivVDJkX5dmanikz7wcXDrSnSSxQrURkBaKrxNbCiYbGyWZVV4cv7H?cluster=devnet',
   },
   {
     label: 'Rebalance',
