@@ -1,6 +1,7 @@
 import { Hero } from '@/components/pitch/Hero'
 import { Architecture } from '@/components/pitch/Architecture'
 import { StrategyEngine } from '@/components/pitch/StrategyEngine'
+import { BacktestResults } from '@/components/pitch/BacktestResults'
 
 function Divider() {
   return (
@@ -16,6 +17,8 @@ export default function PitchPage() {
       <Architecture />
       <Divider />
       <StrategyEngine />
+      <Divider />
+      <BacktestResults />
     </main>
   )
 }
