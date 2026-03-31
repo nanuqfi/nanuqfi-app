@@ -149,10 +149,10 @@ function LiveYieldsCard() {
 
   const fb = fallbackData.yields
 
-  // useYieldEstimates returns { live: { usdcLendingRate, ... } } or YieldEstimate[]
-  // Handle both shapes gracefully
-  const live = !isFallback && data && typeof data === 'object' && 'live' in (data as any)
-    ? (data as any).live
+  // useYieldEstimates returns { live: { usdcLendingRate, ... } } — extract the live object
+  const raw = data as Record<string, unknown> | null
+  const live = raw && typeof raw === 'object' && 'live' in raw
+    ? raw.live as Record<string, number>
     : null
 
   const usdcLending = live?.usdcLendingRate ?? fb.usdcLendingRate
