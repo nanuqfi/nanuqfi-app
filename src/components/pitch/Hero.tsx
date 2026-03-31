@@ -8,16 +8,8 @@ export function Hero() {
   const aggressiveApy = (backtestData.aggressive.apy * 100)
 
   return (
-    // Full-bleed breakout: escapes root layout's max-w-7xl and px-6 constraints
     <section
-      className="relative flex flex-col items-center justify-center text-center px-6"
-      style={{
-        minHeight: '100vh',
-        width: '100vw',
-        marginLeft: 'calc(50% - 50vw)',
-        // Compensate for root layout's pt-24 (6rem) so the section truly starts at viewport top
-        marginTop: '-6rem',
-      }}
+      className="relative flex flex-col items-center justify-center text-center px-6 min-h-screen"
     >
       {/* Radial gradient background */}
       <div
