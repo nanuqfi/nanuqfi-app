@@ -7,7 +7,6 @@ import {
   useYieldEstimates,
   useKeeperDecisions,
   useMarketScan,
-  type YieldEstimate,
 } from '@/hooks/use-keeper-api'
 import fallbackData from '@/data/fallback-keeper-data.json'
 
@@ -31,11 +30,6 @@ function timeAgo(timestamp: number): string {
 
 function pct(value: number, decimals = 2): string {
   return `${(value * 100).toFixed(decimals)}%`
-}
-
-function findYield(yields: YieldEstimate[], sourceKey: string): number | null {
-  const match = yields.find((y) => y.source === sourceKey || y.protocol === sourceKey)
-  return match ? match.apy : null
 }
 
 // ─── Shared card shell ────────────────────────────────────────────────────────
@@ -155,18 +149,16 @@ function LiveYieldsCard() {
 
   const fb = fallbackData.yields
 
-  const usdcLending = isFallback
-    ? fb.usdcLendingRate
-    : findYield(data, 'drift-lending')
-  const solFunding = isFallback
-    ? fb.solFundingRate
-    : findYield(data, 'drift-funding')
-  const solBorrow = isFallback
-    ? fb.solBorrowRate
-    : findYield(data, 'drift-borrow')
-  const jitoYield = isFallback
-    ? fb.jitoStakingYield
-    : findYield(data, 'drift-jito-dn')
+  // useYieldEstimates returns { live: { usdcLendingRate, ... } } or YieldEstimate[]
+  // Handle both shapes gracefully
+  const live = !isFallback && data && typeof data === 'object' && 'live' in (data as any)
+    ? (data as any).live
+    : null
+
+  const usdcLending = live?.usdcLendingRate ?? fb.usdcLendingRate
+  const solFunding = live?.solFundingRate ?? fb.solFundingRate
+  const solBorrow = live?.solBorrowRate ?? fb.solBorrowRate
+  const jitoYield = live?.jitoStakingYield ?? fb.jitoStakingYield
 
   return (
     <Card>
