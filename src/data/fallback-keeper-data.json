@@ -1,0 +1,42 @@
+{
+  "capturedAt": "2026-03-30T16:30:00Z",
+  "health": {
+    "uptime": 266972158,
+    "lastCycleTimestamp": 1774940877217,
+    "cyclesCompleted": 445,
+    "cyclesFailed": 0,
+    "aiLayerStatus": "available",
+    "rpcStatus": "healthy"
+  },
+  "yields": {
+    "usdcLendingRate": 0.02,
+    "solFundingRate": 0,
+    "solBorrowRate": 0.05,
+    "jitoStakingYield": 0.07
+  },
+  "decisions": [
+    {
+      "riskLevel": "moderate",
+      "weights": { "drift-lending": 7827, "drift-basis": 0, "drift-jito-dn": 2173 },
+      "timestamp": 1774940876503
+    },
+    {
+      "riskLevel": "aggressive",
+      "weights": { "drift-lending": 7827, "drift-basis": 0, "drift-jito-dn": 2173, "drift-funding": 0 },
+      "timestamp": 1774940876503
+    }
+  ],
+  "marketScan": {
+    "totalScanned": 50,
+    "driftRank": 51,
+    "driftBestApy": 0,
+    "marketBestApy": 0.1208659,
+    "topOpportunities": [
+      { "protocol": "unitas", "asset": "SUSDU", "apy": 0.1208659, "tvl": 46793469, "risk": "low" },
+      { "protocol": "jupiter-lend", "asset": "USDG", "apy": 0.060028, "tvl": 13941018, "risk": "low" },
+      { "protocol": "raydium-amm", "asset": "USDC", "apy": 0.0585874, "tvl": 4600202, "risk": "low" },
+      { "protocol": "lantern-staked-sol", "asset": "LANTERNSOL", "apy": 0.05574900, "tvl": 3675875, "risk": "low" },
+      { "protocol": "orca-dex", "asset": "USDG", "apy": 0.0526164, "tvl": 16979249, "risk": "low" }
+    ]
+  }
+}
