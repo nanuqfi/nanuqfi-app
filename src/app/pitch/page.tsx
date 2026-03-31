@@ -3,6 +3,8 @@ import { Architecture } from '@/components/pitch/Architecture'
 import { StrategyEngine } from '@/components/pitch/StrategyEngine'
 import { BacktestResults } from '@/components/pitch/BacktestResults'
 import { LiveProof } from '@/components/pitch/LiveProof'
+import { WhyNanuqfi } from '@/components/pitch/WhyNanuqfi'
+import { LinksAndProof } from '@/components/pitch/LinksAndProof'
 
 function Divider() {
   return (
@@ -22,6 +24,10 @@ export default function PitchPage() {
       <BacktestResults />
       <Divider />
       <LiveProof />
+      <Divider />
+      <WhyNanuqfi />
+      <Divider />
+      <LinksAndProof />
     </main>
   )
 }
