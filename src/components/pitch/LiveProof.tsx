@@ -368,14 +368,12 @@ export function LiveProof() {
         </p>
       </FadeIn>
 
-      <FadeIn delay={200}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12">
-          <KeeperStatusCard />
-          <LiveYieldsCard />
-          <LastDecisionCard />
-          <ScannerCard />
-        </div>
-      </FadeIn>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12">
+        <FadeIn delay={100}><KeeperStatusCard /></FadeIn>
+        <FadeIn delay={200}><LiveYieldsCard /></FadeIn>
+        <FadeIn delay={300}><LastDecisionCard /></FadeIn>
+        <FadeIn delay={400}><ScannerCard /></FadeIn>
+      </div>
     </section>
   )
 }

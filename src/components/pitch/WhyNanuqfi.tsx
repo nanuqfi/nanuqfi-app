@@ -72,15 +72,13 @@ export function WhyNanuqfi() {
         </h2>
       </FadeIn>
 
-      <FadeIn delay={200}>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-12">
-          {METRICS.map((m, i) => (
-            <FadeIn key={m.label} delay={200 + i * 80}>
-              <MetricCard label={m.label} value={m.value} sub={m.sub} />
-            </FadeIn>
-          ))}
-        </div>
-      </FadeIn>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-12">
+        {METRICS.map((m, i) => (
+          <FadeIn key={m.label} delay={100 + i * 100}>
+            <MetricCard label={m.label} value={m.value} sub={m.sub} />
+          </FadeIn>
+        ))}
+      </div>
 
       <FadeIn delay={700}>
         <p className="text-lg font-semibold text-slate-300 text-center max-w-3xl mx-auto mt-8">

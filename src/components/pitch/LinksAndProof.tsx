@@ -111,28 +111,32 @@ export function LinksAndProof() {
       </FadeIn>
 
       {/* Devnet Transactions */}
-      <FadeIn delay={200}>
-        <div className="mt-12">
+      <div className="mt-12">
+        <FadeIn delay={100}>
           <SubHeading>On-Chain Proof</SubHeading>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {DEVNET_TXS.map((tx) => (
-              <ExternalLinkCard key={tx.label} {...tx} />
-            ))}
-          </div>
+        </FadeIn>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {DEVNET_TXS.map((tx, i) => (
+            <FadeIn key={tx.label} delay={200 + i * 100}>
+              <ExternalLinkCard {...tx} />
+            </FadeIn>
+          ))}
         </div>
-      </FadeIn>
+      </div>
 
       {/* Live Links */}
-      <FadeIn delay={350}>
-        <div className="mt-10">
+      <div className="mt-10">
+        <FadeIn delay={400}>
           <SubHeading>Explore</SubHeading>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {LIVE_LINKS.map((link) => (
-              <ExternalLinkCard key={link.label} {...link} />
-            ))}
-          </div>
+        </FadeIn>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {LIVE_LINKS.map((link, i) => (
+            <FadeIn key={link.label} delay={500 + i * 100}>
+              <ExternalLinkCard {...link} />
+            </FadeIn>
+          ))}
         </div>
-      </FadeIn>
+      </div>
 
       {/* Built By */}
       <FadeIn delay={500}>

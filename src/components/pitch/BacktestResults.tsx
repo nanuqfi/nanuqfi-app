@@ -73,13 +73,10 @@ export function BacktestResults() {
       </FadeIn>
 
       {/* Metric cards */}
-      <FadeIn delay={200}>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-12">
-          {metrics.map((m) => (
-            <div
-              key={m.label}
-              className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 text-center"
-            >
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-12">
+        {metrics.map((m, i) => (
+          <FadeIn key={m.label} delay={100 + i * 100}>
+            <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4 text-center">
               <div className="text-xs text-slate-500 uppercase tracking-wide">
                 {m.label}
               </div>
@@ -91,9 +88,9 @@ export function BacktestResults() {
                 />
               </div>
             </div>
-          ))}
-        </div>
-      </FadeIn>
+          </FadeIn>
+        ))}
+      </div>
 
       {/* Chart */}
       <FadeIn delay={400}>
