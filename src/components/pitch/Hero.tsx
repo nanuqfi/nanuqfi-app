@@ -34,7 +34,16 @@ export function Hero() {
         <FadeIn delay={100}>
           <p className="text-lg text-slate-400 max-w-2xl">
             AI-powered yield routing across Drift Protocol. Transparent
-            allocations, on-chain guardrails, autonomous rebalancing.
+            allocations, on-chain guardrails, autonomous rebalancing.{' '}
+            by{' '}
+            <a
+              href="https://github.com/rz1989s"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-300 hover:text-slate-100 transition-colors duration-200"
+            >
+              RECTOR
+            </a>
           </p>
         </FadeIn>
 
@@ -92,18 +101,6 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Built by attribution */}
-      <p className="absolute bottom-8 text-sm text-slate-500">
-        Built by{' '}
-        <a
-          href="https://github.com/rz1989s"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-slate-400 hover:text-slate-200 transition-colors duration-200"
-        >
-          RECTOR
-        </a>
-      </p>
     </section>
   )
 }
