@@ -119,7 +119,7 @@ export function StrategyEngine() {
             <button
               key={level}
               onClick={() => setRisk(level)}
-              className={`px-5 py-2 rounded-lg border text-sm font-medium capitalize transition-colors ${
+              className={`px-5 py-2 rounded-lg border text-sm font-medium capitalize transition-colors cursor-pointer ${
                 risk === level
                   ? 'bg-sky-500/20 border-sky-500 text-sky-400'
                   : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'

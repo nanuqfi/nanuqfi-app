@@ -14,8 +14,8 @@ export function TabBar({ tabs, activeTab, onTabChange }: TabBarProps) {
             onClick={() => onTabChange(tab)}
             className={
               tab === activeTab
-                ? 'bg-sky-500/20 text-sky-400 px-5 py-2 rounded-full text-sm font-medium transition-all'
-                : 'text-slate-400 px-5 py-2 rounded-full text-sm font-medium hover:text-slate-200 hover:bg-slate-800/50 transition-all'
+                ? 'bg-sky-500/20 text-sky-400 px-5 py-2 rounded-full text-sm font-medium transition-all cursor-pointer'
+                : 'text-slate-400 px-5 py-2 rounded-full text-sm font-medium hover:text-slate-200 hover:bg-slate-800/50 transition-all cursor-pointer'
             }
           >
             {tab}
