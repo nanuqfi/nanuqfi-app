@@ -10,7 +10,8 @@ import { useConnection } from '@solana/wallet-adapter-react'
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction } from '@solana/spl-token'
 import { Card, Badge, Button, ProgressBar, Stat } from '@/components'
 import { useRiskVault, useUserPosition, useUsdcBalance } from '@/hooks/use-allocator'
-import { useVaultData, useKeeperDecisions } from '@/hooks/use-keeper-api'
+import { useVaultData, useKeeperDecisions, useAIInsight } from '@/hooks/use-keeper-api'
+import { AIInsightCard } from '@/components/ai-insight-card'
 import {
   buildDepositInstruction,
   buildRequestWithdrawInstruction,
@@ -402,6 +403,7 @@ function VaultDetailContent({
   // Keeper API data
   const keeper = useVaultData(riskLevel)
   const keeperDecisions = useKeeperDecisions(riskLevel)
+  const aiInsight = useAIInsight()
 
   // Mock fallback
   const mockVault = mockVaults.find(v => v.riskLevel === riskLevel)
@@ -621,6 +623,15 @@ function VaultDetailContent({
                 ))}
               </div>
             </Card>
+            {/* AI Assessment */}
+            <Card>
+              <h3 className="text-sm font-medium text-slate-300 mb-4">AI Strategy Assessment</h3>
+              <AIInsightCard
+                insight={aiInsight.data?.insight ?? null}
+                available={aiInsight.data?.available ?? false}
+                filterStrategies={Object.keys(weights)}
+              />
+            </Card>
             <Card header={
               <h2 className="text-lg font-semibold flex items-center gap-2">
                 <ShieldCheck className="h-5 w-5 text-emerald-400" />
@@ -650,33 +661,44 @@ function VaultDetailContent({
             </Card>
           </div>
         ) : (
-          <Card header={
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-emerald-400" />
-              Guardrails
-            </h2>
-          }>
-            <div className="space-y-6">
-              <ProgressBar
-                label="Max Drawdown"
-                value={currentDrawdown}
-                max={maxDrawdown}
+          <div className="space-y-6">
+            {/* AI Assessment */}
+            <Card>
+              <h3 className="text-sm font-medium text-slate-300 mb-4">AI Strategy Assessment</h3>
+              <AIInsightCard
+                insight={aiInsight.data?.insight ?? null}
+                available={aiInsight.data?.available ?? false}
+                filterStrategies={Object.keys(weights)}
               />
-              {maxPerp > 0 && (
+            </Card>
+            <Card header={
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-emerald-400" />
+                Guardrails
+              </h2>
+            }>
+              <div className="space-y-6">
                 <ProgressBar
-                  label="Perp Exposure"
-                  value={currentPerp}
-                  max={maxPerp}
+                  label="Max Drawdown"
+                  value={currentDrawdown}
+                  max={maxDrawdown}
                 />
-              )}
-              {maxPerp === 0 && (
-                <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">
-                  <ShieldCheck className="h-4 w-4" />
-                  No perpetual exposure — lending only
-                </div>
-              )}
-            </div>
-          </Card>
+                {maxPerp > 0 && (
+                  <ProgressBar
+                    label="Perp Exposure"
+                    value={currentPerp}
+                    max={maxPerp}
+                  />
+                )}
+                {maxPerp === 0 && (
+                  <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">
+                    <ShieldCheck className="h-4 w-4" />
+                    No perpetual exposure — lending only
+                  </div>
+                )}
+              </div>
+            </Card>
+          </div>
         )}
       </div>
 
