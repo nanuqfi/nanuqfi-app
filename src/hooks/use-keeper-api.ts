@@ -258,3 +258,23 @@ export interface MarketScanData {
 export function useMarketScan(): KeeperHookResult<MarketScanData> {
   return useKeeperData<MarketScanData>('/v1/market-scan')
 }
+
+// ─── AI Insight ──────────────────────────────────────────────────────────────
+
+export interface AIInsightData {
+  available: boolean
+  insight: {
+    strategies: Record<string, number>
+    riskElevated: boolean
+    reasoning: string
+    timestamp: number
+  } | null
+}
+
+/**
+ * AI strategy assessment — confidence scores, risk flag, reasoning.
+ * Polls every 30s.
+ */
+export function useAIInsight(): KeeperHookResult<AIInsightData> {
+  return useKeeperData<AIInsightData>('/v1/ai')
+}
