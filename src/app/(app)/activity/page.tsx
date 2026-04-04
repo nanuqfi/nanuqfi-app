@@ -3,8 +3,9 @@
 import { useMemo } from 'react'
 import { Bot, Cpu, Clock, AlertTriangle, Globe } from 'lucide-react'
 import { Card, Badge } from '@/components'
-import { useKeeperDecisions, useMarketScan } from '@/hooks/use-keeper-api'
+import { useKeeperDecisions, useMarketScan, useAIInsight } from '@/hooks/use-keeper-api'
 import type { MarketScanOpportunity } from '@/hooks/use-keeper-api'
+import { AIInsightCard } from '@/components/ai-insight-card'
 import {
   mockDecisions,
   formatRelativeTime,
@@ -173,6 +174,7 @@ function MarketScanSection() {
 export default function ActivityPage() {
   const moderateDecisions = useKeeperDecisions('moderate')
   const aggressiveDecisions = useKeeperDecisions('aggressive')
+  const aiInsight = useAIInsight()
 
   const loading = moderateDecisions.loading && aggressiveDecisions.loading
   const hasError = moderateDecisions.error && aggressiveDecisions.error
@@ -227,6 +229,12 @@ export default function ActivityPage() {
         </div>
       )}
 
+      {/* AI Assessment */}
+      <AIInsightCard
+        insight={aiInsight.data?.insight ?? null}
+        available={aiInsight.data?.available ?? false}
+      />
+
       <Card>
         {loading ? (
           <div className="divide-y divide-slate-700">
@@ -269,6 +277,9 @@ export default function ActivityPage() {
 
                   <p className="text-slate-200">{decision.summary}</p>
                   <p className="text-sm text-slate-400">{decision.reason}</p>
+                  {decision.aiInvolved && (
+                    <p className="mt-1 text-xs text-sky-400/70 italic">AI-assisted decision</p>
+                  )}
 
                   {decision.weightChanges.length > 0 && (
                     <div className="flex flex-wrap gap-4 rounded-lg bg-slate-900/50 px-4 py-3">
