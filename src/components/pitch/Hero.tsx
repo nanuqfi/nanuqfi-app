@@ -40,7 +40,7 @@ export function Hero() {
               href="https://github.com/rz1989s"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-300 hover:text-slate-100 transition-colors duration-200"
+              className="cursor-pointer text-slate-300 hover:text-slate-100 transition-colors duration-200"
             >
               RECTOR
             </a>

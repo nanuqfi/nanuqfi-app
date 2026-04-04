@@ -26,7 +26,7 @@ export function Button({
   return (
     <button
       className={`
-        inline-flex items-center justify-center
+        cursor-pointer inline-flex items-center justify-center
         rounded-lg font-medium transition-colors duration-150
         disabled:opacity-50 disabled:pointer-events-none
         ${variantStyles[variant]}

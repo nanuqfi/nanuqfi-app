@@ -121,7 +121,7 @@ function DepositForm({
           <button
             type="button"
             onClick={() => setDepositAmount(String(balanceDisplay))}
-            className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+            className="cursor-pointer text-xs text-slate-500 hover:text-slate-300 transition-colors"
           >
             Balance: <span className="font-mono">{formatUsd(balanceDisplay)}</span>
           </button>
