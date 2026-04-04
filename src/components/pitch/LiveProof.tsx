@@ -7,7 +7,9 @@ import {
   useYieldEstimates,
   useKeeperDecisions,
   useMarketScan,
+  useAIInsight,
 } from '@/hooks/use-keeper-api'
+import { AIInsightCard } from '@/components/ai-insight-card'
 import fallbackData from '@/data/fallback-keeper-data.json'
 
 // ─── Utilities ────────────────────────────────────────────────────────────────
@@ -348,6 +350,8 @@ function ScannerCard() {
 // ─── Section ─────────────────────────────────────────────────────────────────
 
 export function LiveProof() {
+  const aiInsight = useAIInsight()
+
   return (
     <section className="py-24 px-6 max-w-5xl mx-auto">
       <FadeIn>
@@ -360,7 +364,16 @@ export function LiveProof() {
         </p>
       </FadeIn>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-12">
+      <div className="mt-12">
+        <FadeIn delay={100}>
+          <AIInsightCard
+            insight={aiInsight.data?.insight ?? null}
+            available={aiInsight.data?.available ?? false}
+          />
+        </FadeIn>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
         <FadeIn delay={100}><KeeperStatusCard /></FadeIn>
         <FadeIn delay={200}><LiveYieldsCard /></FadeIn>
         <FadeIn delay={300}><LastDecisionCard /></FadeIn>
