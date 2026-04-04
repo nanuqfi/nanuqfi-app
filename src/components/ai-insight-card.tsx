@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Brain, ChevronDown, ChevronUp } from 'lucide-react'
 import { ConfidenceBar } from './confidence-bar'
 
@@ -24,6 +24,12 @@ interface AIInsightCardProps {
 
 export function AIInsightCard({ insight, available, filterStrategies }: AIInsightCardProps) {
   const [expanded, setExpanded] = useState(false)
+  const [now, setNow] = useState(() => Date.now())
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 60_000)
+    return () => clearInterval(interval)
+  }, [])
 
   if (!available || !insight) {
     return (
@@ -40,8 +46,7 @@ export function AIInsightCard({ insight, available, filterStrategies }: AIInsigh
     ? Object.entries(insight.strategies).filter(([k]) => filterStrategies.includes(k))
     : Object.entries(insight.strategies)
 
-  const age = Date.now() - insight.timestamp
-  const ageMinutes = Math.floor(age / 60_000)
+  const ageMinutes = Math.floor((now - insight.timestamp) / 60_000)
   const ageLabel = ageMinutes < 60
     ? `${ageMinutes}m ago`
     : `${Math.floor(ageMinutes / 60)}h ${ageMinutes % 60}m ago`
