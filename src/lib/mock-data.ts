@@ -121,7 +121,6 @@ export const mockDecisions: KeeperDecision[] = [
 
 export const mockYields: YieldSource[] = [
   { name: 'Drift Lending', slug: 'drift-lending', currentApy: 0.108, protocol: 'Drift' },
-  { name: 'Drift Insurance', slug: 'drift-insurance', currentApy: 0.142, protocol: 'Drift' },
   { name: 'Drift Basis Trade', slug: 'drift-basis', currentApy: 0.221, protocol: 'Drift' },
   { name: 'Drift Funding Rate', slug: 'drift-funding', currentApy: 0.318, protocol: 'Drift' },
   { name: 'Drift JIT-DN', slug: 'drift-jito-dn', currentApy: 0.196, protocol: 'Drift' },

@@ -41,7 +41,6 @@ const validRiskLevels: RiskLevel[] = ['moderate', 'aggressive']
 
 const allocationColors: Record<string, string> = {
   'drift-lending': 'sky',
-  'drift-insurance': 'emerald',
   'drift-basis': 'amber',
   'drift-funding': 'red',
   'drift-jito-dn': 'sky',
@@ -644,7 +643,7 @@ function VaultDetailContent({
                 {maxPerp === 0 && (
                   <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">
                     <ShieldCheck className="h-4 w-4" />
-                    No perpetual exposure — lending and insurance only
+                    No perpetual exposure — lending only
                   </div>
                 )}
               </div>
@@ -673,7 +672,7 @@ function VaultDetailContent({
               {maxPerp === 0 && (
                 <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">
                   <ShieldCheck className="h-4 w-4" />
-                  No perpetual exposure — lending and insurance only
+                  No perpetual exposure — lending only
                 </div>
               )}
             </div>

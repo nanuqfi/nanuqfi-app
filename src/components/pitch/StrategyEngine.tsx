@@ -10,12 +10,10 @@ const DISPLAY_NAMES: Record<string, string> = {
   'drift-basis': 'Drift Basis Trade',
   'drift-funding': 'Drift Funding Rate',
   'drift-jito-dn': 'Drift JitoSOL DN',
-  'drift-insurance': 'Drift Insurance',
 }
 
 const BAR_COLORS: Record<string, string> = {
   'drift-lending': 'bg-sky-400',
-  'drift-insurance': 'bg-emerald-400',
   'drift-basis': 'bg-amber-400',
   'drift-funding': 'bg-violet-400',
   'drift-jito-dn': 'bg-cyan-400',
@@ -23,7 +21,6 @@ const BAR_COLORS: Record<string, string> = {
 
 const ALL_STRATEGIES = [
   'drift-lending',
-  'drift-insurance',
   'drift-basis',
   'drift-funding',
   'drift-jito-dn',
@@ -76,10 +73,6 @@ const AUTO_EXIT_CARDS = [
   {
     title: 'Basis Trade',
     trigger: 'Auto-exit if spread < 4bps for 4 consecutive hours',
-  },
-  {
-    title: 'Insurance Fund',
-    trigger: 'Auto-exit if drawdown exceeds 30%',
   },
   {
     title: 'Funding Rate',
