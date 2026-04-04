@@ -7,7 +7,6 @@ import { useRiskVault } from '@/hooks/use-allocator'
 import { useVaultData } from '@/hooks/use-keeper-api'
 import {
   mockVaults,
-  mockYields,
   formatUsd,
   formatApy,
   sourceDisplayName,
@@ -72,9 +71,12 @@ function VaultRow({ riskLevel, index }: { riskLevel: RiskLevel; index: number })
               {loading ? (
                 <Skeleton className="h-7 w-16" />
               ) : (
-                <p className="font-mono text-lg font-bold text-emerald-400">
-                  {formatApy(apy)}
-                </p>
+                <>
+                  <p className="font-mono text-lg font-bold text-emerald-400">
+                    {formatApy(apy)}
+                  </p>
+                  <p className="text-xs text-slate-500">90d backtest</p>
+                </>
               )}
             </div>
           </div>
@@ -95,21 +97,13 @@ function VaultRow({ riskLevel, index }: { riskLevel: RiskLevel; index: number })
             ))}
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1">
-            {weightEntries.map(([source, weight]) => {
-              const yieldSource = mockYields.find(y => y.slug === source)
-              return (
-                <div key={source} className="flex items-center gap-2 text-sm">
-                  <div className={`h-2 w-2 rounded-full ${riskColors[riskLevel]}`} />
-                  <span className="text-slate-400">{sourceDisplayName(source)}</span>
-                  <span className="font-mono text-slate-200">{weight}%</span>
-                  {yieldSource && (
-                    <span className="font-mono text-xs text-slate-500">
-                      ({formatApy(yieldSource.currentApy)})
-                    </span>
-                  )}
-                </div>
-              )
-            })}
+            {weightEntries.map(([source, weight]) => (
+              <div key={source} className="flex items-center gap-2 text-sm">
+                <div className={`h-2 w-2 rounded-full ${riskColors[riskLevel]}`} />
+                <span className="text-slate-400">{sourceDisplayName(source)}</span>
+                <span className="font-mono text-slate-200">{Number(weight).toFixed(1)}%</span>
+              </div>
+            ))}
           </div>
         </div>
 
