@@ -11,7 +11,7 @@ export default function AppLayout({
     <SolanaProvider>
       <Nav />
       <SystemStatus />
-      <main className="mx-auto max-w-7xl px-6 pt-[7.5rem] pb-16">
+      <main className="mx-auto max-w-7xl px-6 pt-24 pb-16">
         {children}
       </main>
     </SolanaProvider>

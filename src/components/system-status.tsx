@@ -60,7 +60,7 @@ export function SystemStatus() {
     : null
 
   return (
-    <div className="fixed top-16 left-0 right-0 z-40 border-b border-slate-800/50 bg-slate-900/80 backdrop-blur-sm">
+    <div className="sticky top-16 z-40 border-b border-slate-800/50 bg-slate-900/80 backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-6">
         <button
           type="button"
