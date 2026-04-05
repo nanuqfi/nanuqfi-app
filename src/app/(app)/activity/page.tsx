@@ -6,6 +6,7 @@ import { Card, Badge } from '@/components'
 import { useKeeperDecisions, useMarketScan, useAIInsight } from '@/hooks/use-keeper-api'
 import type { MarketScanOpportunity } from '@/hooks/use-keeper-api'
 import { AIInsightCard } from '@/components/ai-insight-card'
+import { YieldOpportunityAlerts } from '@/components/yield-opportunity-alerts'
 import {
   mockDecisions,
   formatRelativeTime,
@@ -234,6 +235,9 @@ export default function ActivityPage() {
         insight={aiInsight.data?.insight ?? null}
         available={aiInsight.data?.available ?? false}
       />
+
+      {/* Yield Opportunity Alerts */}
+      <YieldOpportunityAlerts />
 
       <Card>
         {loading ? (

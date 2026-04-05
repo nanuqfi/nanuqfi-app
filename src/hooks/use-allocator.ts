@@ -357,6 +357,161 @@ export function useUserPosition(
   return { data, loading, error, refresh: fetch }
 }
 
+// ─── RebalanceRecord Parsing ────────────────────────────────────────────
+
+export interface RebalanceRecordAccount {
+  riskVault: PublicKey
+  counter: number
+  slot: bigint
+  previousWeights: number[] // bps
+  newWeights: number[]      // bps
+  aiReasoningHash: Uint8Array
+  approved: boolean
+  bump: number
+}
+
+function parseRebalanceRecord(raw: Uint8Array | ArrayBuffer): RebalanceRecordAccount {
+  const bytes = toBytes(raw)
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
+  let offset = ANCHOR_DISCRIMINATOR_SIZE
+
+  const riskVault = readPubkey(bytes, offset); offset += 32
+  const counter = readU32(view, offset); offset += 4
+  const slot = readU64(view, offset); offset += 8
+
+  // Vec<u16> — previous_weights
+  const prevLen = readU32(view, offset); offset += 4
+  const previousWeights: number[] = []
+  for (let i = 0; i < prevLen; i++) {
+    previousWeights.push(readU16(view, offset)); offset += 2
+  }
+
+  // Vec<u16> — new_weights
+  const newLen = readU32(view, offset); offset += 4
+  const newWeights: number[] = []
+  for (let i = 0; i < newLen; i++) {
+    newWeights.push(readU16(view, offset)); offset += 2
+  }
+
+  // Vec<u8> — ai_reasoning_hash
+  const hashLen = readU32(view, offset); offset += 4
+  const aiReasoningHash = bytes.slice(offset, offset + hashLen); offset += hashLen
+
+  const approved = bytes[offset] === 1; offset += 1
+  const bump = bytes[offset]!
+
+  return { riskVault, counter, slot, previousWeights, newWeights, aiReasoningHash, approved, bump }
+}
+
+// ─── useRebalanceRecords ────────────────────────────────────────────────
+
+const PROGRAM_ID_PK = new PublicKey(
+  process.env.NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID ??
+    '2QtJ5kmxLuW2jYCFpJMtzZ7PCnKdoMwkeueYoDUi5z5P'
+)
+
+/**
+ * Compute the 8-byte Anchor account discriminator for RebalanceRecord.
+ * SHA-256("account:RebalanceRecord") truncated to 8 bytes.
+ */
+async function getRebalanceRecordDiscriminator(): Promise<Uint8Array> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode('account:RebalanceRecord')
+  const hash = await crypto.subtle.digest('SHA-256', data)
+  return new Uint8Array(hash).slice(0, 8)
+}
+
+export function useRebalanceRecords(
+  riskLevel: number
+): HookResult<RebalanceRecordAccount[]> {
+  const { connection } = useConnection()
+  const [data, setData] = useState<RebalanceRecordAccount[] | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<Error | null>(null)
+  const mountedRef = useRef(true)
+
+  const fetch = useCallback(async () => {
+    try {
+      const [riskVaultPda] = getRiskVaultPDA(riskLevel)
+
+      const discriminator = await getRebalanceRecordDiscriminator()
+
+      // getProgramAccounts with two memcmp filters:
+      // 1. discriminator at offset 0 (8 bytes)
+      // 2. risk_vault pubkey at offset 8 (32 bytes)
+      const accounts = await connection.getProgramAccounts(PROGRAM_ID_PK, {
+        filters: [
+          { memcmp: { offset: 0, bytes: toBase58(discriminator) } },
+          { memcmp: { offset: 8, bytes: riskVaultPda.toBase58() } },
+        ],
+      })
+      if (!mountedRef.current) return
+
+      const records = accounts
+        .map(a => parseRebalanceRecord(a.account.data))
+        .sort((a, b) => b.counter - a.counter)
+
+      setData(records)
+      setError(null)
+    } catch (err) {
+      if (!mountedRef.current) return
+      setError(err instanceof Error ? err : new Error(String(err)))
+    } finally {
+      if (mountedRef.current) setLoading(false)
+    }
+  }, [connection, riskLevel])
+
+  useEffect(() => {
+    mountedRef.current = true
+    fetch()
+
+    const interval = setInterval(fetch, POLL_INTERVAL)
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') fetch()
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+
+    return () => {
+      mountedRef.current = false
+      clearInterval(interval)
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
+  }, [fetch])
+
+  return { data, loading, error, refresh: fetch }
+}
+
+// ─── Base58 Helper ──────────────────────────────────────────────────────
+// Minimal base58 encoder for discriminator bytes (browser-safe, no deps).
+
+const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+
+function toBase58(bytes: Uint8Array): string {
+  const digits: number[] = [0]
+  for (const byte of bytes) {
+    let carry = byte
+    for (let j = 0; j < digits.length; j++) {
+      carry += digits[j]! * 256
+      digits[j] = carry % 58
+      carry = Math.floor(carry / 58)
+    }
+    while (carry > 0) {
+      digits.push(carry % 58)
+      carry = Math.floor(carry / 58)
+    }
+  }
+  // Leading zeros
+  let output = ''
+  for (const byte of bytes) {
+    if (byte === 0) output += BASE58_ALPHABET[0]
+    else break
+  }
+  for (let i = digits.length - 1; i >= 0; i--) {
+    output += BASE58_ALPHABET[digits[i]!]
+  }
+  return output
+}
+
 // ─── useUsdcBalance ──────────────────────────────────────────────────────────
 
 export function useUsdcBalance(): HookResult<bigint> {

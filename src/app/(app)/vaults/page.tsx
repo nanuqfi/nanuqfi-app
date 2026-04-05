@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { Card, Badge, Button } from '@/components'
+import { RebalanceHistory } from '@/components/rebalance-history'
 import { useRiskVault } from '@/hooks/use-allocator'
 import { useVaultData } from '@/hooks/use-keeper-api'
 import {
@@ -139,6 +140,14 @@ export default function VaultsPage() {
       <div className="grid grid-cols-1 gap-6">
         {VAULT_CONFIG.map(({ riskLevel, index }) => (
           <VaultRow key={riskLevel} riskLevel={riskLevel} index={index} />
+        ))}
+      </div>
+
+      {/* On-Chain Rebalance Audit Trail */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-bold tracking-tight">On-Chain Audit Trail</h2>
+        {VAULT_CONFIG.map(({ riskLevel, index }) => (
+          <RebalanceHistory key={riskLevel} riskLevel={index} />
         ))}
       </div>
     </div>
