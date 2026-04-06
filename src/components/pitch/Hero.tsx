@@ -33,7 +33,7 @@ export function Hero() {
         {/* Subline */}
         <FadeIn delay={100}>
           <p className="text-lg text-slate-400 max-w-2xl">
-            AI-powered yield routing across Drift Protocol. Transparent
+            AI-powered yield routing across Kamino, Marginfi, and Lulo. Transparent
             allocations, on-chain guardrails, autonomous rebalancing.{' '}
             by{' '}
             <a

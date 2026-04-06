@@ -36,10 +36,10 @@ function FlowBox({
 
 function StrategyGrid() {
   const strategies = [
-    { name: 'Lending', desc: 'USDC lending — stable baseline yield' },
-    { name: 'Basis Trade', desc: 'Delta-neutral, 4h funding auto-exit' },
-    { name: 'Funding Rate', desc: 'Directional capture, PnL auto-exit' },
-    { name: 'JitoSOL DN', desc: 'JitoSOL delta-neutral, borrow rate exit' },
+    { name: 'Kamino', desc: 'USDC lending — 2.08% APY, $209M TVL' },
+    { name: 'Marginfi', desc: 'USDC lending — ~6.5% APY, battle-tested' },
+    { name: 'Lulo', desc: 'Yield aggregator — 8.29% APY, routes best rate' },
+    { name: 'More Soon', desc: 'Protocol-agnostic — any chain, any protocol' },
   ]
 
   return (
@@ -63,12 +63,12 @@ const comparisons = [
     description: 'No spreadsheets, no 3am rebalances',
   },
   {
-    title: 'vs Yearn / Kamino',
-    description: 'Protocol-agnostic routing, not locked to one protocol',
+    title: 'vs Single-Protocol Vaults',
+    description: 'Protocol-agnostic routing — when one protocol fails, we route around it',
   },
   {
-    title: 'vs Existing Drift Vaults',
-    description: 'AI-enhanced with auto-exit triggers, not static allocations',
+    title: 'Built for Resilience',
+    description: 'When Drift was hacked, we pivoted to Kamino and Lulo in days — the architecture absorbed the shock',
   },
   {
     title: 'vs Centralized Yield',

@@ -10,13 +10,13 @@ import { sourceDisplayName } from '@/lib/mock-data'
 
 const DISPLAY_LIMIT = 10
 
-/** Strategy slugs indexed by weight position (matches backend-drift order). */
+/** Strategy slugs indexed by weight position (matches on-chain allocator order). */
 const WEIGHT_INDEX_SOURCES = [
-  'drift-lending',
-  'drift-basis',
-  'drift-funding',
-  'drift-jito-dn',
-  'drift-insurance',
+  'kamino-lending',
+  'marginfi-lending',
+  'lulo-lending',
+  'lulo-lending',   // index 3 — spare slot
+  'kamino-lending', // index 4 — spare slot
 ]
 
 // ─── Helpers ───────────────────────────────────────────────────────────────

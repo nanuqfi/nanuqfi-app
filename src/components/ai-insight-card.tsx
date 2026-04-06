@@ -5,10 +5,14 @@ import { Brain, ChevronDown, ChevronUp } from 'lucide-react'
 import { ConfidenceBar } from './confidence-bar'
 
 const STRATEGY_NAMES: Record<string, string> = {
-  'drift-lending': 'USDC Lending',
-  'drift-basis': 'Basis Trade',
-  'drift-funding': 'Funding Rate',
-  'drift-jito-dn': 'JitoSOL DN',
+  'kamino-lending': 'Kamino Lending',
+  'marginfi-lending': 'Marginfi Lending',
+  'lulo-lending': 'Lulo Yield',
+  // legacy backtest keys — map to new protocol names
+  'drift-lending': 'Kamino Lending',
+  'drift-basis': 'Marginfi Lending',
+  'drift-funding': 'Lulo Yield',
+  'drift-jito-dn': 'Lulo Yield',
 }
 
 interface AIInsightCardProps {

@@ -68,7 +68,7 @@ export function BacktestResults() {
           Backtest Performance
         </h2>
         <p className="text-slate-400 text-center mt-3">
-          90-day simulation using historical Drift protocol rates
+          90-day simulation using historical multi-protocol yield rates
         </p>
       </FadeIn>
 

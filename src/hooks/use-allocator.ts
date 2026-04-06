@@ -32,7 +32,7 @@ export interface AllocatorAccount {
 export interface RiskVaultAccount {
   allocator: PublicKey
   riskLevel: number
-  driftVault: PublicKey
+  protocolVault: PublicKey
   shareMint: PublicKey
   totalShares: bigint
   totalAssets: bigint
@@ -113,7 +113,7 @@ function parseRiskVault(raw: Uint8Array | ArrayBuffer): RiskVaultAccount {
 
   const allocator = readPubkey(bytes, offset); offset += 32
   const riskLevel = bytes[offset]!; offset += 1
-  const driftVault = readPubkey(bytes, offset); offset += 32
+  const protocolVault = readPubkey(bytes, offset); offset += 32
   const shareMint = readPubkey(bytes, offset); offset += 32
 
   const totalShares = readU64(view, offset); offset += 8
@@ -147,7 +147,7 @@ function parseRiskVault(raw: Uint8Array | ArrayBuffer): RiskVaultAccount {
       : 1.0
 
   return {
-    allocator, riskLevel, driftVault, shareMint,
+    allocator, riskLevel, protocolVault, shareMint,
     totalShares, totalAssets, peakEquity, currentEquity, equity24hAgo,
     lastRebalanceSlot, rebalanceCounter, lastMgmtFeeSlot, currentWeights,
     maxPerpAllocationBps, maxLendingAllocationBps, maxSingleAssetBps,

@@ -243,7 +243,7 @@ function LastDecisionCard() {
           fbTopTwo.map(([key, weight]) => (
             <MetricRow
               key={key}
-              label={key.replace(/^drift-/, '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
+              label={key.replace(/^(drift|kamino|marginfi|lulo)-/, '').replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
               value={`${(weight / 100).toFixed(1)}%`}
               highlight={weight > 5000}
             />
@@ -253,7 +253,7 @@ function LastDecisionCard() {
             <MetricRow
               key={wc.source}
               label={wc.source
-                .replace(/^drift-/, '')
+                .replace(/^(drift|kamino|marginfi|lulo)-/, '')
                 .replace(/-/g, ' ')
                 .replace(/\b\w/g, (c) => c.toUpperCase())}
               value={`${wc.to.toFixed(1)}%`}
@@ -313,7 +313,7 @@ function ScannerCard() {
         <span className="text-xs text-slate-500">protocols scanned</span>
         {driftRank && (
           <span className="ml-auto text-xs text-slate-500">
-            Drift rank{' '}
+            Best rank{' '}
             <span className="text-slate-300 font-medium">#{driftRank}</span>
           </span>
         )}

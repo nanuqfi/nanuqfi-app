@@ -22,8 +22,8 @@ function RiskBadge({ risk }: { risk: string }) {
   )
 }
 
-function OpportunityRow({ opp, driftApy }: { opp: MarketScanOpportunity; driftApy: number }) {
-  const gap = opp.apy - driftApy
+function OpportunityRow({ opp, baseApy }: { opp: MarketScanOpportunity; baseApy: number }) {
+  const gap = opp.apy - baseApy
   return (
     <div className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
       <div className="flex items-center gap-3">
@@ -38,7 +38,7 @@ function OpportunityRow({ opp, driftApy }: { opp: MarketScanOpportunity; driftAp
       <div className="flex items-center gap-4 text-right">
         <div>
           <p className="font-mono text-sm font-bold text-amber-400">{formatApy(opp.apy)}</p>
-          <p className="text-[10px] text-slate-500">vs Drift {formatApy(driftApy)}</p>
+          <p className="text-[10px] text-slate-500">vs current {formatApy(baseApy)}</p>
         </div>
         <div>
           <p className="font-mono text-xs text-emerald-400">+{formatApy(gap)}</p>
@@ -56,11 +56,12 @@ export function YieldOpportunityAlerts() {
   if (!data) return null
 
   const { driftComparison, opportunities } = data
-  const hasYieldGap = driftComparison.marketBestApy > driftComparison.driftBestApy * 1.5
+  const currentBestApy = driftComparison.driftBestApy
+  const hasYieldGap = driftComparison.marketBestApy > currentBestApy * 1.5
 
-  // Find top 3 non-Drift opportunities that beat Drift
+  // Find top 3 opportunities that beat current best
   const betterYields = opportunities
-    .filter((o: MarketScanOpportunity) => o.protocol !== 'Drift' && o.apy > driftComparison.driftBestApy)
+    .filter((o: MarketScanOpportunity) => o.apy > currentBestApy)
     .slice(0, 3)
 
   if (!hasYieldGap || betterYields.length === 0) {
@@ -71,7 +72,7 @@ export function YieldOpportunityAlerts() {
             <CheckCircle className="h-5 w-5 text-emerald-400" />
           </div>
           <div>
-            <p className="text-sm font-medium text-emerald-400">Drift is Competitive</p>
+            <p className="text-sm font-medium text-emerald-400">Current Protocols Are Competitive</p>
             <p className="text-xs text-slate-500">
               No significantly better yields detected across {driftComparison.totalScanned} protocols scanned.
             </p>
@@ -98,7 +99,7 @@ export function YieldOpportunityAlerts() {
           <OpportunityRow
             key={i}
             opp={opp}
-            driftApy={driftComparison.driftBestApy}
+            baseApy={currentBestApy}
           />
         ))}
       </div>

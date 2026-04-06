@@ -25,10 +25,10 @@ const ERROR_MAP: Record<number, string> = {
   6016: 'You already have a pending withdrawal',
   6017: 'Insufficient vault balance',
   6018: 'Arithmetic overflow',
-  6019: 'Drift vault capacity exceeded',
+  6019: 'Protocol vault capacity exceeded',
   6020: 'Oracle price data is stale — try again',
   6021: 'Insufficient liquid USDC — keeper is freeing funds',
-  6022: 'Drift operation failed — try again',
+  6022: 'Protocol operation failed — try again',
   6023: 'Deposit exceeds vault cap',
 }
 

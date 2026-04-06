@@ -94,7 +94,7 @@ function MarketScanSection() {
         </span>
       </div>
 
-      {/* Drift vs Market */}
+      {/* Market Overview */}
       <Card>
         <div className="flex flex-wrap gap-6">
           <div className="space-y-1">
@@ -108,13 +108,13 @@ function MarketScanSection() {
             </p>
           </div>
           <div className="space-y-1">
-            <span className="text-xs text-slate-500 uppercase tracking-wider">Drift Best APY</span>
+            <span className="text-xs text-slate-500 uppercase tracking-wider">Current Best APY</span>
             <p className="font-mono text-2xl font-bold">
               {(driftComparison.driftBestApy * 100).toFixed(1)}%
             </p>
           </div>
           <div className="space-y-1">
-            <span className="text-xs text-slate-500 uppercase tracking-wider">Drift Rank</span>
+            <span className="text-xs text-slate-500 uppercase tracking-wider">Best Rank</span>
             <p className="font-mono text-2xl font-bold text-sky-400">
               #{driftComparison.driftRank} / {driftComparison.totalScanned}
             </p>
