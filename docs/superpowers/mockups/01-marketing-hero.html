@@ -1,0 +1,270 @@
+<!--
+  NanuqFi UI Revamp — Marketing Hero Mockup
+  Generated via AI Designer MCP
+  Reference: Pendle Finance aesthetic
+-->
+<!DOCTYPE html>
+<html lang="en" class="antialiased selection:bg-sky-500/30 selection:text-sky-200">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NanuqFi — Yield, Routed.</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    },
+                    colors: {
+                        obsidian: '#080B11',
+                        cyan: {
+                            glow: '#0EA5E9',
+                        }
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #080B11;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .ambient-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            height: 80vh;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, rgba(8, 11, 17, 0) 60%);
+            pointer-events: none;
+            z-index: 0;
+            animation: corePulse 8s ease-in-out infinite alternate;
+        }
+
+        .mesh-plane {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            transform: perspective(1000px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+            transform-origin: center center;
+            opacity: 0.6;
+            z-index: 0;
+            mask-image: radial-gradient(circle at center, black 10%, transparent 60%);
+            -webkit-mask-image: radial-gradient(circle at center, black 10%, transparent 60%);
+            animation: gridFlow 30s linear infinite;
+        }
+
+        .routing-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.8), transparent);
+            height: 1px;
+            width: 150px;
+            filter: drop-shadow(0 0 4px rgba(14, 165, 233, 0.8));
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .line-1 { top: 30%; left: 10%; animation: routePath 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        .line-2 { top: 70%; right: 5%; animation: routePath 5s cubic-bezier(0.4, 0, 0.2, 1) infinite 1.5s; width: 250px; }
+        .line-3 { top: 15%; left: 60%; transform: rotate(90deg); animation: routePath 6s cubic-bezier(0.4, 0, 0.2, 1) infinite 3s; width: 300px; }
+
+        @keyframes corePulse {
+            0% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.95); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        @keyframes gridFlow {
+            0% { background-position: 0px 0px; }
+            100% { background-position: 0px 60px; }
+        }
+
+        @keyframes routePath {
+            0% { opacity: 0; transform: translateX(-100%) scaleX(0); }
+            20% { opacity: 1; transform: translateX(0) scaleX(1); }
+            80% { opacity: 1; transform: translateX(50%) scaleX(1); }
+            100% { opacity: 0; transform: translateX(150%) scaleX(0); }
+        }
+
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: reveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+
+        @keyframes reveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .number-scramble {
+            display: inline-block;
+            position: relative;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 40px rgba(14, 165, 233, 0.4);
+        }
+
+        .glass-btn {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-btn:hover {
+            box-shadow: 0 0 30px rgba(14, 165, 233, 0.3), inset 0 0 10px rgba(14, 165, 233, 0.2);
+            transform: translateY(-2px);
+            background-color: rgba(14, 165, 233, 0.2) !important;
+        }
+
+        .ghost-btn {
+            transition: all 0.3s ease;
+        }
+        .ghost-btn:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="relative min-h-screen w-full flex flex-col items-center selection:bg-cyan-900/50">
+
+    <div class="mesh-plane"></div>
+    <div class="ambient-core"></div>
+    <div class="routing-line line-1"></div>
+    <div class="routing-line line-2"></div>
+    <div class="routing-line line-3"></div>
+
+    <nav class="absolute top-0 left-0 w-full px-6 py-6 flex justify-between items-center z-20 mix-blend-plus-lighter border-b border-white/[0.04]">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full border border-sky-500/50 flex items-center justify-center bg-black/50 backdrop-blur shadow-[0_0_15px_rgba(14,165,233,0.3)]">
+                <i class="ph-bold ph-strategy text-sky-400"></i>
+            </div>
+            <span class="font-sans font-semibold tracking-wide text-white text-sm uppercase">Nanuq<span class="text-sky-500">Fi</span></span>
+        </div>
+
+        <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
+            <a href="#" class="hover:text-white transition-colors">Ecosystem</a>
+            <a href="#" class="hover:text-white transition-colors">Developers</a>
+            <a href="#" class="hover:text-white transition-colors flex items-center gap-1">Docs <i class="ph ph-arrow-up-right text-xs"></i></a>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-800 bg-slate-900/50 backdrop-blur text-xs">
+                <div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+                <span class="text-slate-300 font-mono tracking-tight">Solana Mainnet</span>
+            </div>
+            <button class="ghost-btn px-4 py-2 rounded border border-slate-700/50 text-sm font-medium text-slate-200">
+                Connect Wallet
+            </button>
+        </div>
+    </nav>
+
+    <main class="relative z-10 flex-1 w-full max-w-6xl mx-auto flex flex-col justify-center items-center text-center px-4 pt-24 pb-16">
+
+        <div class="reveal-up mb-8 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-500/20 bg-sky-500/[0.03] backdrop-blur-md">
+            <i class="ph-fill ph-sparkle text-sky-400 text-xs"></i>
+            <span class="text-xs font-mono text-sky-300 tracking-wider">AI ROUTING ENGINE ONLINE</span>
+        </div>
+
+        <h1 class="reveal-up delay-100 text-[4rem] md:text-[6rem] lg:text-[7.5rem] font-black leading-[0.95] tracking-[auto] mb-6 text-glow relative">
+            <span class="bg-gradient-to-br from-[#0EA5E9] via-sky-200 to-white bg-clip-text text-transparent">
+                Yield,
+            </span>
+            <br />
+            <span class="bg-gradient-to-tr from-white via-slate-200 to-slate-500 bg-clip-text text-transparent opacity-90">
+                Routed.
+            </span>
+        </h1>
+
+        <p class="reveal-up delay-200 text-lg md:text-xl font-sans text-slate-400 max-w-2xl leading-relaxed mb-10">
+            AI-powered yield routing across Solana DeFi.
+            <span class="text-slate-200 font-medium">Deposit USDC.</span>
+            Pick your risk. Let the protocol work.
+        </p>
+
+        <div class="reveal-up delay-300 flex flex-col sm:flex-row items-center gap-4 mb-20 w-full sm:w-auto">
+            <button class="glass-btn group w-full sm:w-auto px-8 py-4 rounded-xl bg-[rgba(14,165,233,0.15)] border border-[rgba(14,165,233,0.3)] backdrop-blur-md flex items-center justify-center gap-3">
+                <span class="font-sans font-semibold text-white tracking-wide">Launch App</span>
+                <i class="ph-bold ph-arrow-right text-sky-300 transform group-hover:translate-x-1 transition-transform"></i>
+            </button>
+
+            <button class="ghost-btn w-full sm:w-auto px-8 py-4 rounded-xl border border-slate-700 mx-auto flex items-center justify-center gap-3 text-slate-300">
+                <i class="ph-fill ph-github-logo text-xl"></i>
+                <span class="font-sans font-medium">View on GitHub</span>
+            </button>
+        </div>
+
+        <div class="reveal-up delay-400 w-full max-w-4xl relative">
+            <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-10">
+
+                <div class="flex flex-col items-center justify-center p-6 border border-white/[0.02] bg-white/[0.01] rounded-2xl backdrop-blur-sm relative overflow-hidden group hover:border-white/[0.08] transition-colors">
+                    <div class="absolute inset-0 bg-gradient-to-b from-sky-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <span class="font-sans text-xs font-semibold text-slate-500 uppercase tracking-[0.2em] mb-3">Total Value Locked</span>
+                    <div class="flex items-baseline gap-1 relative">
+                        <span class="font-mono text-3xl lg:text-4xl font-bold text-white tracking-tight">$260</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center justify-center p-6 border border-white/[0.02] bg-white/[0.01] rounded-2xl backdrop-blur-sm relative overflow-hidden group hover:border-white/[0.08] transition-colors">
+                    <div class="absolute inset-0 bg-gradient-to-b from-sky-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="flex items-center gap-1.5 mb-3">
+                        <div class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></div>
+                        <span class="font-sans text-xs font-semibold text-slate-500 uppercase tracking-[0.2em]">Weighted APY</span>
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                        <span class="font-mono text-3xl lg:text-4xl font-bold text-white tracking-tight">14.2</span>
+                        <span class="font-mono text-xl text-slate-400 font-medium">%</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center justify-center p-6 border border-white/[0.02] bg-white/[0.01] rounded-2xl backdrop-blur-sm relative overflow-hidden group hover:border-white/[0.08] transition-colors">
+                    <div class="absolute inset-0 bg-gradient-to-b from-sky-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <span class="font-sans text-xs font-semibold text-slate-500 uppercase tracking-[0.2em] mb-3">Active Protocols</span>
+                    <div class="flex items-center gap-3">
+                        <span class="font-mono text-3xl lg:text-4xl font-bold text-white tracking-tight">03</span>
+                        <div class="flex flex-col gap-1">
+                            <div class="w-8 h-[2px] bg-sky-500/40 rounded-full"></div>
+                            <div class="w-6 h-[2px] bg-slate-600 rounded-full"></div>
+                            <div class="w-10 h-[2px] bg-slate-700 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#080B11] to-transparent pointer-events-none z-10"></div>
+</body>
+</html>

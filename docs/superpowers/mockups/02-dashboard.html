@@ -1,0 +1,246 @@
+<!--
+  NanuqFi UI Revamp — Dashboard Mockup
+  Generated via AI Designer MCP
+  Reference: Ethena data density + Pendle glassmorphism
+-->
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NanuqFi - Yield Routing Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: { DEFAULT: '#0EA5E9', dark: '#0369a1', glow: 'rgba(14, 165, 233, 0.4)' },
+                        base: { bg: '#080B11', panel: 'rgba(15, 23, 42, 0.6)', border: 'rgba(148, 163, 184, 0.1)' }
+                    },
+                    boxShadow: {
+                        'glass-inset': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05)',
+                        'glow-cyan': '0 0 20px -5px rgba(14, 165, 233, 0.3)',
+                        'glow-emerald': '0 0 20px -5px rgba(16, 185, 129, 0.3)',
+                        'glow-amber': '0 0 20px -5px rgba(245, 158, 11, 0.3)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .tabular-data { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+            .glass-panel { @apply bg-base-panel backdrop-blur-xl border border-base-border rounded-2xl shadow-glass-inset relative overflow-hidden; }
+            .text-glow { text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #080B11; }
+        ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 4px; }
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            50% { transform: scale(1.1); opacity: 0.8; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0); }
+        }
+        .animate-pulse-dot { animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        .ambient-light { position: fixed; border-radius: 50%; filter: blur(120px); opacity: 0.15; z-index: -1; pointer-events: none; }
+        .light-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #0EA5E9; }
+        .light-2 { bottom: -20%; right: -10%; width: 600px; height: 600px; background: #3B82F6; }
+        .light-3 { top: 40%; left: 50%; width: 400px; height: 400px; background: #10B981; opacity: 0.05; transform: translate(-50%, -50%); }
+    </style>
+</head>
+<body class="bg-base-bg text-slate-200 antialiased min-h-screen selection:bg-brand/30 selection:text-white">
+    <div class="ambient-light light-1"></div>
+    <div class="ambient-light light-2"></div>
+    <div class="ambient-light light-3"></div>
+    <nav class="fixed top-0 left-0 right-0 h-16 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-6 lg:px-8">
+        <div class="flex items-center space-x-2 w-1/4">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-white/10 to-transparent border border-white/10 flex items-center justify-center shadow-glow-cyan relative overflow-hidden">
+                <div class="absolute inset-0 bg-brand/20 blur-md"></div>
+                <i class="ph-bold ph-planet relative z-10 text-white"></i>
+            </div>
+            <span class="font-semibold text-lg tracking-tight text-white">Nanuq<span class="text-brand">Fi</span></span>
+        </div>
+        <div class="hidden md:flex items-center justify-center w-2/4">
+            <div class="flex space-x-1 bg-slate-900/50 p-1 rounded-full border border-white/5 shadow-glass-inset">
+                <a href="#" class="px-5 py-1.5 rounded-full text-sm font-medium bg-slate-800 text-white shadow-sm ring-1 ring-white/10">Dashboard</a>
+                <a href="#" class="px-5 py-1.5 rounded-full text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">Vaults</a>
+                <a href="#" class="px-5 py-1.5 rounded-full text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">Activity</a>
+            </div>
+        </div>
+        <div class="flex items-center justify-end space-x-4 w-1/4">
+            <div class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-dot"></div>
+                <span class="text-xs font-mono text-emerald-400">Mainnet System Ok</span>
+            </div>
+            <button class="relative isolate overflow-hidden px-4 py-2 rounded-lg bg-slate-800 text-sm font-medium text-white border border-white/10 hover:border-white/20 hover:bg-slate-700 active:scale-95 transition-all">
+                <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-brand/50 to-transparent"></div>
+                Connect Wallet
+            </button>
+        </div>
+    </nav>
+    <main class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 flex flex-col space-y-6">
+        <section class="glass-panel p-6 shadow-2xl shadow-black/40">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 divide-x-0 sm:divide-x divide-white/5">
+                <div class="flex flex-col space-y-1 sm:px-4 first:px-0">
+                    <span class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold flex items-center space-x-1.5"><i class="ph ph-wallet"></i><span>Total Value</span></span>
+                    <span class="text-2xl font-mono tabular-data text-white">$260.00</span>
+                </div>
+                <div class="flex flex-col space-y-1 sm:px-4">
+                    <span class="text-[11px] uppercase tracking-wider text-brand/80 font-semibold flex items-center space-x-1.5"><i class="ph ph-trend-up"></i><span>Daily Earnings</span></span>
+                    <div class="flex items-baseline space-x-1 relative">
+                        <div class="absolute -left-2 top-0 bottom-0 w-[2px] bg-brand rounded-full blur-[2px]"></div>
+                        <span class="text-3xl font-mono tabular-data text-brand text-glow">$0.58</span>
+                        <span class="text-sm font-mono text-brand/60">/day</span>
+                    </div>
+                </div>
+                <div class="flex flex-col space-y-1 sm:px-4">
+                    <span class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold flex items-center space-x-1.5"><i class="ph ph-chart-line-up"></i><span>Weighted APY</span></span>
+                    <span class="text-2xl font-mono tabular-data text-white">14.2<span class="text-slate-500">%</span></span>
+                </div>
+                <div class="flex flex-col space-y-1 sm:px-4 relative group">
+                    <span class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold flex items-center space-x-1.5"><i class="ph ph-cpu"></i><span>AI Central Pulse</span></span>
+                    <div class="flex items-center space-x-2 mt-1">
+                        <div class="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/20"><div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse-dot"></div></div>
+                        <span class="text-sm font-mono tabular-data text-emerald-400">Active <span class="text-slate-500 font-sans text-xs">2m ago</span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="glass-panel p-6 flex flex-col relative">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full mb-6 relative z-10">
+                <div class="flex flex-col">
+                    <h2 class="text-lg font-semibold text-white flex items-center space-x-2"><span>Cumulative Earnings</span></h2>
+                    <p class="text-sm text-slate-400 mt-0.5">Automated compounding across all positions</p>
+                </div>
+                <div class="mt-4 sm:mt-0 flex space-x-1 bg-slate-900/60 p-1 rounded-xl border border-white/5 shadow-inner">
+                    <button class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-400 hover:text-white hover:bg-slate-800">1W</button>
+                    <button class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-slate-700 text-white shadow-sm ring-1 ring-white/10">1M</button>
+                    <button class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-400 hover:text-white hover:bg-slate-800">3M</button>
+                    <button class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-400 hover:text-white hover:bg-slate-800">1Y</button>
+                    <button class="px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-400 hover:text-white hover:bg-slate-800">All</button>
+                </div>
+            </div>
+            <div class="h-[300px] w-full relative rounded-b-xl overflow-hidden mt-2 group cursor-crosshair">
+                <div class="absolute left-0 top-0 bottom-0 flex flex-col justify-between py-[2px] text-[10px] font-mono text-slate-500 z-10 pointer-events-none">
+                    <span>$15.00</span><span>$11.25</span><span>$7.50</span><span>$3.75</span><span>$0.00</span>
+                </div>
+                <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 1000 300" class="absolute inset-0 z-0 pl-12 pr-4 pt-4 pb-0">
+                    <defs>
+                        <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0EA5E9" stop-opacity="0.3"/><stop offset="100%" stop-color="#0EA5E9" stop-opacity="0.0"/></linearGradient>
+                        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter>
+                    </defs>
+                    <path d="M0,300 L0,250 C100,240 200,280 300,200 C400,120 500,160 600,100 C700,40 800,80 900,30 C950,5 980,10 1000,0 L1000,300 Z" fill="url(#chart-fill)"/>
+                    <path d="M0,250 C100,240 200,280 300,200 C400,120 500,160 600,100 C700,40 800,80 900,30 C950,5 980,10 1000,0" fill="none" stroke="#0EA5E9" stroke-width="3" filter="url(#glow)"/>
+                    <circle cx="900" cy="30" r="4" fill="#080B11" stroke="#0EA5E9" stroke-width="3" class="opacity-0 group-hover:opacity-100 transition-opacity duration-300"/>
+                </svg>
+                <div class="absolute right-[8%] top-[10%] bg-slate-800 border border-white/10 rounded-lg p-2 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-20">
+                    <p class="text-[10px] text-slate-400 font-mono mb-1">Nov 28, 14:00</p>
+                    <p class="text-sm text-white font-mono font-medium">$13.42</p>
+                </div>
+            </div>
+        </section>
+        <section>
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-white ml-1">Active Strategies</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-panel group hover:bg-slate-800/40 transition-all duration-300 hover:shadow-glow-emerald cursor-pointer">
+                    <div class="absolute inset-y-0 left-0 w-1 bg-emerald-500/40 group-hover:bg-emerald-400 transition-colors shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><i class="ph-fill ph-shield-check mr-1.5 opacity-80"></i> Conservative</span>
+                            <div class="text-right"><p class="text-3xl font-mono tabular-data text-white">6.2<span class="text-lg text-slate-400">%</span></p><p class="text-[11px] uppercase tracking-wider text-slate-500 mt-1 font-mono">Current APY</p></div>
+                        </div>
+                        <div class="space-y-4 mb-6">
+                            <div class="flex justify-between items-end border-b border-white/5 pb-2"><span class="text-sm text-slate-400">Daily Projection</span><span class="font-mono tabular-data text-white">$0.00<span class="text-slate-500 text-xs">/day</span></span></div>
+                            <div class="flex justify-between items-end border-b border-white/5 pb-2"><span class="text-sm text-slate-400">Deposited</span><span class="font-mono tabular-data text-white">$0</span></div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2">
+                            <div class="flex items-center space-x-2 text-xs bg-slate-900/50 rounded-lg px-2 py-1 border border-white/5"><i class="ph-fill ph-robot text-emerald-400"></i><span class="text-slate-300">Confidence <span class="font-mono text-emerald-400 ml-1">92%</span></span></div>
+                            <div class="w-8 h-1 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-emerald-500/50 w-[92%]"></div></div>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-0 inset-x-0 h-10 bg-gradient-to-t from-emerald-500/10 to-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"><span class="text-sm font-medium text-emerald-400 flex items-center">Deposit <i class="ph-bold ph-arrow-right ml-1"></i></span></div>
+                </div>
+                <div class="glass-panel group hover:bg-slate-800/40 transition-all duration-300 hover:shadow-glow-cyan bg-slate-800/30 transform md:-translate-y-2 border-white/20 cursor-pointer shadow-xl">
+                    <div class="absolute inset-y-0 left-0 w-[6px] bg-brand shadow-[0_0_15px_rgba(14,165,233,0.8)] z-10"></div>
+                    <div class="p-6 relative z-0">
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-brand/10 text-brand border border-brand/20"><i class="ph-fill ph-scales mr-1.5 opacity-80"></i> Moderate</span>
+                            <div class="text-right"><p class="text-3xl font-mono tabular-data text-white text-glow">14.2<span class="text-lg text-brand/60">%</span></p><p class="text-[11px] uppercase tracking-wider text-brand/80 mt-1 font-mono">Current APY</p></div>
+                        </div>
+                        <div class="space-y-4 mb-6">
+                            <div class="flex justify-between items-end border-b border-brand/10 pb-2"><span class="text-sm text-slate-300 font-medium">Daily Projection</span><span class="font-mono tabular-data text-brand font-medium">$0.43<span class="text-brand/50 text-xs">/day</span></span></div>
+                            <div class="flex justify-between items-end border-b border-white/5 pb-2"><span class="text-sm text-slate-400">Deposited</span><span class="font-mono tabular-data text-white">$210</span></div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2">
+                            <div class="flex items-center space-x-2 text-xs bg-brand/5 rounded-lg px-2 py-1 border border-brand/10"><i class="ph-fill ph-robot text-brand"></i><span class="text-slate-200">Confidence <span class="font-mono text-brand ml-1">87%</span></span></div>
+                            <div class="w-8 h-1 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-brand w-[87%]"></div></div>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-0 inset-x-0 h-10 bg-gradient-to-t from-brand/10 to-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"><span class="text-sm font-medium text-brand flex items-center">Details <i class="ph-bold ph-arrow-right ml-1"></i></span></div>
+                </div>
+                <div class="glass-panel group hover:bg-slate-800/40 transition-all duration-300 hover:shadow-glow-amber cursor-pointer relative overflow-hidden">
+                    <div class="absolute inset-y-0 left-0 w-1 bg-amber-500/40 group-hover:bg-amber-400 transition-colors shadow-[0_0_10px_rgba(245,158,11,0.5)]"></div>
+                    <div class="p-6 relative z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20"><i class="ph-fill ph-lightning mr-1.5 opacity-80"></i> Aggressive</span>
+                            <div class="text-right"><p class="text-3xl font-mono tabular-data text-white">22.8<span class="text-lg text-slate-400">%</span></p><p class="text-[11px] uppercase tracking-wider text-slate-500 mt-1 font-mono">Current APY</p></div>
+                        </div>
+                        <div class="space-y-4 mb-6">
+                            <div class="flex justify-between items-end border-b border-white/5 pb-2"><span class="text-sm text-slate-400">Daily Projection</span><span class="font-mono tabular-data text-white">$0.15<span class="text-slate-500 text-xs">/day</span></span></div>
+                            <div class="flex justify-between items-end border-b border-white/5 pb-2"><span class="text-sm text-slate-400">Deposited</span><span class="font-mono tabular-data text-white">$50</span></div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2">
+                            <div class="flex items-center space-x-2 text-xs bg-slate-900/50 rounded-lg px-2 py-1 border border-white/5"><i class="ph-fill ph-robot text-amber-500"></i><span class="text-slate-300">Confidence <span class="font-mono text-amber-500 ml-1">74%</span></span></div>
+                            <div class="w-8 h-1 bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-amber-500/50 w-[74%]"></div></div>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-0 inset-x-0 h-10 bg-gradient-to-t from-amber-500/10 to-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"><span class="text-sm font-medium text-amber-400 flex items-center">Details <i class="ph-bold ph-arrow-right ml-1"></i></span></div>
+                </div>
+            </div>
+        </section>
+        <section class="glass-panel mt-6">
+            <div class="px-6 py-4 border-b border-white/5 bg-slate-800/20 flex justify-between items-center">
+                <h3 class="font-semibold text-white flex items-center space-x-2"><i class="ph-fill ph-terminal-window text-slate-400"></i><span>Recent AI Decisions</span></h3>
+                <span class="flex h-2 w-2"><span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
+            </div>
+            <div class="px-6 py-2">
+                <ul class="space-y-0">
+                    <li class="relative pl-8 py-5 border-b border-white/[0.02] group">
+                        <div class="absolute left-[11px] top-10 bottom-0 w-px bg-white/5"></div>
+                        <div class="absolute left-0 top-6 w-6 h-6 rounded-full bg-brand/10 border border-brand/30 flex items-center justify-center shadow-[0_0_8px_rgba(14,165,233,0.2)]"><i class="ph-bold ph-arrows-left-right text-[10px] text-brand"></i></div>
+                        <div class="flex flex-col sm:flex-row sm:items-start justify-between w-full">
+                            <div class="pr-4">
+                                <h4 class="text-sm font-medium text-slate-200 flex items-center flex-wrap gap-2">Rebalanced Moderate <span class="bg-slate-800 border border-white/10 rounded px-1.5 py-0.5 text-[10px] font-mono text-slate-400">Kamino 60%</span><span class="text-slate-600 text-xs">/</span><span class="bg-slate-800 border border-white/10 rounded px-1.5 py-0.5 text-[10px] font-mono text-slate-400">Marginfi 40%</span></h4>
+                                <p class="text-xs text-slate-500 mt-1 font-mono">Kamino rate rose <span class="text-brand">2.1%</span> above threshold</p>
+                            </div>
+                            <div class="mt-2 sm:mt-0 flex items-center space-x-3 text-xs shrink-0 bg-slate-900/50 p-1.5 rounded-lg border border-white/5"><span class="text-slate-400 font-mono">2h ago</span><span class="w-1 h-1 rounded-full bg-slate-600"></span><span class="text-emerald-400 flex items-center"><i class="ph-fill ph-check-circle mr-1"></i>87% conf</span></div>
+                        </div>
+                    </li>
+                    <li class="relative pl-8 py-5 group">
+                        <div class="absolute left-0 top-6 w-6 h-6 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center"><i class="ph-bold ph-prohibit text-[10px] text-slate-400"></i></div>
+                        <div class="flex flex-col sm:flex-row sm:items-start justify-between w-full">
+                            <div class="pr-4">
+                                <h4 class="text-sm font-medium text-slate-300">Held Aggressive<span class="mx-2 text-slate-600">-></span><span class="text-amber-400/80 font-mono text-xs">No Action</span></h4>
+                                <p class="text-xs text-slate-500 mt-1 font-mono">Spread within tolerance (<span class="text-white/70">0.4%</span>)</p>
+                            </div>
+                            <div class="mt-2 sm:mt-0 flex items-center space-x-3 text-xs shrink-0 bg-slate-900/50 p-1.5 rounded-lg border border-white/5"><span class="text-slate-400 font-mono">5h ago</span><span class="w-1 h-1 rounded-full bg-slate-600"></span><span class="text-emerald-400 flex items-center"><i class="ph-fill ph-check-circle mr-1"></i>91% conf</span></div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <a href="#" class="block w-full text-center py-3 bg-slate-900/40 hover:bg-slate-800/80 border-t border-white/5 text-xs text-slate-400 hover:text-white font-medium transition-colors">View all decisions <i class="ph-bold ph-arrow-right ml-1 inline-block align-middle"></i></a>
+        </section>
+    </main>
+</body>
+</html>
