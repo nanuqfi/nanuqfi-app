@@ -17,12 +17,12 @@
   "decisions": [
     {
       "riskLevel": "moderate",
-      "weights": { "drift-lending": 7827, "drift-basis": 0, "drift-jito-dn": 2173 },
+      "weights": { "kamino-lending": 5000, "marginfi-lending": 3500, "lulo-lending": 1500 },
       "timestamp": 1774940876503
     },
     {
       "riskLevel": "aggressive",
-      "weights": { "drift-lending": 7827, "drift-basis": 0, "drift-jito-dn": 2173, "drift-funding": 0 },
+      "weights": { "kamino-lending": 2500, "marginfi-lending": 3500, "lulo-lending": 4000 },
       "timestamp": 1774940876503
     }
   ],

@@ -41,6 +41,10 @@ const RISK_LEVEL_MAP: Record<string, number> = {
 const validRiskLevels: RiskLevel[] = ['moderate', 'aggressive']
 
 const allocationColors: Record<string, string> = {
+  'kamino-lending': 'sky',
+  'marginfi-lending': 'amber',
+  'lulo-lending': 'emerald',
+  // legacy backtest keys
   'drift-lending': 'sky',
   'drift-basis': 'amber',
   'drift-funding': 'red',
@@ -421,13 +425,10 @@ function VaultDetailContent({
   const maxDrawdownBps = onChain.data?.maxDrawdownBps ?? (mockVault?.guardrails.maxDrawdown ?? 5) * 100
   const maxDrawdown = maxDrawdownBps / 100
   const currentDrawdown = drawdown * 100
-  const maxPerpBps = onChain.data?.maxPerpAllocationBps ?? (mockVault?.guardrails.maxPerp ?? 60) * 100
+  const maxPerpBps = onChain.data?.maxPerpAllocationBps ?? (mockVault?.guardrails.maxPerp ?? 0) * 100
   const maxPerp = maxPerpBps / 100
-  // Compute current perp exposure from weights
-  const perpSources = ['drift-basis', 'drift-funding', 'drift-jito-dn']
-  const currentPerp = Object.entries(weights)
-    .filter(([source]) => perpSources.includes(source))
-    .reduce((sum, [, w]) => sum + w, 0)
+  // No perp exposure in current multi-protocol lending stack
+  const currentPerp = 0
 
   // Decisions: keeper API > mock fallback
   const decisions: DecisionDisplay[] = useMemo(() => {

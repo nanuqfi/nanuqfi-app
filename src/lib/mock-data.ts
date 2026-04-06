@@ -32,98 +32,99 @@ export interface YieldSource {
   protocol: string
 }
 
-// Fallback values aligned with 90-day backtest (2026-01-01 to 2026-03-31).
-// Weights reflect final-day allocations from backtest dailyReturns (converted from bps to %).
+// Fallback values aligned with current multi-protocol stack (Kamino, Marginfi, Lulo).
+// APY reflects real-world rates: Kamino ~2.08%, Marginfi ~6.5%, Lulo ~8.29%.
 // On-chain TVL and keeper API data take priority when available.
 export const mockVaults: Vault[] = [
   {
     riskLevel: 'moderate',
     tvl: 200,
-    apy: 0.1608,
-    drawdown: 0.018942,
-    weights: { 'drift-lending': 56.7, 'drift-basis': 32.2, 'drift-jito-dn': 11.1 },
-    guardrails: { maxDrawdown: 5, currentDrawdown: 1.89, maxPerp: 60, currentPerp: 43 },
+    apy: 0.065,
+    drawdown: 0.005,
+    weights: { 'kamino-lending': 50, 'marginfi-lending': 35, 'lulo-lending': 15 },
+    guardrails: { maxDrawdown: 5, currentDrawdown: 0.5, maxPerp: 0, currentPerp: 0 },
   },
   {
     riskLevel: 'aggressive',
     tvl: 0,
-    apy: 0.1939,
-    drawdown: 0.030073,
-    weights: { 'drift-lending': 39.8, 'drift-basis': 22.6, 'drift-jito-dn': 7.5, 'drift-funding': 30.1 },
-    guardrails: { maxDrawdown: 10, currentDrawdown: 3.01, maxPerp: 70, currentPerp: 53 },
+    apy: 0.083,
+    drawdown: 0.010,
+    weights: { 'kamino-lending': 25, 'marginfi-lending': 35, 'lulo-lending': 40 },
+    guardrails: { maxDrawdown: 10, currentDrawdown: 1.0, maxPerp: 0, currentPerp: 0 },
   },
 ]
 
 export const mockDecisions: KeeperDecision[] = [
   {
     id: 'dec-001',
-    timestamp: '2026-03-31T10:32:00Z',
+    timestamp: '2026-04-05T10:32:00Z',
     vault: 'moderate',
-    action: 'Rebalance',
-    summary: 'Increased lending allocation as basis spread narrowed',
+    action: 'Protocol Pivot',
+    summary: 'Rotated from Drift to Kamino + Marginfi after protocol compromise',
     weightChanges: [
-      { source: 'drift-basis', from: 3800, to: 3218 },
-      { source: 'drift-lending', from: 5085, to: 5667 },
+      { source: 'kamino-lending', from: 0, to: 5000 },
+      { source: 'marginfi-lending', from: 0, to: 3500 },
+      { source: 'lulo-lending', from: 0, to: 1500 },
     ],
     aiInvolved: true,
-    reason: 'AI detected basis spread compression below 4bps threshold. Shifted to lending for safer yield.',
+    reason: 'AI flagged Drift protocol compromise. Architecture is protocol-agnostic — pivoted capital to Kamino, Marginfi, and Lulo within hours. All guardrails passed.',
   },
   {
     id: 'dec-002',
-    timestamp: '2026-03-30T06:15:00Z',
+    timestamp: '2026-04-04T06:15:00Z',
     vault: 'aggressive',
-    action: 'Guardrail Trigger',
-    summary: 'Reduced funding rate exposure after drawdown spike',
+    action: 'Yield Optimization',
+    summary: 'Increased Lulo allocation to capture higher aggregated yield',
     weightChanges: [
-      { source: 'drift-funding', from: 3500, to: 3009 },
-      { source: 'drift-lending', from: 3485, to: 3976 },
+      { source: 'lulo-lending', from: 2500, to: 4000 },
+      { source: 'kamino-lending', from: 3500, to: 2500 },
     ],
     aiInvolved: false,
-    reason: 'Drawdown reached 2.8% (threshold: 10%). Algorithm reduced perp exposure to lending as precaution.',
+    reason: 'Lulo APY at 8.29% vs Kamino at 2.08%. Algorithm increased Lulo weight within guardrail limits.',
   },
   {
     id: 'dec-003',
-    timestamp: '2026-03-29T16:20:00Z',
+    timestamp: '2026-04-03T16:20:00Z',
     vault: 'moderate',
-    action: 'Yield Capture',
-    summary: 'Increased JitoSOL DN allocation on favorable borrow rates',
+    action: 'Rebalance',
+    summary: 'Increased Marginfi allocation on improving lending rates',
     weightChanges: [
-      { source: 'drift-jito-dn', from: 900, to: 1115 },
-      { source: 'drift-lending', from: 5882, to: 5667 },
+      { source: 'marginfi-lending', from: 3000, to: 3500 },
+      { source: 'kamino-lending', from: 5500, to: 5000 },
     ],
     aiInvolved: true,
-    reason: 'SOL borrow rate dropped to 4.1% while JitoSOL staking yield at 7%. AI flagged positive carry opportunity.',
+    reason: 'Marginfi USDC rates improved to 6.5%. AI recommended shifting 5% from Kamino to Marginfi for better risk-adjusted yield.',
   },
   {
     id: 'dec-004',
-    timestamp: '2026-03-28T20:30:00Z',
+    timestamp: '2026-04-02T20:30:00Z',
     vault: 'moderate',
     action: 'Risk Check',
     summary: 'Passed scheduled risk assessment — no action needed',
     weightChanges: [],
     aiInvolved: false,
-    reason: 'All positions within guardrail bounds. Drawdown at 0.8%, perp exposure at 43%. No rebalance required.',
+    reason: 'All positions within guardrail bounds. Drawdown at 0.5%, all lending — no perp exposure. No rebalance required.',
   },
   {
     id: 'dec-005',
-    timestamp: '2026-03-28T08:05:00Z',
+    timestamp: '2026-04-01T08:05:00Z',
     vault: 'aggressive',
-    action: 'Position Adjustment',
-    summary: 'Increased funding rate capture on strong SOL funding',
+    action: 'Emergency Rebalance',
+    summary: 'Emergency rotation triggered by Drift hack — $285M exploit',
     weightChanges: [
-      { source: 'drift-funding', from: 2500, to: 3009 },
-      { source: 'drift-basis', from: 2757, to: 2257 },
+      { source: 'lulo-lending', from: 0, to: 4000 },
+      { source: 'marginfi-lending', from: 0, to: 3500 },
+      { source: 'kamino-lending', from: 0, to: 2500 },
     ],
     aiInvolved: true,
-    reason: 'SOL funding rates elevated at 28% annualized. AI recommended shifting from basis to direct funding capture.',
+    reason: 'Drift Protocol suffered $285M exploit on 2026-04-01. NanuqFi\'s protocol-agnostic architecture allowed immediate pivot to Kamino, Marginfi, and Lulo. Capital preserved. Architecture proven.',
   },
 ]
 
 export const mockYields: YieldSource[] = [
-  { name: 'Drift Lending', slug: 'drift-lending', currentApy: 0.108, protocol: 'Drift' },
-  { name: 'Drift Basis Trade', slug: 'drift-basis', currentApy: 0.221, protocol: 'Drift' },
-  { name: 'Drift Funding Rate', slug: 'drift-funding', currentApy: 0.318, protocol: 'Drift' },
-  { name: 'Drift JIT-DN', slug: 'drift-jito-dn', currentApy: 0.196, protocol: 'Drift' },
+  { name: 'Kamino Lending', slug: 'kamino-lending', currentApy: 0.0208, protocol: 'Kamino' },
+  { name: 'Marginfi Lending', slug: 'marginfi-lending', currentApy: 0.065, protocol: 'Marginfi' },
+  { name: 'Lulo Yield', slug: 'lulo-lending', currentApy: 0.0829, protocol: 'Lulo' },
 ]
 
 // Utility: format dollar amounts

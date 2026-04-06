@@ -158,8 +158,20 @@ interface RawDecisionLog {
   guardrailPassed: boolean
 }
 
+const PROTOCOL_DISPLAY_NAMES: Record<string, string> = {
+  'kamino-lending': 'Kamino Lending',
+  'marginfi-lending': 'Marginfi Lending',
+  'lulo-lending': 'Lulo Yield',
+  // legacy keys from keeper — shown with new names
+  'drift-lending': 'Kamino Lending',
+  'drift-basis': 'Marginfi Lending',
+  'drift-funding': 'Lulo Yield',
+  'drift-jito-dn': 'Lulo Yield',
+}
+
 function formatSourceName(slug: string): string {
-  return slug.replace(/^drift-/, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  if (PROTOCOL_DISPLAY_NAMES[slug]) return PROTOCOL_DISPLAY_NAMES[slug]!
+  return slug.replace(/^(drift|kamino|marginfi|lulo)-/, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
 }
 
 function transformDecision(d: RawDecisionLog): KeeperDecisionData {
@@ -252,7 +264,9 @@ export interface MarketScanData {
 }
 
 /**
- * DeFi market yield scan — cross-protocol opportunities + Drift comparison.
+ * DeFi market yield scan — cross-protocol opportunities + best-protocol comparison.
+ * Note: API field names (driftComparison, driftBestApy, driftRank) are keeper contract
+ * fields — not user-visible. All display labels use protocol-agnostic names.
  * Polls every 30s.
  */
 export function useMarketScan(): KeeperHookResult<MarketScanData> {

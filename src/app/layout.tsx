@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "NanuqFi — Yield, Routed.",
-  description: "AI-powered USDC yield routing across Drift Protocol strategies. Transparent allocations, real-time guardrails, and autonomous rebalancing.",
+  description: "AI-powered USDC yield routing across Kamino, Marginfi, and Lulo. Transparent allocations, real-time guardrails, and autonomous rebalancing.",
 };
 
 export default function RootLayout({

@@ -6,13 +6,19 @@ import backtestData from '@/data/backtest-results.json'
 type RiskLevel = 'moderate' | 'aggressive'
 
 const DISPLAY_NAMES: Record<string, string> = {
-  'drift-lending': 'Drift Lending',
-  'drift-basis': 'Drift Basis Trade',
-  'drift-funding': 'Drift Funding Rate',
-  'drift-jito-dn': 'Drift JitoSOL DN',
+  'kamino-lending': 'Kamino Lending',
+  'marginfi-lending': 'Marginfi Lending',
+  'lulo-lending': 'Lulo Yield',
+  'drift-lending': 'Kamino Lending',   // legacy backtest key → display as Kamino
+  'drift-basis': 'Marginfi Lending',   // legacy backtest key → display as Marginfi
+  'drift-funding': 'Lulo Yield',       // legacy backtest key → display as Lulo
+  'drift-jito-dn': 'Lulo Yield',       // legacy backtest key → display as Lulo
 }
 
 const BAR_COLORS: Record<string, string> = {
+  'kamino-lending': 'bg-sky-400',
+  'marginfi-lending': 'bg-amber-400',
+  'lulo-lending': 'bg-violet-400',
   'drift-lending': 'bg-sky-400',
   'drift-basis': 'bg-amber-400',
   'drift-funding': 'bg-violet-400',
@@ -71,19 +77,19 @@ function WeightBar({
 
 const AUTO_EXIT_CARDS = [
   {
-    title: 'Basis Trade',
-    trigger: 'Auto-exit if spread < 4bps for 4 consecutive hours',
+    title: 'Kamino Lending',
+    trigger: 'Stable USDC lending — 2.08% APY, $209M TVL',
   },
   {
-    title: 'Funding Rate',
+    title: 'Marginfi Lending',
     triggerByRisk: {
-      moderate: 'Auto-exit if PnL < -2% (moderate)',
-      aggressive: 'Auto-exit if PnL < -5% (aggressive)',
+      moderate: 'Conservative allocation — ~6.5% APY (mock mode)',
+      aggressive: 'Higher allocation — ~6.5% APY (mock mode)',
     },
   },
   {
-    title: 'JitoSOL DN',
-    trigger: 'Auto-exit if borrow rate exceeds staking yield',
+    title: 'Lulo Aggregator',
+    trigger: 'Routes across Kamino/Marginfi/Jupiter — 8.29% APY, $19.4M TVL',
   },
 ] as const
 
@@ -100,7 +106,7 @@ export function StrategyEngine() {
 
       <FadeIn delay={100} className="text-center mb-12">
         <p className="text-lg text-slate-400">
-          AI-powered allocation across four Drift strategies. Toggle risk
+          AI-powered allocation across Kamino, Marginfi, and Lulo. Toggle risk
           profiles to see how capital is routed.
         </p>
       </FadeIn>
