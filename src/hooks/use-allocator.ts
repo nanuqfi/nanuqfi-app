@@ -407,7 +407,7 @@ function parseRebalanceRecord(raw: Uint8Array | ArrayBuffer): RebalanceRecordAcc
 
 const PROGRAM_ID_PK = new PublicKey(
   process.env.NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID ??
-    '2QtJ5kmxLuW2jYCFpJMtzZ7PCnKdoMwkeueYoDUi5z5P'
+    'CDhkMBnc43wJQyVaSrreXk2ojvQvZMWrAWNBLSjaRJxq'
 )
 
 /**

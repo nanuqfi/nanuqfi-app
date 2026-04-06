@@ -49,7 +49,7 @@ const LIVE_LINKS: LinkItem[] = [
   },
   {
     label: 'Program (Solscan)',
-    href: 'https://solscan.io/account/2QtJ5kmxLuW2jYCFpJMtzZ7PCnKdoMwkeueYoDUi5z5P?cluster=devnet',
+    href: 'https://solscan.io/account/CDhkMBnc43wJQyVaSrreXk2ojvQvZMWrAWNBLSjaRJxq?cluster=devnet',
     description: '23 instructions, deployed',
   },
 ]

@@ -9,7 +9,7 @@ services:
       - "9001:3000"
     environment:
       - NEXT_PUBLIC_RPC_URL=${NEXT_PUBLIC_RPC_URL:-https://api.devnet.solana.com}
-      - NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID=${NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID:-2QtJ5kmxLuW2jYCFpJMtzZ7PCnKdoMwkeueYoDUi5z5P}
+      - NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID=${NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID:-CDhkMBnc43wJQyVaSrreXk2ojvQvZMWrAWNBLSjaRJxq}
       - NEXT_PUBLIC_KEEPER_API_URL=${NEXT_PUBLIC_KEEPER_API_URL:-https://keeper.nanuqfi.xyz}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
