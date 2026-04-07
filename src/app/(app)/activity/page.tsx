@@ -1,188 +1,81 @@
 'use client'
 
-import { useMemo } from 'react'
-import { Bot, Cpu, Clock, AlertTriangle, Globe } from 'lucide-react'
-import { Card, Badge } from '@/components'
-import { useKeeperDecisions, useMarketScan, useAIInsight } from '@/hooks/use-keeper-api'
-import type { MarketScanOpportunity } from '@/hooks/use-keeper-api'
-import { AIInsightCard } from '@/components/ai-insight-card'
-import { YieldOpportunityAlerts } from '@/components/yield-opportunity-alerts'
+import { useState, useMemo } from 'react'
+import { AlertTriangle } from 'lucide-react'
+import { GlassCard } from '@/components/ui/glass-card'
+import { KeeperStatsBar } from '@/components/app/keeper-stats-bar'
+import { DecisionFeedItem } from '@/components/app/decision-feed-item'
+import { DecisionDetail } from '@/components/app/decision-detail'
+import { useKeeperDecisions } from '@/hooks/use-keeper-api'
 import {
   mockDecisions,
-  formatRelativeTime,
-  sourceDisplayName,
+  type KeeperDecision,
   type RiskLevel,
 } from '@/lib/mock-data'
 
-// ─── Skeleton ───────────────────────────────────────────────────────────────
+// ─── Types ──────────────────────────────────────────────────────────────────
 
-function Skeleton({ className = '' }: { className?: string }) {
-  return <div className={`animate-pulse rounded bg-slate-700 ${className}`} />
-}
+type FilterType = 'all' | 'rebalance' | 'hold' | 'alert'
+
+const FILTERS: { key: FilterType; label: string }[] = [
+  { key: 'all', label: 'All' },
+  { key: 'rebalance', label: 'Rebalance' },
+  { key: 'hold', label: 'Hold' },
+  { key: 'alert', label: 'Alert' },
+]
+
+// ─── Skeleton ───────────────────────────────────────────────────────────────
 
 function DecisionSkeleton() {
   return (
-    <div className="flex gap-4 py-6 first:pt-0 last:pb-0">
-      <Skeleton className="h-10 w-10 shrink-0 rounded-xl" />
-      <div className="flex-1 space-y-3">
-        <div className="flex gap-3">
-          <Skeleton className="h-6 w-20 rounded-full" />
-          <Skeleton className="h-6 w-24" />
-        </div>
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-3/4" />
+    <div className="flex gap-3 py-4">
+      <div className="flex flex-col items-center">
+        <div className="h-7 w-7 animate-pulse rounded-full bg-slate-700" />
+        <div className="w-px flex-1 bg-white/5 mt-1" />
+      </div>
+      <div className="flex-1 space-y-2 pb-2">
+        <div className="h-4 w-3/4 animate-pulse rounded bg-slate-700" />
+        <div className="h-3 w-1/2 animate-pulse rounded bg-slate-700" />
+        <div className="h-3 w-20 animate-pulse rounded bg-slate-700" />
       </div>
     </div>
   )
 }
 
-// ─── Types ──────────────────────────────────────────────────────────────────
+// ─── Filter helpers ─────────────────────────────────────────────────────────
 
-interface DecisionDisplay {
-  id: string
-  timestamp: string
-  vault: RiskLevel
-  action: string
-  summary: string
-  weightChanges: { source: string; from: number; to: number }[]
-  aiInvolved: boolean
-  reason: string
-}
+function matchesFilter(decision: KeeperDecision, filter: FilterType): boolean {
+  if (filter === 'all') return true
 
-// ─── Activity Page ──────────────────────────────────────────────────────────
+  const action = decision.action.toLowerCase()
 
-// ─── Market Scan Section ───────────────────────────────────────────────────
-
-function MarketScanSection() {
-  const scan = useMarketScan()
-
-  if (scan.loading) {
-    return (
-      <Card>
-        <div className="space-y-4">
-          <Skeleton className="h-6 w-48" />
-          <Skeleton className="h-20 w-full" />
-          <Skeleton className="h-20 w-full" />
-        </div>
-      </Card>
-    )
+  if (filter === 'rebalance') {
+    return action.includes('rebalance') || action.includes('pivot') || action.includes('optimization')
+  }
+  if (filter === 'hold') {
+    return action.includes('risk check') || action.includes('hold') || action.includes('no action')
+  }
+  if (filter === 'alert') {
+    return action.includes('emergency') || action.includes('alert') || action.includes('halt')
   }
 
-  // Handle the "no scan yet" response shape
-  const data = scan.data && 'opportunities' in scan.data ? scan.data : null
-
-  if (!data) {
-    return (
-      <Card>
-        <div className="flex items-center gap-3 text-slate-400">
-          <Globe className="h-5 w-5" />
-          <span>Market scan not yet available. Waiting for keeper cycle.</span>
-        </div>
-      </Card>
-    )
-  }
-
-  const top5 = data.opportunities.slice(0, 5)
-  const { driftComparison } = data
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold tracking-tight">DeFi Yield Scanner</h2>
-        <span className="text-xs text-slate-500">
-          {data.timestamp ? new Date(data.timestamp).toLocaleString() : ''}
-        </span>
-      </div>
-
-      {/* Market Overview */}
-      <Card>
-        <div className="flex flex-wrap gap-6">
-          <div className="space-y-1">
-            <span className="text-xs text-slate-500 uppercase tracking-wider">Protocols Scanned</span>
-            <p className="font-mono text-2xl font-bold">{driftComparison.totalScanned}</p>
-          </div>
-          <div className="space-y-1">
-            <span className="text-xs text-slate-500 uppercase tracking-wider">Market Best APY</span>
-            <p className="font-mono text-2xl font-bold text-emerald-400">
-              {(driftComparison.marketBestApy * 100).toFixed(1)}%
-            </p>
-          </div>
-          <div className="space-y-1">
-            <span className="text-xs text-slate-500 uppercase tracking-wider">Current Best APY</span>
-            <p className="font-mono text-2xl font-bold">
-              {(driftComparison.driftBestApy * 100).toFixed(1)}%
-            </p>
-          </div>
-          <div className="space-y-1">
-            <span className="text-xs text-slate-500 uppercase tracking-wider">Best Rank</span>
-            <p className="font-mono text-2xl font-bold text-sky-400">
-              #{driftComparison.driftRank} / {driftComparison.totalScanned}
-            </p>
-          </div>
-        </div>
-      </Card>
-
-      {/* Top Opportunities */}
-      {top5.length > 0 && (
-        <Card>
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-400">
-            Top Opportunities
-          </h3>
-          <div className="divide-y divide-slate-700">
-            {top5.map((opp: MarketScanOpportunity, i: number) => (
-              <div key={i} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-700 text-xs font-bold text-slate-300">
-                    {i + 1}
-                  </span>
-                  <div>
-                    <p className="text-sm font-medium text-slate-200">{opp.asset}</p>
-                    <p className="text-xs text-slate-500">{opp.protocol} / {opp.strategy}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 text-right">
-                  <div>
-                    <p className="font-mono text-sm font-bold text-emerald-400">
-                      {(opp.apy * 100).toFixed(2)}%
-                    </p>
-                    <p className="text-xs text-slate-500">APY</p>
-                  </div>
-                  <div>
-                    <p className="font-mono text-sm text-slate-300">
-                      ${(opp.tvl / 1e6).toFixed(1)}M
-                    </p>
-                    <p className="text-xs text-slate-500">TVL</p>
-                  </div>
-                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                    opp.risk === 'low' ? 'bg-emerald-500/10 text-emerald-400' :
-                    opp.risk === 'medium' ? 'bg-amber-500/10 text-amber-400' :
-                    'bg-red-500/10 text-red-400'
-                  }`}>
-                    {opp.risk}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      )}
-    </div>
-  )
+  return true
 }
 
 // ─── Activity Page ──────────────────────────────────────────────────────────
 
 export default function ActivityPage() {
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all')
+  const [selectedDecisionId, setSelectedDecisionId] = useState<string | null>(null)
+
   const moderateDecisions = useKeeperDecisions('moderate')
   const aggressiveDecisions = useKeeperDecisions('aggressive')
-  const aiInsight = useAIInsight()
 
   const loading = moderateDecisions.loading && aggressiveDecisions.loading
-  const hasError = moderateDecisions.error && aggressiveDecisions.error
   const isStale = moderateDecisions.isStale || aggressiveDecisions.isStale
 
-  // Merge and sort decisions from both vaults
-  const decisions: DecisionDisplay[] = useMemo(() => {
+  // Merge keeper decisions or fall back to mock data
+  const decisions: KeeperDecision[] = useMemo(() => {
     const hasKeeperData =
       (moderateDecisions.data && moderateDecisions.data.length > 0) ||
       (aggressiveDecisions.data && aggressiveDecisions.data.length > 0)
@@ -198,24 +91,35 @@ export default function ActivityPage() {
       }))
       return [...moderate, ...aggressive]
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-        .slice(0, 20)
     }
 
-    // Fallback to mock data (filtered to moderate + aggressive only)
     return mockDecisions
-      .filter(d => d.vault === 'moderate' || d.vault === 'aggressive')
-      .slice(0, 10)
   }, [moderateDecisions.data, aggressiveDecisions.data])
+
+  // Filtered decisions
+  const filteredDecisions = useMemo(() => {
+    return decisions.filter(d => matchesFilter(d, activeFilter))
+  }, [decisions, activeFilter])
+
+  // Selected decision — default to first if none selected
+  const selectedDecision = useMemo(() => {
+    if (selectedDecisionId) {
+      return filteredDecisions.find(d => d.id === selectedDecisionId) ?? filteredDecisions[0] ?? null
+    }
+    return filteredDecisions[0] ?? null
+  }, [filteredDecisions, selectedDecisionId])
 
   return (
     <div className="space-y-8">
+      {/* Page header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Activity</h1>
+        <h1 className="text-3xl font-bold tracking-tight">AI Activity</h1>
         <p className="mt-1 text-slate-400">
-          Every decision the keeper makes is logged and transparent.
+          Every decision, explained.
         </p>
       </div>
 
+      {/* Stale data warning */}
       {isStale && (
         <div className="flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-400">
           <AlertTriangle className="h-4 w-4 shrink-0" />
@@ -223,93 +127,83 @@ export default function ActivityPage() {
         </div>
       )}
 
-      {hasError && !isStale && !loading && decisions.length === 0 && (
-        <div className="flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-400">
-          <AlertTriangle className="h-4 w-4 shrink-0" />
-          Keeper data unavailable. Showing sample activity.
-        </div>
-      )}
+      {/* Keeper stats bar */}
+      <KeeperStatsBar />
 
-      {/* AI Assessment */}
-      <AIInsightCard
-        insight={aiInsight.data?.insight ?? null}
-        available={aiInsight.data?.available ?? false}
-      />
-
-      {/* Yield Opportunity Alerts */}
-      <YieldOpportunityAlerts />
-
-      <Card>
-        {loading ? (
-          <div className="divide-y divide-slate-700">
-            <DecisionSkeleton />
-            <DecisionSkeleton />
-            <DecisionSkeleton />
+      {/* 2-column layout */}
+      <div className="lg:grid lg:grid-cols-12 gap-8 items-start">
+        {/* Left column — decision feed */}
+        <div className="col-span-7 space-y-4">
+          {/* Filter bar */}
+          <div className="flex items-center gap-2">
+            {FILTERS.map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => {
+                  setActiveFilter(key)
+                  setSelectedDecisionId(null)
+                }}
+                className={[
+                  'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
+                  activeFilter === key
+                    ? 'bg-white/10 text-white'
+                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50',
+                ].join(' ')}
+              >
+                {label}
+              </button>
+            ))}
           </div>
-        ) : (
-          <div className="divide-y divide-slate-700">
-            {decisions.map((decision) => (
-              <div key={decision.id} className="flex gap-4 py-6 first:pt-0 last:pb-0">
-                <div className="flex flex-col items-center gap-2">
-                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
-                    decision.aiInvolved ? 'bg-sky-500/10' : 'bg-slate-700'
-                  }`}>
-                    {decision.aiInvolved
-                      ? <Bot className="h-5 w-5 text-sky-400" />
-                      : <Cpu className="h-5 w-5 text-slate-400" />
-                    }
-                  </div>
-                </div>
 
-                <div className="min-w-0 flex-1 space-y-3">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Badge level={decision.vault} />
-                    <span className="rounded-lg bg-slate-700 px-3 py-1 text-sm font-medium text-slate-200">
-                      {decision.action}
-                    </span>
-                    {decision.aiInvolved && (
-                      <span className="flex items-center gap-1 rounded-full bg-sky-500/10 px-2 py-0.5 text-xs font-medium text-sky-400 border border-sky-500/20">
-                        <Bot className="h-3 w-3" />
-                        AI
-                      </span>
-                    )}
-                    <span className="flex items-center gap-1 text-xs text-slate-500">
-                      <Clock className="h-3 w-3" />
-                      {formatRelativeTime(decision.timestamp)}
-                    </span>
-                  </div>
+          {/* Decision feed */}
+          <GlassCard className="p-4">
+            {loading ? (
+              <div>
+                <DecisionSkeleton />
+                <DecisionSkeleton />
+                <DecisionSkeleton />
+                <DecisionSkeleton />
+              </div>
+            ) : filteredDecisions.length === 0 ? (
+              <p className="py-8 text-center text-sm text-slate-500">
+                No decisions match this filter.
+              </p>
+            ) : (
+              <div>
+                {filteredDecisions.map((decision) => {
+                  const isSelected = selectedDecision?.id === decision.id
+                  return (
+                    <button
+                      key={decision.id}
+                      onClick={() => setSelectedDecisionId(decision.id)}
+                      className={[
+                        'w-full text-left rounded-lg transition-colors -mx-1 px-1',
+                        isSelected
+                          ? 'bg-white/5 border-l-2 border-l-sky-500/60 pl-3'
+                          : 'hover:bg-white/[0.02] border-l-2 border-l-transparent pl-3',
+                      ].join(' ')}
+                    >
+                      <DecisionFeedItem decision={decision} />
+                    </button>
+                  )
+                })}
 
-                  <p className="text-slate-200">{decision.summary}</p>
-                  <p className="text-sm text-slate-400">{decision.reason}</p>
-                  {decision.aiInvolved && (
-                    <p className="mt-1 text-xs text-sky-400/70 italic">AI-assisted decision</p>
-                  )}
-
-                  {decision.weightChanges.length > 0 && (
-                    <div className="flex flex-wrap gap-4 rounded-lg bg-slate-900/50 px-4 py-3">
-                      {decision.weightChanges.map((change, i) => (
-                        <div key={i} className="flex items-center gap-2 text-sm">
-                          <span className="text-slate-400">{sourceDisplayName(change.source)}</span>
-                          <span className="font-mono text-red-400">{change.from}%</span>
-                          <span className="text-slate-600">&rarr;</span>
-                          <span className="font-mono text-emerald-400">{change.to}%</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                {/* Load more (static) */}
+                <div className="pt-3 border-t border-white/5 mt-2">
+                  <button className="w-full py-2 text-xs font-medium text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5">
+                    Load more decisions
+                  </button>
                 </div>
               </div>
-            ))}
-            {decisions.length === 0 && (
-              <p className="py-8 text-center text-sm text-slate-500">
-                No keeper decisions recorded yet.
-              </p>
             )}
-          </div>
-        )}
-      </Card>
+          </GlassCard>
+        </div>
 
-      <MarketScanSection />
+        {/* Right column — detail panel */}
+        <div className="col-span-5 mt-8 lg:mt-0 lg:sticky lg:top-28">
+          <DecisionDetail decision={selectedDecision} />
+        </div>
+      </div>
     </div>
   )
 }
