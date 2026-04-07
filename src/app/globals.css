@@ -45,3 +45,57 @@ body {
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
+
+/* ---- Marketing hero animations ---- */
+
+.hero-glow {
+  text-shadow: 0 0 40px rgba(14, 165, 233, 0.4);
+}
+
+.routing-line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, rgba(14, 165, 233, 0.8), transparent);
+  height: 1px;
+  width: 150px;
+  filter: drop-shadow(0 0 4px rgba(14, 165, 233, 0.8));
+  opacity: 0;
+  z-index: 1;
+}
+
+.line-1 {
+  top: 30%;
+  left: 10%;
+  animation: routePath 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.line-2 {
+  top: 70%;
+  right: 5%;
+  width: 250px;
+  animation: routePath 5s cubic-bezier(0.4, 0, 0.2, 1) infinite 1.5s;
+}
+
+.line-3 {
+  top: 15%;
+  left: 60%;
+  width: 300px;
+  transform: rotate(90deg);
+  animation: routePath 6s cubic-bezier(0.4, 0, 0.2, 1) infinite 3s;
+}
+
+@keyframes corePulse {
+  0% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.95); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+@keyframes gridFlow {
+  0% { background-position: 0px 0px; }
+  100% { background-position: 0px 60px; }
+}
+
+@keyframes routePath {
+  0% { opacity: 0; transform: translateX(-100%) scaleX(0); }
+  20% { opacity: 1; transform: translateX(0) scaleX(1); }
+  80% { opacity: 1; transform: translateX(50%) scaleX(1); }
+  100% { opacity: 0; transform: translateX(150%) scaleX(0); }
+}
