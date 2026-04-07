@@ -1,6 +1,5 @@
-import { Nav } from "@/components";
-import { SystemStatus } from "@/components/system-status";
-import { SolanaProvider } from "@/providers/solana-provider";
+import { Nav } from '@/components/app/nav'
+import { SolanaProvider } from '@/providers/solana-provider'
 
 export default function AppLayout({
   children,
@@ -10,10 +9,9 @@ export default function AppLayout({
   return (
     <SolanaProvider>
       <Nav />
-      <SystemStatus />
-      <main className="mx-auto max-w-7xl px-6 pt-24 pb-16">
+      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20">
         {children}
       </main>
     </SolanaProvider>
-  );
+  )
 }
