@@ -1,18 +1,62 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
-import { Card, Badge, Button } from '@/components'
-import { RebalanceHistory } from '@/components/rebalance-history'
-import { useRiskVault } from '@/hooks/use-allocator'
+import { GlassCard } from '@/components/ui/glass-card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { ConfidenceBar } from '@/components/ui/confidence-bar'
+import { ProtocolBar } from '@/components/app/protocol-bar'
+import { GuardrailCard } from '@/components/app/guardrail-card'
 import { useVaultData } from '@/hooks/use-keeper-api'
 import {
   mockVaults,
+  mockYields,
   formatUsd,
   formatApy,
   sourceDisplayName,
   type RiskLevel,
+  type Vault,
 } from '@/lib/mock-data'
+
+// ─── Config ─────────────────────────────────────────────────────────────────
+
+const VAULT_ORDER: RiskLevel[] = ['conservative', 'moderate', 'aggressive']
+
+const tierConfig: Record<RiskLevel, {
+  gradient: string
+  barColor: string
+  confidenceColor: string
+  aiConfidence: number
+}> = {
+  conservative: {
+    gradient: 'from-emerald-500/10 to-transparent',
+    barColor: 'text-emerald-400',
+    confidenceColor: 'bg-emerald-500',
+    aiConfidence: 92,
+  },
+  moderate: {
+    gradient: 'from-sky-500/10 to-transparent',
+    barColor: 'text-sky-400',
+    confidenceColor: 'bg-sky-500',
+    aiConfidence: 87,
+  },
+  aggressive: {
+    gradient: 'from-amber-500/10 to-transparent',
+    barColor: 'text-amber-400',
+    confidenceColor: 'bg-amber-500',
+    aiConfidence: 74,
+  },
+}
+
+const protocolColors: Record<string, string> = {
+  'kamino-lending': 'text-sky-400',
+  'marginfi-lending': 'text-violet-400',
+  'lulo-lending': 'text-amber-400',
+}
+
+function getProtocolApy(slug: string): number {
+  return mockYields.find(y => y.slug === slug)?.currentApy ?? 0
+}
 
 // ─── Skeleton ───────────────────────────────────────────────────────────────
 
@@ -20,136 +64,248 @@ function Skeleton({ className = '' }: { className?: string }) {
   return <div className={`animate-pulse rounded bg-slate-700 ${className}`} />
 }
 
-// ─── Config ─────────────────────────────────────────────────────────────────
+// ─── Vault Column ───────────────────────────────────────────────────────────
 
-const riskColors = {
-  conservative: 'bg-emerald-500',
-  moderate: 'bg-sky-500',
-  aggressive: 'bg-amber-500',
-} as const
+function VaultColumn({ vault }: { vault: Vault }) {
+  const keeper = useVaultData(vault.riskLevel)
+  const config = tierConfig[vault.riskLevel]
 
-const VAULT_CONFIG: { riskLevel: RiskLevel; index: number }[] = [
-  { riskLevel: 'moderate', index: 1 },
-  { riskLevel: 'aggressive', index: 2 },
-]
-
-// ─── Vault Row ──────────────────────────────────────────────────────────────
-
-function VaultRow({ riskLevel, index }: { riskLevel: RiskLevel; index: number }) {
-  const onChain = useRiskVault(index)
-  const keeper = useVaultData(riskLevel)
-  const mockVault = mockVaults.find(v => v.riskLevel === riskLevel)
-
-  const loading = onChain.loading && keeper.loading
-  const tvl = onChain.data
-    ? Number(onChain.data.totalAssets) / 1e6
-    : keeper.data?.tvl ?? mockVault?.tvl ?? 0
-  const apy = keeper.data?.apy ?? mockVault?.apy ?? 0
-  const weights = keeper.data?.weights ?? mockVault?.weights ?? {}
-  const weightEntries = Object.entries(weights)
+  const tvl = keeper.data?.tvl ?? vault.tvl
+  const apy = keeper.data?.apy ?? vault.apy
+  const weights = keeper.data?.weights ?? vault.weights
+  const dailyEarnings = tvl * (apy / 365)
+  const drawdown = vault.guardrails.maxDrawdown
 
   return (
-    <Card>
-      <div className="space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <Badge level={riskLevel} />
-            <span className="text-lg font-semibold capitalize">
-              {riskLevel} Vault
+    <GlassCard
+      tier={vault.riskLevel}
+      className="relative flex flex-col p-0 overflow-hidden"
+    >
+      {/* Tier badge header */}
+      <div className={`bg-gradient-to-b ${config.gradient} px-6 pt-5 pb-4`}>
+        <Badge tier={vault.riskLevel} />
+      </div>
+
+      {/* Stats rows */}
+      <div className="px-6 py-4 flex-1 space-y-0">
+        <div className="flex items-center justify-between py-3 border-b border-white/5">
+          <span className="text-xs text-slate-400">APY</span>
+          {keeper.loading ? (
+            <Skeleton className="h-5 w-14" />
+          ) : (
+            <span className="font-mono text-lg tabular-nums text-emerald-400">
+              {formatApy(apy)}
             </span>
-          </div>
-          <div className="flex items-center gap-6">
-            <div className="text-right">
-              <p className="text-sm text-slate-400">TVL</p>
-              {loading ? (
-                <Skeleton className="h-7 w-24" />
-              ) : (
-                <p className="font-mono text-lg font-bold">{formatUsd(tvl)}</p>
-              )}
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-slate-400">APY</p>
-              {loading ? (
-                <Skeleton className="h-7 w-16" />
-              ) : (
-                <>
-                  <p className="font-mono text-lg font-bold text-emerald-400">
-                    {formatApy(apy)}
-                  </p>
-                  <p className="text-xs text-slate-500">90d backtest</p>
-                </>
-              )}
-            </div>
-          </div>
+          )}
         </div>
 
-        <div className="space-y-3">
-          <p className="text-sm font-medium text-slate-300">Allocation Breakdown</p>
-          <div className="flex h-3 w-full overflow-hidden rounded-full">
-            {weightEntries.map(([source, weight]) => (
-              <div
-                key={source}
-                className={`${riskColors[riskLevel]} first:rounded-l-full last:rounded-r-full`}
-                style={{
-                  width: `${weight}%`,
-                  opacity: 0.4 + (weight / 100) * 0.6,
-                }}
-              />
-            ))}
-          </div>
-          <div className="flex flex-wrap gap-x-4 gap-y-1">
-            {weightEntries.map(([source, weight]) => (
-              <div key={source} className="flex items-center gap-2 text-sm">
-                <div className={`h-2 w-2 rounded-full ${riskColors[riskLevel]}`} />
-                <span className="text-slate-400">{sourceDisplayName(source)}</span>
-                <span className="font-mono text-slate-200">{Number(weight).toFixed(1)}%</span>
-              </div>
-            ))}
-          </div>
+        <div className="flex items-center justify-between py-3 border-b border-white/5">
+          <span className="text-xs text-slate-400">Daily Earnings</span>
+          {keeper.loading ? (
+            <Skeleton className="h-5 w-16" />
+          ) : (
+            <span className="font-mono text-sm text-slate-200">
+              {formatUsd(dailyEarnings)}/day
+            </span>
+          )}
         </div>
 
-        <div className="flex items-center gap-3">
-          <Link href={`/vaults/${riskLevel}`}>
-            <Button variant="primary" size="sm" className="gap-2">
-              View Details <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
-          <Link href={`/vaults/${riskLevel}`}>
-            <Button variant="secondary" size="sm">
-              Deposit
-            </Button>
-          </Link>
+        <div className="flex items-center justify-between py-3 border-b border-white/5">
+          <span className="text-xs text-slate-400">TVL</span>
+          {keeper.loading ? (
+            <Skeleton className="h-5 w-20" />
+          ) : (
+            <span className="font-mono text-sm text-slate-200">
+              {formatUsd(tvl)}
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between py-3 border-b border-white/5">
+          <span className="text-xs text-slate-400">Max Drawdown</span>
+          <span className="font-mono text-sm text-red-400">-{drawdown}%</span>
+        </div>
+
+        {/* AI Confidence */}
+        <div className="py-3 border-b border-white/5">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs text-slate-400">AI Confidence</span>
+          </div>
+          <ConfidenceBar
+            value={config.aiConfidence}
+            color={config.confidenceColor}
+          />
+        </div>
+
+        {/* Protocol allocation */}
+        <div className="pt-4 space-y-3">
+          <p className="text-[11px] text-slate-500 uppercase tracking-wider">Allocation</p>
+          {Object.entries(weights).map(([slug, weight]) => (
+            <ProtocolBar
+              key={slug}
+              name={sourceDisplayName(slug)}
+              percentage={Number(weight)}
+              apy={getProtocolApy(slug)}
+              color={protocolColors[slug] ?? 'text-slate-400'}
+              reasoning={`Weight assigned based on risk-adjusted yield scoring. ${sourceDisplayName(slug)} currently offers ${(getProtocolApy(slug) * 100).toFixed(1)}% APY with ${vault.riskLevel} risk profile.`}
+            />
+          ))}
         </div>
       </div>
-    </Card>
+
+      {/* CTA */}
+      <div className="px-6 pb-6 pt-2">
+        <Link href={`/app/vaults/${vault.riskLevel}`} className="block">
+          <Button variant="primary" size="md" className="w-full">
+            Deposit
+          </Button>
+        </Link>
+      </div>
+    </GlassCard>
   )
 }
 
-// ─── Vaults Page ────────────────────────────────────────────────────────────
+// ─── Protocol Allocation Map ────────────────────────────────────────────────
 
-export default function VaultsPage() {
+function ProtocolAllocationMap() {
+  // Aggregate weights and TVL across all vaults
+  const protocolTotals: Record<string, { totalWeight: number; totalDollars: number; count: number }> = {}
+
+  for (const vault of mockVaults) {
+    const entries = Object.entries(vault.weights)
+    for (const [slug, weight] of entries) {
+      if (!protocolTotals[slug]) {
+        protocolTotals[slug] = { totalWeight: 0, totalDollars: 0, count: 0 }
+      }
+      protocolTotals[slug].totalWeight += Number(weight)
+      protocolTotals[slug].totalDollars += vault.tvl * (Number(weight) / 100)
+      protocolTotals[slug].count += 1
+    }
+  }
+
+  // Normalize weights to sum to 100
+  const totalWeight = Object.values(protocolTotals).reduce((s, p) => s + p.totalWeight, 0)
+  const protocols = Object.entries(protocolTotals)
+    .map(([slug, data]) => ({
+      slug,
+      name: sourceDisplayName(slug),
+      percentage: totalWeight > 0 ? (data.totalWeight / totalWeight) * 100 : 0,
+      dollars: data.totalDollars,
+      apy: getProtocolApy(slug),
+    }))
+    .sort((a, b) => b.percentage - a.percentage)
+
   return (
-    <div className="space-y-8">
+    <section className="space-y-5">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Vaults</h1>
-        <p className="mt-1 text-slate-400">
-          Choose your risk tier. Every allocation is transparent.
+        <h2 className="text-xl font-bold tracking-tight text-white">Protocol Allocation Map</h2>
+        <p className="mt-1 text-sm text-slate-400">
+          Where your capital lives across all vaults
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
-        {VAULT_CONFIG.map(({ riskLevel, index }) => (
-          <VaultRow key={riskLevel} riskLevel={riskLevel} index={index} />
+      <GlassCard className="p-6 space-y-5">
+        {protocols.map(p => (
+          <div key={p.slug} className="space-y-1">
+            <ProtocolBar
+              name={p.name}
+              percentage={p.percentage}
+              apy={p.apy}
+              color={protocolColors[p.slug] ?? 'text-slate-400'}
+            />
+            <p className="text-right font-mono text-xs text-slate-500">
+              {formatUsd(p.dollars)} deployed
+            </p>
+          </div>
         ))}
+      </GlassCard>
+    </section>
+  )
+}
+
+// ─── Guardrails Summary ─────────────────────────────────────────────────────
+
+function GuardrailsSummary() {
+  const guardrails = [
+    {
+      label: 'Max Drawdown',
+      value: '2% / 5% / 10%',
+      color: 'text-red-400',
+    },
+    {
+      label: 'Rebalance Cycle',
+      value: '4h',
+    },
+    {
+      label: 'Deposit Cap',
+      value: '$10,000',
+    },
+  ]
+
+  return (
+    <section className="space-y-5">
+      <div>
+        <h2 className="text-xl font-bold tracking-tight text-white">Guardrails</h2>
+        <p className="mt-1 text-sm text-slate-400">
+          Every limit is on-chain. Not promises -- code.
+        </p>
       </div>
 
-      {/* On-Chain Rebalance Audit Trail */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-bold tracking-tight">On-Chain Audit Trail</h2>
-        {VAULT_CONFIG.map(({ riskLevel, index }) => (
-          <RebalanceHistory key={riskLevel} riskLevel={index} />
-        ))}
-      </div>
+      <GuardrailCard guardrails={guardrails} />
+
+      <p className="text-center text-xs text-slate-500">
+        On-chain enforced. Not promises -- code.
+      </p>
+    </section>
+  )
+}
+
+// ─── Page ───────────────────────────────────────────────────────────────────
+
+// Build the full vault set: mock data for active tiers, placeholder for conservative
+function getVaultSet(): Vault[] {
+  return VAULT_ORDER.map(level => {
+    const existing = mockVaults.find(v => v.riskLevel === level)
+    if (existing) return existing
+
+    // Conservative vault placeholder (not yet active in mock data)
+    return {
+      riskLevel: level,
+      tvl: 0,
+      apy: 0.021,
+      drawdown: 0.002,
+      weights: { 'kamino-lending': 60, 'marginfi-lending': 30, 'lulo-lending': 10 },
+      guardrails: { maxDrawdown: 2, currentDrawdown: 0.2, maxPerp: 0, currentPerp: 0 },
+    }
+  })
+}
+
+export default function VaultsPage() {
+  const vaults = getVaultSet()
+
+  return (
+    <div className="space-y-12">
+      {/* Section 1 — Comparison Table */}
+      <section className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-white">Vaults</h2>
+          <p className="mt-1 text-sm text-slate-400">
+            Compare risk tiers, pick your route
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {vaults.map(vault => (
+            <VaultColumn key={vault.riskLevel} vault={vault} />
+          ))}
+        </div>
+      </section>
+
+      {/* Section 2 — Protocol Allocation Map */}
+      <ProtocolAllocationMap />
+
+      {/* Section 3 — Guardrails Summary */}
+      <GuardrailsSummary />
     </div>
   )
 }
