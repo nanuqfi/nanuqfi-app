@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react'
 import { GlassCard } from '@/components/ui/glass-card'
 import { Badge } from '@/components/ui/badge'
 import { YieldChart } from '@/components/app/yield-chart'
@@ -241,7 +241,7 @@ function VaultDetailContent({
         </div>
 
         {/* Right Column (sticky) */}
-        <div className="col-span-5 space-y-6 mt-8 lg:mt-0 sticky top-28">
+        <div className="col-span-5 space-y-6 mt-8 lg:mt-0 sticky top-36">
           {/* Deposit Form */}
           <DepositForm
             riskLevel={riskLevel}
@@ -261,6 +261,43 @@ function VaultDetailContent({
 
           {/* Guardrail Card */}
           <GuardrailCard guardrails={guardrails} />
+
+          {/* Devnet Onboarding */}
+          <GlassCard className="p-5 bg-sky-500/5 border-sky-500/10">
+            <h3 className="text-sm font-semibold text-sky-400 mb-3">Getting Started on Devnet</h3>
+            <ol className="space-y-2.5 text-xs text-slate-400">
+              <li className="flex items-start gap-2">
+                <span className="text-sky-500 font-mono font-bold shrink-0">1.</span>
+                <span>
+                  <a
+                    href="https://faucet.solana.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sky-400 hover:text-sky-300 transition-colors inline-flex items-center gap-1"
+                  >
+                    Get devnet SOL
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                  {' — '}free from the Solana faucet
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-sky-500 font-mono font-bold shrink-0">2.</span>
+                <span>
+                  <span className="text-slate-300">Get test USDC</span>
+                  {' — '}contact the team for tokens
+                  <span className="block mt-0.5 font-mono text-[10px] text-slate-500">mint: BiTXT...DcFR</span>
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-sky-500 font-mono font-bold shrink-0">3.</span>
+                <span>
+                  <span className="text-slate-300">Connect Phantom</span>
+                  {' — '}switch to devnet in Settings → Developer Settings
+                </span>
+              </li>
+            </ol>
+          </GlassCard>
         </div>
       </div>
     </div>
