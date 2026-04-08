@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Github, Sparkles } from 'lucide-react'
+import { ArrowRight, BookOpen, Github, Sparkles } from 'lucide-react'
 import { FadeIn } from '@/components/ui/fade-in'
 import { AnimatedCounter } from '@/components/ui/animated-counter'
 
@@ -96,6 +96,14 @@ export function Hero() {
               <ArrowRight className="w-4 h-4 text-sky-300 transition-transform group-hover:translate-x-1" />
             </Link>
 
+            <Link
+              href="/strategy"
+              className="w-full sm:w-auto px-8 py-4 rounded-xl border border-slate-700 flex items-center justify-center gap-3 text-slate-300 transition-all duration-300 hover:bg-white/5 hover:border-white/40 hover:-translate-y-0.5"
+            >
+              <BookOpen className="w-5 h-5" />
+              <span className="font-medium">Strategy Docs</span>
+            </Link>
+
             <a
               href="https://github.com/nanuqfi/nanuqfi"
               target="_blank"
@@ -103,7 +111,7 @@ export function Hero() {
               className="w-full sm:w-auto px-8 py-4 rounded-xl border border-slate-700 flex items-center justify-center gap-3 text-slate-300 transition-all duration-300 hover:bg-white/5 hover:border-white/40 hover:-translate-y-0.5"
             >
               <Github className="w-5 h-5" />
-              <span className="font-medium">View on GitHub</span>
+              <span className="font-medium">GitHub</span>
             </a>
           </div>
         </FadeIn>

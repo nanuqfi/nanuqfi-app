@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { ExternalLink, Github, Twitter } from 'lucide-react'
 
 export function Footer() {
@@ -11,6 +12,13 @@ export function Footer() {
 
         {/* Links */}
         <div className="flex items-center gap-6 text-sm text-slate-500">
+          <Link
+            href="/strategy"
+            className="hover:text-slate-300 transition-colors"
+          >
+            Strategy
+          </Link>
+
           <a
             href="https://github.com/nanuqfi"
             target="_blank"
