@@ -10,8 +10,11 @@ const KEEPER_POLL_INTERVAL = 30_000
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface KeeperHealthData {
-  uptime: number
-  lastCycle: string
+  uptime: number              // seconds
+  lastCycleTimestamp: number   // unix ms
+  cyclesCompleted: number
+  cyclesFailed: number
+  aiLayerStatus: string
   rpcStatus: string
   version?: string
 }
@@ -155,6 +158,7 @@ interface RawDecisionLog {
   newWeights: Record<string, number>
   algoScores: Record<string, number>
   aiInvolved: boolean
+  aiReasoning?: string
   guardrailPassed: boolean
 }
 
@@ -204,7 +208,7 @@ function transformDecision(d: RawDecisionLog): KeeperDecisionData {
     summary,
     weightChanges,
     aiInvolved: d.aiInvolved ?? true,
-    reason: d.guardrailPassed !== false ? 'All guardrails passed' : 'Guardrail triggered',
+    reason: d.aiReasoning ?? (d.guardrailPassed !== false ? 'All guardrails passed' : 'Guardrail triggered'),
   }
 }
 
@@ -223,6 +227,68 @@ export function useKeeperDecisions(
     () => raw.data?.map(transformDecision) ?? null,
     [raw.data]
   )
+
+  return { ...raw, data }
+}
+
+// ─── Global Decision Transform ──────────────────────────────────────────────
+
+/** Shape returned by keeper /v1/decisions (all vaults) */
+interface RawGlobalDecision {
+  timestamp: number
+  riskLevel: string
+  proposal: { weights: Record<string, number>; scores: Record<string, number> }
+  yieldData: Record<string, number>
+  aiInsight: {
+    strategies: Record<string, number>
+    riskElevated: boolean
+    reasoning: string
+    regime: string
+    timestamp: number
+  }
+}
+
+function transformGlobalDecision(d: RawGlobalDecision): KeeperDecisionData {
+  const weights = d.proposal?.weights ?? {}
+
+  const topWeights = Object.entries(weights)
+    .filter(([, w]) => w > 0)
+    .sort(([, a], [, b]) => b - a)
+
+  const weightChanges = topWeights.map(([source, w]) => ({
+    source,
+    from: 0,
+    to: Math.round(w / 100),
+  }))
+
+  const summary = topWeights.length > 0
+    ? topWeights.map(([s, w]) => `${(w / 100).toFixed(1)}% ${formatSourceName(s)}`).join(', ')
+    : 'Keeper cycle completed'
+
+  return {
+    id: String(d.timestamp),
+    timestamp: new Date(d.timestamp).toISOString(),
+    action: 'Rebalance',
+    summary,
+    weightChanges,
+    aiInvolved: !!d.aiInsight,
+    reason: d.aiInsight?.reasoning ?? 'Algorithm-driven rebalance',
+  }
+}
+
+/**
+ * All recent keeper decisions across vaults — fetches from /v1/decisions.
+ * Polls every 30s. Transforms raw global decision format to display format.
+ */
+export function useAllDecisions(): KeeperHookResult<KeeperDecisionData[]> {
+  const raw = useKeeperData<RawGlobalDecision[]>('/v1/decisions')
+
+  const data = useMemo(() => {
+    if (!raw.data) return null
+    // Handle both array and single-object responses
+    const arr = Array.isArray(raw.data) ? raw.data : [raw.data]
+    return arr.map(transformGlobalDecision)
+  }, [raw.data])
 
   return { ...raw, data }
 }

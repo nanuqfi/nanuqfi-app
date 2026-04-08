@@ -27,8 +27,8 @@ function formatFullDate(timestamp: string): string {
 }
 
 function WeightChangeRow({ source, from, to }: { source: string; from: number; to: number }) {
-  const fromPct = (from / 100).toFixed(1)
-  const toPct = (to / 100).toFixed(1)
+  const fromPct = from.toFixed(1)
+  const toPct = to.toFixed(1)
 
   let arrowColor = 'text-slate-500'
   let toColor = 'text-slate-300'
