@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useWalletModal } from '@solana/wallet-adapter-react-ui'
+import { BookOpen } from 'lucide-react'
 
 import { SystemStatus } from '@/components/app/system-status'
 
@@ -61,8 +62,16 @@ export function Nav() {
           })}
         </div>
 
-        {/* Right — Status + Wallet */}
+        {/* Right — Strategy + Status + Wallet */}
         <div className="flex items-center gap-3">
+          <Link
+            href="/strategy"
+            className="hidden md:flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            Strategy
+          </Link>
+
           <SystemStatus />
 
           {connected && publicKey ? (
