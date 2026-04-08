@@ -1,17 +1,6 @@
 <div align="center">
 
-<pre>
-███╗   ██╗ █████╗ ███╗   ██╗██╗   ██╗ ██████╗ ███████╗██╗     █████╗ ██████╗ ██████╗
-████╗  ██║██╔══██╗████╗  ██║██║   ██║██╔═══██╗██╔════╝██║    ██╔══██╗██╔══██╗██╔══██╗
-██╔██╗ ██║███████║██╔██╗ ██║██║   ██║██║   ██║█████╗  ██║    ███████║██████╔╝██████╔╝
-██║╚██╗██║██╔══██║██║╚██╗██║██║   ██║██║▄▄ ██║██╔══╝  ██║    ██╔══██║██╔═══╝ ██╔═══╝
-██║ ╚████║██║  ██║██║ ╚████║╚██████╔╝╚██████╔╝██║     ██║    ██║  ██║██║     ██║
-╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝  ╚══▀▀═╝ ╚═╝     ╚═╝    ╚═╝  ╚═╝╚═╝     ╚═╝
-</pre>
-
-**Yield Dashboard + Marketing**
-
-Glassmorphism design system. Deposit/withdraw. AI transparency. Every decision visible.
+<img src="assets/header.svg" alt="NanuqFi App — Yield Dashboard + Marketing" width="800"/>
 
 [![CI/Deploy](https://github.com/nanuqfi/nanuqfi-app/actions/workflows/deploy.yml/badge.svg)](https://github.com/nanuqfi/nanuqfi-app/actions/workflows/deploy.yml)
 ![Tests](https://img.shields.io/badge/tests-26-brightgreen)
