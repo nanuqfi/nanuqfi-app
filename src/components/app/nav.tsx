@@ -28,7 +28,7 @@ export function Nav() {
   const { setVisible } = useWalletModal()
 
   return (
-    <nav className="fixed inset-x-0 top-0 z-50 h-16 bg-slate-900/80 backdrop-blur-xl border-b border-white/5">
+    <nav className="fixed inset-x-0 top-8 z-50 h-16 bg-slate-900/80 backdrop-blur-xl border-b border-white/5">
       <div className="mx-auto flex h-full max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Left — Logo */}
         <Link href="/app" className="flex items-center gap-2.5">

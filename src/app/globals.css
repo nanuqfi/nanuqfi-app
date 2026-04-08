@@ -83,6 +83,38 @@ body {
   animation: routePath 6s cubic-bezier(0.4, 0, 0.2, 1) infinite 3s;
 }
 
+/* ---- Toast animations ---- */
+
+@keyframes toastIn {
+  0% { opacity: 0; transform: translateX(100%); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastOut {
+  0% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(100%); }
+}
+
+.animate-toast-in {
+  animation: toastIn 0.25s ease-out forwards;
+}
+
+.animate-toast-out {
+  animation: toastOut 0.2s ease-in forwards;
+}
+
+/* ---- Spinner ---- */
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 0.75s linear infinite;
+}
+
+/* ---- Marketing hero animations ---- */
+
 @keyframes corePulse {
   0% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.95); }
   100% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
