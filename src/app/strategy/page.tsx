@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef, useState } from 'react'
 import { FadeIn } from '@/components/ui/fade-in'
 import { GlassCard } from '@/components/ui/glass-card'
 import {
@@ -9,11 +10,26 @@ import {
   Activity,
   Server,
   BookOpen,
+  Shield,
+  Cpu,
+  Link2,
+  CheckCircle2,
+  Zap,
+  AlertTriangle,
+  ArrowRight,
 } from 'lucide-react'
 
 /* ------------------------------------------------------------------ */
-/*  Metadata (handled via <title> since this is a client component)    */
+/*  Section IDs for sticky nav                                         */
 /* ------------------------------------------------------------------ */
+const sections = [
+  { id: 'thesis', number: '01', title: 'Strategy Thesis' },
+  { id: 'mechanics', number: '02', title: 'Operational Mechanics' },
+  { id: 'risk', number: '03', title: 'Risk Management' },
+  { id: 'performance', number: '04', title: 'Performance' },
+  { id: 'architecture', number: '05', title: 'Technical Architecture' },
+  { id: 'links', number: '06', title: 'Links' },
+]
 
 /* ------------------------------------------------------------------ */
 /*  Guardrails table data                                              */
@@ -41,15 +57,16 @@ const backtestMetrics = [
 /*  Links                                                              */
 /* ------------------------------------------------------------------ */
 const links = [
-  { label: 'Website', href: 'https://nanuqfi.com', icon: Globe },
-  { label: 'Dashboard', href: 'https://nanuqfi.com/app', icon: Activity },
-  { label: 'AI Activity Log', href: 'https://nanuqfi.com/app/activity', icon: BookOpen },
-  { label: 'Keeper API', href: 'https://keeper.nanuqfi.com', icon: Server },
-  { label: 'GitHub', href: 'https://github.com/nanuqfi', icon: Github },
+  { label: 'Website', href: 'https://nanuqfi.com', icon: Globe, desc: 'Marketing & overview' },
+  { label: 'Dashboard', href: 'https://nanuqfi.com/app', icon: Activity, desc: 'Live vault dashboard' },
+  { label: 'AI Activity Log', href: 'https://nanuqfi.com/app/activity', icon: BookOpen, desc: 'Every AI decision, viewable' },
+  { label: 'Keeper API', href: 'https://keeper.nanuqfi.com', icon: Server, desc: 'Health, backtest, status' },
+  { label: 'GitHub', href: 'https://github.com/nanuqfi', icon: Github, desc: '4 repos, open source' },
   {
     label: 'Program (Solscan)',
     href: 'https://solscan.io/account/2QtJ5kmxLuW2jYCFpJMtzZ7PCnKdoMwkeueYoDUi5z5P?cluster=devnet',
     icon: ExternalLink,
+    desc: 'On-chain allocator program',
   },
 ]
 
@@ -58,12 +75,93 @@ const links = [
 /* ------------------------------------------------------------------ */
 function SectionHeading({ number, title }: { number: string; title: string }) {
   return (
-    <div className="border-b border-white/5 pb-4 mb-8">
-      <span className="text-xs font-mono text-sky-400/60 uppercase tracking-widest">
-        Section {number}
-      </span>
-      <h2 className="text-2xl font-bold text-white mt-1">{title}</h2>
+    <div className="pb-4 mb-8">
+      <div className="flex items-center gap-3 mb-2">
+        <span className="font-mono text-sm font-bold text-sky-400/80">{number}</span>
+        <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
+      </div>
+      <h2 className="text-2xl md:text-3xl font-bold text-white">{title}</h2>
     </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Gradient divider between sections                                  */
+/* ------------------------------------------------------------------ */
+function SectionDivider() {
+  return (
+    <div className="my-24" aria-hidden="true">
+      <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  Sticky sidebar nav with IntersectionObserver                       */
+/* ------------------------------------------------------------------ */
+function StickyNav() {
+  const [active, setActive] = useState('thesis')
+
+  useEffect(() => {
+    const observers: IntersectionObserver[] = []
+
+    sections.forEach(({ id }) => {
+      const el = document.getElementById(id)
+      if (!el) return
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) setActive(id)
+        },
+        { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
+      )
+      observer.observe(el)
+      observers.push(observer)
+    })
+
+    return () => observers.forEach((o) => o.disconnect())
+  }, [])
+
+  return (
+    <nav className="hidden lg:flex fixed left-8 top-1/2 -translate-y-1/2 z-50 flex-col gap-3">
+      {sections.map(({ id, number, title }) => {
+        const isActive = active === id
+        return (
+          <a
+            key={id}
+            href={`#${id}`}
+            className={[
+              'group flex items-center gap-2 transition-all duration-300',
+              isActive ? 'opacity-100' : 'opacity-40 hover:opacity-70',
+            ].join(' ')}
+          >
+            <span
+              className={[
+                'font-mono text-[10px] font-bold transition-colors duration-300',
+                isActive ? 'text-sky-400' : 'text-slate-600 group-hover:text-slate-400',
+              ].join(' ')}
+            >
+              {number}
+            </span>
+            <span
+              className={[
+                'text-[10px] tracking-wider uppercase transition-all duration-300 overflow-hidden whitespace-nowrap',
+                isActive
+                  ? 'max-w-40 text-white opacity-100'
+                  : 'max-w-0 opacity-0 group-hover:max-w-40 group-hover:opacity-100 text-slate-400',
+              ].join(' ')}
+            >
+              {title}
+            </span>
+            <span
+              className={[
+                'h-px transition-all duration-300',
+                isActive ? 'w-6 bg-sky-400' : 'w-2 bg-slate-700 group-hover:w-4 group-hover:bg-slate-500',
+              ].join(' ')}
+            />
+          </a>
+        )
+      })}
+    </nav>
   )
 }
 
@@ -75,56 +173,118 @@ export default function StrategyPage() {
     <>
       <title>Strategy Documentation — NanuqFi</title>
 
-      <main className="max-w-4xl mx-auto px-6 py-20">
-        {/* -------------------------------------------------------- */}
-        {/*  Header                                                   */}
-        {/* -------------------------------------------------------- */}
-        <FadeIn>
-          <header className="mb-20">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-3">
-              NanuqFi Strategy Documentation
-            </h1>
-            <p className="text-lg text-slate-400 mb-6">
-              Submitted for Ranger Build-A-Bear Hackathon — April 2026
-            </p>
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-mono text-slate-500">
-              <span>
-                Protocol:{' '}
-                <a
-                  href="https://nanuqfi.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-slate-400 hover:text-white transition-colors"
-                >
-                  nanuqfi.com
-                </a>
-              </span>
-              <span className="hidden sm:inline text-slate-700">|</span>
-              <span>
-                GitHub:{' '}
-                <a
-                  href="https://github.com/nanuqfi"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-slate-400 hover:text-white transition-colors"
-                >
-                  github.com/nanuqfi
-                </a>
-              </span>
-              <span className="hidden sm:inline text-slate-700">|</span>
-              <span>
-                Program:{' '}
-                <span className="text-slate-400">2QtJ5k...5z5P</span>
-              </span>
-            </div>
-          </header>
-        </FadeIn>
+      <StickyNav />
 
-        {/* -------------------------------------------------------- */}
+      <main className="max-w-4xl mx-auto px-6 lg:px-8">
+        {/* ======================================================== */}
+        {/*  Hero Header                                              */}
+        {/* ======================================================== */}
+        <section className="relative pt-20 pb-16 mb-8 overflow-hidden">
+          {/* Radial glow background */}
+          <div
+            className="pointer-events-none absolute inset-0 z-0"
+            aria-hidden="true"
+          >
+            <div
+              className="absolute top-1/3 left-1/2 w-[90vw] h-[60vh] -translate-x-1/2 -translate-y-1/2"
+              style={{
+                background:
+                  'radial-gradient(ellipse, rgba(14,165,233,0.08) 0%, rgba(8,11,17,0) 65%)',
+              }}
+            />
+          </div>
+
+          <div className="relative z-10">
+            <FadeIn>
+              {/* Hackathon badge */}
+              <span className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-sky-500/20 bg-sky-500/[0.03] backdrop-blur-md">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
+                <span className="text-[10px] font-mono text-sky-300/80 tracking-wider uppercase">
+                  Ranger Build-A-Bear Hackathon — April 2026
+                </span>
+              </span>
+
+              {/* Title */}
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-[0.95] tracking-tight mb-4">
+                <span className="bg-gradient-to-br from-[#0EA5E9] via-sky-200 to-white bg-clip-text text-transparent">
+                  NanuqFi
+                </span>
+              </h1>
+              <p className="text-xl md:text-2xl text-slate-400 font-light mb-3">
+                Strategy Documentation
+              </p>
+
+              {/* Subtitle links */}
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-mono text-slate-500 mb-12">
+                <span>
+                  Protocol:{' '}
+                  <a
+                    href="https://nanuqfi.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-400 hover:text-white transition-colors"
+                  >
+                    nanuqfi.com
+                  </a>
+                </span>
+                <span className="hidden sm:inline text-slate-700">|</span>
+                <span>
+                  GitHub:{' '}
+                  <a
+                    href="https://github.com/nanuqfi"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-slate-400 hover:text-white transition-colors"
+                  >
+                    github.com/nanuqfi
+                  </a>
+                </span>
+                <span className="hidden sm:inline text-slate-700">|</span>
+                <span>
+                  Program:{' '}
+                  <span className="text-slate-400">2QtJ5k...5z5P</span>
+                </span>
+              </div>
+            </FadeIn>
+
+            {/* Hero stat callouts */}
+            <FadeIn delay={150}>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { value: '540', label: 'Tests' },
+                  { value: '27', label: 'Instructions' },
+                  { value: '3', label: 'Protocols' },
+                  { value: '16.1%', label: 'CAGR' },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="relative p-5 rounded-2xl border border-white/[0.04] bg-white/[0.015] text-center group hover:border-white/[0.08] transition-colors"
+                  >
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-sky-500/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <p className="font-mono text-3xl md:text-4xl font-bold text-white relative">
+                      {stat.value}
+                    </p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-1 relative">
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </FadeIn>
+          </div>
+
+          {/* Bottom fade */}
+          <div
+            className="pointer-events-none absolute bottom-0 left-0 z-10 h-16 w-full bg-gradient-to-t from-[#080B11] to-transparent"
+            aria-hidden="true"
+          />
+        </section>
+
+        {/* ======================================================== */}
         {/*  Section 1: Strategy Thesis                               */}
-        {/* -------------------------------------------------------- */}
+        {/* ======================================================== */}
         <FadeIn>
-          <section className="mb-20">
+          <section id="thesis" className="scroll-mt-20">
             <SectionHeading number="01" title="Strategy Thesis" />
 
             <p className="text-slate-300 leading-relaxed mb-6">
@@ -195,11 +355,13 @@ export default function StrategyPage() {
           </section>
         </FadeIn>
 
-        {/* -------------------------------------------------------- */}
+        <SectionDivider />
+
+        {/* ======================================================== */}
         {/*  Section 2: Operational Mechanics                         */}
-        {/* -------------------------------------------------------- */}
+        {/* ======================================================== */}
         <FadeIn>
-          <section className="mb-20">
+          <section id="mechanics" className="scroll-mt-20">
             <SectionHeading number="02" title="Operational Mechanics" />
 
             <p className="text-slate-400 mb-8">
@@ -207,7 +369,7 @@ export default function StrategyPage() {
             </p>
 
             {/* Flow steps */}
-            <div className="space-y-4 mb-10">
+            <div className="space-y-4 mb-12">
               {[
                 {
                   step: '1',
@@ -263,6 +425,88 @@ export default function StrategyPage() {
                   </div>
                 </GlassCard>
               ))}
+            </div>
+
+            {/* ---- 3-Layer Validation Flow Diagram ---- */}
+            <h3 className="text-lg font-semibold text-white mb-6">
+              Three-Layer Validation
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-0 mb-12">
+              {[
+                {
+                  label: 'AI Layer',
+                  desc: 'Claude assesses market conditions, rate sustainability, and protocol health',
+                  accent: 'sky',
+                  icon: Cpu,
+                },
+                {
+                  label: 'Algorithm',
+                  desc: 'Scoring matrix validates proposal against rate, volatility, TVL, and risk thresholds',
+                  accent: 'emerald',
+                  icon: Shield,
+                },
+                {
+                  label: 'On-Chain',
+                  desc: 'Anchor program enforces guardrails — drawdown caps, whitelist, weight limits',
+                  accent: 'amber',
+                  icon: Link2,
+                },
+              ].map((layer, i) => {
+                const Icon = layer.icon
+                const borderColor =
+                  layer.accent === 'sky'
+                    ? 'border-sky-500/30'
+                    : layer.accent === 'emerald'
+                      ? 'border-emerald-500/30'
+                      : 'border-amber-500/30'
+                const iconColor =
+                  layer.accent === 'sky'
+                    ? 'text-sky-400'
+                    : layer.accent === 'emerald'
+                      ? 'text-emerald-400'
+                      : 'text-amber-400'
+                const glowBg =
+                  layer.accent === 'sky'
+                    ? 'from-sky-500/5'
+                    : layer.accent === 'emerald'
+                      ? 'from-emerald-500/5'
+                      : 'from-amber-500/5'
+
+                return (
+                  <div key={layer.label} className="flex items-stretch">
+                    <div
+                      className={[
+                        'flex-1 p-5 border backdrop-blur-md rounded-2xl relative overflow-hidden',
+                        borderColor,
+                        'bg-white/[0.02]',
+                      ].join(' ')}
+                    >
+                      <div
+                        className={`absolute inset-0 bg-gradient-to-b ${glowBg} to-transparent opacity-50`}
+                      />
+                      <div className="relative">
+                        <Icon className={`w-5 h-5 ${iconColor} mb-3`} />
+                        <p className="text-white font-semibold text-sm mb-1">
+                          {layer.label}
+                        </p>
+                        <p className="text-xs text-slate-400 leading-relaxed">
+                          {layer.desc}
+                        </p>
+                      </div>
+                    </div>
+                    {i < 2 && (
+                      <div className="hidden md:flex items-center px-2">
+                        <ArrowRight className="w-4 h-4 text-slate-600" />
+                      </div>
+                    )}
+                    {i < 2 && (
+                      <div className="flex md:hidden justify-center py-2">
+                        <ArrowRight className="w-4 h-4 text-slate-600 rotate-90" />
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
             </div>
 
             {/* Protocol Integrations */}
@@ -324,11 +568,13 @@ export default function StrategyPage() {
           </section>
         </FadeIn>
 
-        {/* -------------------------------------------------------- */}
+        <SectionDivider />
+
+        {/* ======================================================== */}
         {/*  Section 3: Risk Management                               */}
-        {/* -------------------------------------------------------- */}
+        {/* ======================================================== */}
         <FadeIn>
-          <section className="mb-20">
+          <section id="risk" className="scroll-mt-20">
             <SectionHeading number="03" title="Risk Management" />
 
             <p className="text-slate-400 mb-6">
@@ -443,7 +689,7 @@ export default function StrategyPage() {
                 </ul>
               </div>
 
-              {/* Stress Test */}
+              {/* Stress Test — kept as reference bullet list */}
               <GlassCard className="p-6 border-l-2 border-l-amber-500/40">
                 <h3 className="text-lg font-semibold text-white mb-3">
                   Stress Test: Drift Protocol Hack
@@ -472,21 +718,148 @@ export default function StrategyPage() {
           </section>
         </FadeIn>
 
-        {/* -------------------------------------------------------- */}
-        {/*  Section 4: Performance                                   */}
-        {/* -------------------------------------------------------- */}
+        <SectionDivider />
+
+        {/* ======================================================== */}
+        {/*  Drift Hack Survival — Dramatic Feature Section           */}
+        {/* ======================================================== */}
         <FadeIn>
-          <section className="mb-20">
+          <section className="relative -mx-6 lg:-mx-8 px-6 lg:px-8 py-16 mb-0 overflow-hidden scroll-mt-20">
+            {/* Red gradient background */}
+            <div
+              className="pointer-events-none absolute inset-0 z-0"
+              aria-hidden="true"
+            >
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(180deg, rgba(239,68,68,0.06) 0%, rgba(239,68,68,0.02) 40%, transparent 100%)',
+                }}
+              />
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/20 to-transparent" />
+            </div>
+
+            <div className="relative z-10 max-w-4xl mx-auto">
+              <div className="flex items-center gap-2 mb-4">
+                <AlertTriangle className="w-4 h-4 text-red-400/80" />
+                <span className="text-[10px] font-mono text-red-400/60 uppercase tracking-widest">
+                  Live Stress Test
+                </span>
+              </div>
+
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight mb-8">
+                $285M Exploit.{' '}
+                <span className="bg-gradient-to-r from-emerald-400 to-emerald-300 bg-clip-text text-transparent">
+                  Zero User Capital Lost.
+                </span>
+              </h2>
+
+              {/* Timeline */}
+              <div className="space-y-6 mb-8">
+                {[
+                  {
+                    time: 'April 1, 2026',
+                    event: 'Drift Protocol hacked — $285M exploit',
+                    color: 'bg-red-500',
+                  },
+                  {
+                    time: 'Hours later',
+                    event: 'Full pivot to Kamino / Marginfi / Lulo — protocol-agnostic architecture enabled instant migration',
+                    color: 'bg-amber-500',
+                  },
+                  {
+                    time: 'Result',
+                    event: 'Architecture proven under real-world adversarial conditions. Generic allocate_to_protocol replaced all Drift-specific code.',
+                    color: 'bg-emerald-500',
+                  },
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-4 items-start">
+                    <div className="flex flex-col items-center gap-1 pt-1.5">
+                      <span className={`w-2.5 h-2.5 rounded-full ${item.color} shrink-0`} />
+                      {i < 2 && <span className="w-px h-8 bg-white/10" />}
+                    </div>
+                    <div>
+                      <p className="text-xs font-mono text-slate-500 mb-1">
+                        {item.time}
+                      </p>
+                      <p className="text-slate-300 leading-relaxed text-sm">
+                        {item.event}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <p className="text-xs text-slate-500 border-t border-white/5 pt-4">
+                This is not a hypothetical scenario. This happened during active development, validating the core
+                architectural thesis: protocol-agnostic design survives protocol failure.
+              </p>
+            </div>
+          </section>
+        </FadeIn>
+
+        <SectionDivider />
+
+        {/* ======================================================== */}
+        {/*  Section 4: Performance                                   */}
+        {/* ======================================================== */}
+        <FadeIn>
+          <section id="performance" className="scroll-mt-20">
             <SectionHeading number="04" title="Performance" />
 
-            <h3 className="text-lg font-semibold text-white mb-4">
+            <h3 className="text-lg font-semibold text-white mb-6">
               Backtest Results
               <span className="text-sm font-normal text-slate-500 ml-2">
                 90-day simulation
               </span>
             </h3>
 
-            {/* Metrics table */}
+            {/* ---- Hero Metric Cards ---- */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+              {/* CAGR */}
+              <div className="relative p-6 rounded-2xl border border-sky-500/20 bg-sky-500/[0.03] text-center overflow-hidden group">
+                <div
+                  className="absolute inset-0 opacity-30"
+                  style={{
+                    background:
+                      'radial-gradient(circle at 50% 80%, rgba(14,165,233,0.15) 0%, transparent 70%)',
+                  }}
+                />
+                <p className="text-xs text-slate-500 uppercase tracking-wider mb-2 relative">CAGR</p>
+                <p className="font-mono text-4xl md:text-5xl font-black text-sky-400 relative" style={{ textShadow: '0 0 30px rgba(14,165,233,0.3)' }}>
+                  16.1%
+                </p>
+                <p className="text-xs text-slate-500 mt-2 relative">vs 5.5% single-protocol baseline</p>
+              </div>
+
+              {/* Sharpe */}
+              <div className="relative p-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] text-center overflow-hidden">
+                <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Sharpe Ratio</p>
+                <p className="font-mono text-4xl md:text-5xl font-black text-white">
+                  2.95
+                </p>
+                <p className="text-xs text-slate-500 mt-2">&gt; 1.0 is considered good</p>
+              </div>
+
+              {/* Max Drawdown */}
+              <div className="relative p-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.03] text-center overflow-hidden">
+                <div
+                  className="absolute inset-0 opacity-30"
+                  style={{
+                    background:
+                      'radial-gradient(circle at 50% 80%, rgba(16,185,129,0.1) 0%, transparent 70%)',
+                  }}
+                />
+                <p className="text-xs text-slate-500 uppercase tracking-wider mb-2 relative">Max Drawdown</p>
+                <p className="font-mono text-4xl md:text-5xl font-black text-emerald-400 relative">
+                  1.89%
+                </p>
+                <p className="text-xs text-slate-500 mt-2 relative">worst peak-to-trough</p>
+              </div>
+            </div>
+
+            {/* Comparison table (supporting detail) */}
             <GlassCard className="p-0 mb-6 overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
@@ -572,11 +945,13 @@ export default function StrategyPage() {
           </section>
         </FadeIn>
 
-        {/* -------------------------------------------------------- */}
+        <SectionDivider />
+
+        {/* ======================================================== */}
         {/*  Section 5: Technical Architecture                        */}
-        {/* -------------------------------------------------------- */}
+        {/* ======================================================== */}
         <FadeIn>
-          <section className="mb-20">
+          <section id="architecture" className="scroll-mt-20">
             <SectionHeading number="05" title="Technical Architecture" />
 
             <p className="text-slate-400 mb-6">
@@ -643,32 +1018,93 @@ export default function StrategyPage() {
           </section>
         </FadeIn>
 
-        {/* -------------------------------------------------------- */}
-        {/*  Section 6: Links                                         */}
-        {/* -------------------------------------------------------- */}
+        <SectionDivider />
+
+        {/* ======================================================== */}
+        {/*  Technical Credibility Bar                                 */}
+        {/* ======================================================== */}
         <FadeIn>
-          <section className="mb-20">
+          <section className="mb-0">
+            <div className="rounded-2xl border border-white/[0.04] bg-white/[0.015] p-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {[
+                  { icon: CheckCircle2, value: '540', label: 'tests passing', color: 'text-emerald-400' },
+                  { icon: Shield, value: '27', label: 'on-chain instructions', color: 'text-sky-400' },
+                  { icon: Zap, value: '4', label: 'repositories', color: 'text-amber-400' },
+                  { icon: Activity, value: 'Green', label: 'CI/CD pipeline', color: 'text-emerald-400' },
+                ].map((item) => {
+                  const Icon = item.icon
+                  return (
+                    <div key={item.label} className="flex items-center gap-3">
+                      <Icon className={`w-5 h-5 ${item.color} shrink-0`} />
+                      <div>
+                        <p className="font-mono text-sm font-bold text-white">
+                          {item.value}
+                        </p>
+                        <p className="text-[10px] text-slate-500 uppercase tracking-wider">
+                          {item.label}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
+        </FadeIn>
+
+        <SectionDivider />
+
+        {/* ======================================================== */}
+        {/*  Section 6: Links — CTA Grid                              */}
+        {/* ======================================================== */}
+        <FadeIn>
+          <section id="links" className="scroll-mt-20">
             <SectionHeading number="06" title="Links" />
 
-            <div className="space-y-2">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {links.map((link) => {
                 const Icon = link.icon
+                const isLive = link.label === 'Dashboard' || link.label === 'AI Activity Log'
                 return (
                   <a
                     key={link.label}
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-sm text-slate-400 hover:text-white transition-colors group py-2"
+                    className={[
+                      'group relative p-5 rounded-2xl border transition-all duration-300',
+                      'hover:scale-[1.02] hover:-translate-y-0.5',
+                      isLive
+                        ? 'border-sky-500/20 bg-sky-500/[0.03] hover:border-sky-500/40 hover:shadow-[0_0_20px_rgba(14,165,233,0.1)]'
+                        : 'border-white/[0.04] bg-white/[0.015] hover:border-white/[0.1] hover:shadow-[0_0_20px_rgba(255,255,255,0.03)]',
+                    ].join(' ')}
                   >
-                    <Icon className="w-4 h-4 text-slate-600 group-hover:text-sky-400 transition-colors" />
-                    <span className="font-medium text-slate-300 group-hover:text-white transition-colors">
-                      {link.label}
-                    </span>
-                    <span className="font-mono text-xs text-slate-600 group-hover:text-slate-400 transition-colors">
-                      {link.href.replace('https://', '')}
-                    </span>
-                    <ExternalLink className="w-3 h-3 text-slate-700 group-hover:text-slate-500 transition-colors ml-auto" />
+                    <div className="flex items-start gap-3">
+                      <Icon
+                        className={[
+                          'w-5 h-5 shrink-0 mt-0.5 transition-colors',
+                          isLive
+                            ? 'text-sky-400 group-hover:text-sky-300'
+                            : 'text-slate-500 group-hover:text-white',
+                        ].join(' ')}
+                      />
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-white flex items-center gap-2">
+                          {link.label}
+                          {isLive && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
+                          )}
+                        </p>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {link.desc}
+                        </p>
+                        <p className="font-mono text-[10px] text-slate-600 mt-1.5 truncate">
+                          {link.href.replace('https://', '')}
+                        </p>
+                      </div>
+                    </div>
+                    <ExternalLink className="absolute top-4 right-4 w-3 h-3 text-slate-700 group-hover:text-slate-500 transition-colors" />
                   </a>
                 )
               })}
@@ -676,17 +1112,20 @@ export default function StrategyPage() {
           </section>
         </FadeIn>
 
-        {/* -------------------------------------------------------- */}
+        {/* ======================================================== */}
         {/*  Footer                                                   */}
-        {/* -------------------------------------------------------- */}
-        <footer className="border-t border-white/5 pt-8 pb-12 text-center">
-          <span className="text-sm font-semibold tracking-wide text-slate-500 uppercase">
-            Nanuq<span className="text-sky-500">Fi</span>
-          </span>
-          <p className="text-xs text-slate-600 mt-2">
-            Yield, Routed. Built on Solana.
-          </p>
-        </footer>
+        {/* ======================================================== */}
+        <div className="mt-24 mb-12">
+          <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-8" />
+          <footer className="text-center">
+            <span className="text-sm font-semibold tracking-wide text-slate-500 uppercase">
+              Nanuq<span className="text-sky-500">Fi</span>
+            </span>
+            <p className="text-xs text-slate-600 mt-2">
+              Yield, Routed. Built on Solana.
+            </p>
+          </footer>
+        </div>
       </main>
     </>
   )
