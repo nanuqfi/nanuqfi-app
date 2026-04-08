@@ -8,6 +8,8 @@ import {
   mockVaults,
   formatUsd,
   formatApy,
+  formatDailyEarnings,
+  normalizeApy,
   getTotalTvl,
   getWeightedApy,
 } from '@/lib/mock-data'
@@ -58,8 +60,6 @@ export function PortfolioSummary() {
       : getTotalTvl()
 
   // APY: keeper API > mock (on-chain doesn't store APY)
-  // Keeper may return APY as percentage (e.g. 6.5) or decimal (0.065) — normalize to decimal
-  const normalizeApy = (v: number) => v > 1 ? v / 100 : v
   const modApy = normalizeApy(modKeeper.data?.apy ?? modMock?.apy ?? 0)
   const aggApy = normalizeApy(aggKeeper.data?.apy ?? aggMock?.apy ?? 0)
 
@@ -99,9 +99,7 @@ export function PortfolioSummary() {
           <div className="absolute -left-2 top-0 h-full w-[2px] bg-sky-500 blur-[2px] hidden sm:block" />
           <p className="text-xs text-sky-400/80 uppercase tracking-wider">Daily Earnings</p>
           <p className="text-3xl font-mono tabular-nums text-sky-400">
-            {dailyEarnings < 0.01 && dailyEarnings > 0
-              ? `$${dailyEarnings.toFixed(4)}`
-              : formatUsd(dailyEarnings)}
+            {formatDailyEarnings(dailyEarnings)}
             <span className="text-sm text-sky-400/60 ml-1">/day</span>
           </p>
         </div>

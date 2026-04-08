@@ -127,6 +127,19 @@ export const mockYields: YieldSource[] = [
   { name: 'Lulo Yield', slug: 'lulo-lending', currentApy: 0.0829, protocol: 'Lulo' },
 ]
 
+// Utility: normalize APY — keeper may return percentage (6.5) or decimal (0.065)
+export function normalizeApy(v: number): number {
+  return v > 1 ? v / 100 : v
+}
+
+// Utility: format daily earnings (small amounts need precision)
+export function formatDailyEarnings(amount: number): string {
+  if (amount <= 0) return '$0.00'
+  if (amount < 0.01) return `$${amount.toFixed(4)}`
+  if (amount < 1) return `$${amount.toFixed(2)}`
+  return formatUsd(amount)
+}
+
 // Utility: format dollar amounts
 export function formatUsd(amount: number): string {
   return new Intl.NumberFormat('en-US', {

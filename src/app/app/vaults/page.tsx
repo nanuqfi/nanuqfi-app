@@ -8,11 +8,14 @@ import { ConfidenceBar } from '@/components/ui/confidence-bar'
 import { ProtocolBar } from '@/components/app/protocol-bar'
 import { GuardrailCard } from '@/components/app/guardrail-card'
 import { useVaultData } from '@/hooks/use-keeper-api'
+import { useRiskVault } from '@/hooks/use-allocator'
 import {
   mockVaults,
   mockYields,
   formatUsd,
   formatApy,
+  formatDailyEarnings,
+  normalizeApy,
   sourceDisplayName,
   type RiskLevel,
   type Vault,
@@ -48,6 +51,12 @@ const tierConfig: Record<RiskLevel, {
   },
 }
 
+const RISK_LEVEL_INDEX: Record<RiskLevel, number> = {
+  conservative: 0,
+  moderate: 1,
+  aggressive: 2,
+}
+
 const protocolColors: Record<string, string> = {
   'kamino-lending': 'text-sky-400',
   'marginfi-lending': 'text-violet-400',
@@ -68,12 +77,16 @@ function Skeleton({ className = '' }: { className?: string }) {
 
 function VaultColumn({ vault }: { vault: Vault }) {
   const keeper = useVaultData(vault.riskLevel)
+  const onChain = useRiskVault(RISK_LEVEL_INDEX[vault.riskLevel])
   const config = tierConfig[vault.riskLevel]
 
-  const tvl = keeper.data?.tvl ?? vault.tvl
-  const apy = keeper.data?.apy ?? vault.apy
+  // Data cascade: on-chain > keeper > mock
+  const tvl = onChain.data
+    ? Number(onChain.data.totalAssets) / 1e6
+    : keeper.data?.tvl ?? vault.tvl
+  const apy = normalizeApy(keeper.data?.apy ?? vault.apy)
   const weights = keeper.data?.weights ?? vault.weights
-  const dailyEarnings = tvl * (apy / 365)
+  const dailyEarnings = tvl * apy / 365
   const drawdown = vault.guardrails.maxDrawdown
 
   return (
@@ -105,7 +118,7 @@ function VaultColumn({ vault }: { vault: Vault }) {
             <Skeleton className="h-5 w-16" />
           ) : (
             <span className="font-mono text-sm text-slate-200">
-              {formatUsd(dailyEarnings)}/day
+              {formatDailyEarnings(dailyEarnings)}/day
             </span>
           )}
         </div>
@@ -161,6 +174,13 @@ function VaultColumn({ vault }: { vault: Vault }) {
           </Button>
         </Link>
       </div>
+
+      {/* Coming soon overlay for inactive vaults */}
+      {vault.riskLevel === 'conservative' && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-slate-900/80 backdrop-blur-sm">
+          <span className="text-sm font-medium text-slate-400 uppercase tracking-wider">Coming Soon</span>
+        </div>
+      )}
     </GlassCard>
   )
 }
