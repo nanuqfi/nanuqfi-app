@@ -127,14 +127,17 @@ export const mockYields: YieldSource[] = [
   { name: 'Lulo Yield', slug: 'lulo-lending', currentApy: 0.0829, protocol: 'Lulo' },
 ]
 
-// Utility: normalize APY — keeper may return percentage (6.5) or decimal (0.065)
+// Utility: normalize APY — keeper may return percentage (6.5) or decimal (0.065).
+// Assumes any value > 1 is a percentage. Values in [1.0, 1.99] are ambiguous —
+// keeper contract guarantees decimal format for APYs in this range.
 export function normalizeApy(v: number): number {
+  if (!Number.isFinite(v)) return 0
   return v > 1 ? v / 100 : v
 }
 
 // Utility: format daily earnings (small amounts need precision)
 export function formatDailyEarnings(amount: number): string {
-  if (amount <= 0) return '$0.00'
+  if (!Number.isFinite(amount) || amount <= 0) return '$0.00'
   if (amount < 0.01) return `$${amount.toFixed(4)}`
   if (amount < 1) return `$${amount.toFixed(2)}`
   return formatUsd(amount)
@@ -183,7 +186,7 @@ export function getTotalTvl(): number {
 export function getWeightedApy(): number {
   const totalTvl = getTotalTvl()
   if (totalTvl === 0) return 0
-  return mockVaults.reduce((sum, v) => sum + v.apy * v.tvl, 0) / totalTvl
+  return mockVaults.reduce((sum, v) => sum + normalizeApy(v.apy) * v.tvl, 0) / totalTvl
 }
 
 // Utility: source display name

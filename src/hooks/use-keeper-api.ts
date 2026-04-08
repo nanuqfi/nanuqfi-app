@@ -294,7 +294,8 @@ export function useAllDecisions(): KeeperHookResult<KeeperDecisionData[]> {
   const data = useMemo(() => {
     if (!raw.data) return null
     const arr = Array.isArray(raw.data) ? raw.data : [raw.data]
-    // Deduplicate by timestamp (keeper sends one per risk level per cycle)
+    // Sort newest-first, then deduplicate by timestamp
+    arr.sort((a, b) => b.timestamp - a.timestamp)
     const seen = new Set<number>()
     const unique = arr.filter(d => {
       if (seen.has(d.timestamp)) return false

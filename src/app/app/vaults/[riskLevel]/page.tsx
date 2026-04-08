@@ -19,6 +19,8 @@ import {
   mockYields,
   formatUsd,
   formatApy,
+  formatDailyEarnings,
+  normalizeApy,
   sourceDisplayName,
   type RiskLevel,
   type KeeperDecision,
@@ -96,9 +98,9 @@ function VaultDetailContent({
   const tvl = onChain.data
     ? Number(onChain.data.totalAssets) / 1e6
     : keeper.data?.tvl ?? mockVault?.tvl ?? 0
-  const apy = keeper.data?.apy ?? mockVault?.apy ?? 0
+  const apy = normalizeApy(keeper.data?.apy ?? mockVault?.apy ?? 0)
   const weights = keeper.data?.weights ?? mockVault?.weights ?? {}
-  const dailyEarnings = (tvl * apy) / 365
+  const dailyEarnings = tvl * apy / 365
 
   // Wallet balance in USDC (human-readable)
   const walletBalance = usdcBalance.data !== null
@@ -163,7 +165,7 @@ function VaultDetailContent({
           <div className="w-px h-8 bg-white/10" />
           <div className="text-center px-4">
             <p className="text-[11px] text-slate-500 uppercase tracking-widest mb-0.5">Daily</p>
-            <p className="text-lg font-bold font-mono text-slate-200">${dailyEarnings.toFixed(2)}</p>
+            <p className="text-lg font-bold font-mono text-slate-200">{formatDailyEarnings(dailyEarnings)}</p>
           </div>
           <div className="w-px h-8 bg-white/10" />
           <div className="text-center px-4">

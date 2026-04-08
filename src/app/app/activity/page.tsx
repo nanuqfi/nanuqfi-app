@@ -91,11 +91,12 @@ export default function ActivityPage() {
       }))
       const merged = [...moderate, ...aggressive]
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-      // Deduplicate by timestamp (same keeper cycle produces entries for both vaults)
+      // Deduplicate: same vault + same timestamp = true duplicate
       const seen = new Set<string>()
       return merged.filter(d => {
-        if (seen.has(d.timestamp)) return false
-        seen.add(d.timestamp)
+        const key = `${d.timestamp}-${d.vault}`
+        if (seen.has(key)) return false
+        seen.add(key)
         return true
       })
     }

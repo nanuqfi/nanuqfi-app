@@ -16,14 +16,12 @@ import {
   type RiskLevel,
 } from '@/lib/mock-data'
 
-const VAULT_DEPOSITS: Record<RiskLevel, number> = {
-  conservative: 0,
+const VAULT_DEPOSITS: Record<string, number> = {
   moderate: 210,
   aggressive: 50,
 }
 
-const VAULT_CONFIDENCE: Record<RiskLevel, number> = {
-  conservative: 92,
+const VAULT_CONFIDENCE: Record<string, number> = {
   moderate: 87,
   aggressive: 74,
 }
@@ -53,8 +51,7 @@ export default function DashboardPage() {
   const moderateVault = useVaultWithFallback('moderate')
   const aggressiveVault = useVaultWithFallback('aggressive')
 
-  const vaults: Record<RiskLevel, Vault> = {
-    conservative: moderateVault, // unused, conservative filtered out
+  const vaults: Record<string, Vault> = {
     moderate: moderateVault,
     aggressive: aggressiveVault,
   }

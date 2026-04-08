@@ -175,12 +175,24 @@ function VaultColumn({ vault }: { vault: Vault }) {
         </Link>
       </div>
 
-      {/* Coming soon overlay for inactive vaults */}
-      {vault.riskLevel === 'conservative' && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-slate-900/80 backdrop-blur-sm">
-          <span className="text-sm font-medium text-slate-400 uppercase tracking-wider">Coming Soon</span>
-        </div>
-      )}
+    </GlassCard>
+  )
+}
+
+// ─── Conservative Placeholder (no hooks, no RPC calls) ─────────────────────
+
+function ConservativePlaceholder() {
+  return (
+    <GlassCard
+      tier="conservative"
+      className="relative flex flex-col p-0 overflow-hidden"
+    >
+      <div className="bg-gradient-to-b from-emerald-500/10 to-transparent px-6 pt-5 pb-4">
+        <Badge tier="conservative" />
+      </div>
+      <div className="flex-1 flex items-center justify-center py-20">
+        <span className="text-sm font-medium text-slate-400 uppercase tracking-wider">Coming Soon</span>
+      </div>
     </GlassCard>
   )
 }
@@ -315,9 +327,13 @@ export default function VaultsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {vaults.map(vault => (
-            <VaultColumn key={vault.riskLevel} vault={vault} />
-          ))}
+          {vaults.map(vault =>
+            vault.riskLevel === 'conservative' ? (
+              <ConservativePlaceholder key={vault.riskLevel} />
+            ) : (
+              <VaultColumn key={vault.riskLevel} vault={vault} />
+            )
+          )}
         </div>
       </section>
 
