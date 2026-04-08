@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { GlassCard } from '@/components/ui/glass-card'
 import { Badge } from '@/components/ui/badge'
 import { ConfidenceBar } from '@/components/ui/confidence-bar'
-import { formatUsd, formatApy, type Vault } from '@/lib/mock-data'
+import { formatUsd, formatApy, formatDailyEarnings, normalizeApy, type Vault } from '@/lib/mock-data'
 
 const tierGlow: Record<string, string> = {
   conservative: 'from-emerald-500/20',
@@ -26,7 +26,8 @@ interface VaultCardProps {
 
 export function VaultCard({ vault, deposited, confidence }: VaultCardProps) {
   const hasPosition = deposited !== undefined && deposited > 0
-  const dailyProjection = vault.tvl * (vault.apy / 365)
+  const apy = normalizeApy(vault.apy)
+  const dailyProjection = vault.tvl * apy / 365
 
   return (
     <Link href={`/app/vaults/${vault.riskLevel}`}>
@@ -38,7 +39,7 @@ export function VaultCard({ vault, deposited, confidence }: VaultCardProps) {
         <div className="flex items-center justify-between">
           <Badge tier={vault.riskLevel} />
           <span className="text-3xl font-mono tabular-nums text-white">
-            {formatApy(vault.apy)}
+            {formatApy(apy)}
           </span>
         </div>
 
@@ -47,7 +48,7 @@ export function VaultCard({ vault, deposited, confidence }: VaultCardProps) {
           <div className="flex items-center justify-between border-b border-white/5 pb-3">
             <span className="text-xs text-slate-400">Daily Projection</span>
             <span className="font-mono text-sm text-slate-200">
-              {formatUsd(dailyProjection)}
+              {formatDailyEarnings(dailyProjection)}
             </span>
           </div>
 

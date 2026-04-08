@@ -89,8 +89,16 @@ export default function ActivityPage() {
         ...d,
         vault: 'aggressive' as RiskLevel,
       }))
-      return [...moderate, ...aggressive]
+      const merged = [...moderate, ...aggressive]
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      // Deduplicate: same vault + same timestamp = true duplicate
+      const seen = new Set<string>()
+      return merged.filter(d => {
+        const key = `${d.timestamp}-${d.vault}`
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
     }
 
     return mockDecisions

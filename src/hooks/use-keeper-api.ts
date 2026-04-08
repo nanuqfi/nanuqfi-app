@@ -223,10 +223,18 @@ export function useKeeperDecisions(
     `/v1/vaults/${riskLevel}/decisions`
   )
 
-  const data = useMemo(
-    () => raw.data?.map(transformDecision) ?? null,
-    [raw.data]
-  )
+  const data = useMemo(() => {
+    if (!raw.data) return null
+    // Deduplicate by timestamp within vault
+    const seen = new Set<number>()
+    return raw.data
+      .filter(d => {
+        if (seen.has(d.timestamp)) return false
+        seen.add(d.timestamp)
+        return true
+      })
+      .map(transformDecision)
+  }, [raw.data])
 
   return { ...raw, data }
 }
@@ -248,7 +256,7 @@ interface RawGlobalDecision {
   }
 }
 
-function transformGlobalDecision(d: RawGlobalDecision): KeeperDecisionData {
+function transformGlobalDecision(d: RawGlobalDecision, prevWeights?: Record<string, number>): KeeperDecisionData {
   const weights = d.proposal?.weights ?? {}
 
   const topWeights = Object.entries(weights)
@@ -257,7 +265,7 @@ function transformGlobalDecision(d: RawGlobalDecision): KeeperDecisionData {
 
   const weightChanges = topWeights.map(([source, w]) => ({
     source,
-    from: 0,
+    from: Math.round((prevWeights?.[source] ?? 0) / 100),
     to: Math.round(w / 100),
   }))
 
@@ -285,9 +293,19 @@ export function useAllDecisions(): KeeperHookResult<KeeperDecisionData[]> {
 
   const data = useMemo(() => {
     if (!raw.data) return null
-    // Handle both array and single-object responses
     const arr = Array.isArray(raw.data) ? raw.data : [raw.data]
-    return arr.map(transformGlobalDecision)
+    // Sort newest-first, then deduplicate by timestamp
+    arr.sort((a, b) => b.timestamp - a.timestamp)
+    const seen = new Set<number>()
+    const unique = arr.filter(d => {
+      if (seen.has(d.timestamp)) return false
+      seen.add(d.timestamp)
+      return true
+    })
+    return unique.map((d, i) => {
+      const prevWeights = unique[i + 1]?.proposal?.weights
+      return transformGlobalDecision(d, prevWeights)
+    })
   }, [raw.data])
 
   return { ...raw, data }

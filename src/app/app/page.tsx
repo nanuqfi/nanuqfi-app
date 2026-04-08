@@ -11,23 +11,22 @@ import { useVaultData, useAllDecisions } from '@/hooks/use-keeper-api'
 import {
   mockVaults,
   mockDecisions,
+  normalizeApy,
   type Vault,
   type RiskLevel,
 } from '@/lib/mock-data'
 
-const VAULT_DEPOSITS: Record<RiskLevel, number> = {
-  conservative: 0,
+const VAULT_DEPOSITS: Record<string, number> = {
   moderate: 210,
   aggressive: 50,
 }
 
-const VAULT_CONFIDENCE: Record<RiskLevel, number> = {
-  conservative: 92,
+const VAULT_CONFIDENCE: Record<string, number> = {
   moderate: 87,
   aggressive: 74,
 }
 
-const ALL_RISK_LEVELS: RiskLevel[] = ['conservative', 'moderate', 'aggressive']
+const ACTIVE_RISK_LEVELS: RiskLevel[] = ['moderate', 'aggressive']
 
 function useVaultWithFallback(riskLevel: RiskLevel): Vault {
   const live = useVaultData(riskLevel)
@@ -36,7 +35,7 @@ function useVaultWithFallback(riskLevel: RiskLevel): Vault {
   return {
     riskLevel,
     tvl: live.data?.tvl ?? mock?.tvl ?? 0,
-    apy: live.data?.apy ?? mock?.apy ?? 0,
+    apy: normalizeApy(live.data?.apy ?? mock?.apy ?? 0),
     drawdown: live.data?.drawdown ?? mock?.drawdown ?? 0,
     weights: live.data?.weights ?? mock?.weights ?? {},
     guardrails: mock?.guardrails ?? {
@@ -49,11 +48,13 @@ function useVaultWithFallback(riskLevel: RiskLevel): Vault {
 }
 
 export default function DashboardPage() {
-  const conservativeVault = useVaultWithFallback('conservative')
   const moderateVault = useVaultWithFallback('moderate')
   const aggressiveVault = useVaultWithFallback('aggressive')
 
-  const vaults = [conservativeVault, moderateVault, aggressiveVault]
+  const vaults: Record<string, Vault> = {
+    moderate: moderateVault,
+    aggressive: aggressiveVault,
+  }
 
   const decisionsHook = useAllDecisions()
   const decisions = decisionsHook.data
@@ -80,11 +81,11 @@ export default function DashboardPage() {
       {/* Vault Cards */}
       <section>
         <h3 className="text-lg font-semibold text-white mb-4">Active Strategies</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {ALL_RISK_LEVELS.map((level, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {ACTIVE_RISK_LEVELS.map(level => (
             <VaultCard
               key={level}
-              vault={vaults[i]}
+              vault={vaults[level]}
               deposited={VAULT_DEPOSITS[level]}
               confidence={VAULT_CONFIDENCE[level]}
             />
