@@ -11,7 +11,7 @@ import { ProtocolBar } from '@/components/app/protocol-bar'
 import { GuardrailCard } from '@/components/app/guardrail-card'
 import { DecisionFeedItem } from '@/components/app/decision-feed-item'
 import { DepositForm } from '@/components/app/deposit-form'
-import { useRiskVault, useUsdcBalance } from '@/hooks/use-allocator'
+import { useRiskVault, useUserPosition, useUsdcBalance } from '@/hooks/use-allocator'
 import { useVaultData, useKeeperDecisions } from '@/hooks/use-keeper-api'
 import {
   mockVaults,
@@ -82,6 +82,7 @@ function VaultDetailContent({
 }) {
   // On-chain data
   const onChain = useRiskVault(riskLevelNum)
+  const userPosition = useUserPosition(riskLevelNum)
   const usdcBalance = useUsdcBalance()
 
   // Keeper API data
@@ -244,9 +245,18 @@ function VaultDetailContent({
           {/* Deposit Form */}
           <DepositForm
             riskLevel={riskLevel}
+            riskLevelNum={riskLevelNum}
             apy={apy}
             dailyEarnings={dailyEarnings}
             walletBalance={walletBalance}
+            shareMint={onChain.data?.shareMint}
+            userShares={userPosition.data?.shares}
+            redemptionPeriodSlots={onChain.data?.redemptionPeriodSlots}
+            onSuccess={() => {
+              onChain.refresh()
+              userPosition.refresh()
+              usdcBalance.refresh()
+            }}
           />
 
           {/* Guardrail Card */}

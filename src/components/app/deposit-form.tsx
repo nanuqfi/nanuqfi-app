@@ -1,37 +1,173 @@
 'use client'
 
-import { useState } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { useState, useCallback } from 'react'
+import { ArrowRight, Loader2 } from 'lucide-react'
+import { Transaction, type PublicKey } from '@solana/web3.js'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useConnection } from '@solana/wallet-adapter-react'
 import { GlassCard } from '@/components/ui/glass-card'
 import { AIContext } from '@/components/app/ai-context'
+import { useToast } from '@/components/ui/toast'
+import {
+  buildDepositInstruction,
+  buildRequestWithdrawInstruction,
+  buildWithdrawInstruction,
+} from '@/lib/transactions'
+import { parseAllocatorError } from '@/lib/errors'
 import type { RiskLevel } from '@/lib/mock-data'
+
+// ─── Types ──────────────────────────────────────────────────────────────────
 
 interface DepositFormProps {
   riskLevel: RiskLevel
+  riskLevelNum: number
   apy: number
   dailyEarnings: number
   walletBalance?: number
+  shareMint?: PublicKey
+  userShares?: bigint
+  redemptionPeriodSlots?: bigint
+  onSuccess?: () => void
 }
+
+// ─── Constants ──────────────────────────────────────────────────────────────
+
+const USDC_DECIMALS = 6
+
+// ─── Component ──────────────────────────────────────────────────────────────
 
 export function DepositForm({
   riskLevel,
+  riskLevelNum,
   apy,
   dailyEarnings,
   walletBalance,
+  shareMint,
+  userShares,
+  redemptionPeriodSlots,
+  onSuccess,
 }: DepositFormProps) {
   const [mode, setMode] = useState<'deposit' | 'withdraw'>('deposit')
   const [amount, setAmount] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const { publicKey, sendTransaction } = useWallet()
+  const { connection } = useConnection()
+  const { toast } = useToast()
 
   const parsedAmount = Number(amount) || 0
   const estimatedDaily = parsedAmount > 0
     ? (parsedAmount * apy) / 365
     : dailyEarnings
 
+  const isWalletConnected = !!publicKey
+  const isShareMintReady = !!shareMint
+  const canDeposit = isWalletConnected && isShareMintReady && parsedAmount > 0 && !loading
+  const canWithdraw = isWalletConnected && parsedAmount > 0 && !loading
+
+  // ─── Handlers ─────────────────────────────────────────────────────────────
+
   function handleMax() {
-    if (walletBalance !== undefined && walletBalance > 0) {
+    if (mode === 'deposit' && walletBalance !== undefined && walletBalance > 0) {
       setAmount(String(walletBalance))
+    } else if (mode === 'withdraw' && userShares !== undefined && userShares > 0n) {
+      // Convert shares back to approximate USDC for display
+      // Share price ~1:1 at initialization, so shares / 1e6 gives USDC
+      setAmount(String(Number(userShares) / 10 ** USDC_DECIMALS))
     }
   }
+
+  const handleDeposit = useCallback(async () => {
+    if (!publicKey || !shareMint || parsedAmount <= 0) return
+
+    setLoading(true)
+    try {
+      const amountInSmallestUnit = BigInt(Math.round(parsedAmount * 10 ** USDC_DECIMALS))
+
+      const instruction = await buildDepositInstruction(
+        publicKey,
+        riskLevelNum,
+        amountInSmallestUnit,
+        shareMint,
+      )
+
+      const tx = new Transaction().add(instruction)
+      const signature = await sendTransaction(tx, connection)
+
+      toast('Confirming transaction...', 'info')
+      await connection.confirmTransaction(signature, 'confirmed')
+
+      toast('Deposit confirmed!', 'success')
+      setAmount('')
+      onSuccess?.()
+    } catch (err) {
+      const message = parseAllocatorError(err)
+      toast(message, 'error')
+    } finally {
+      setLoading(false)
+    }
+  }, [publicKey, shareMint, parsedAmount, riskLevelNum, sendTransaction, connection, toast, onSuccess])
+
+  const handleWithdraw = useCallback(async () => {
+    if (!publicKey || parsedAmount <= 0) return
+
+    setLoading(true)
+    try {
+      // Convert entered USDC amount to shares
+      // For simplicity, treat 1 share = 1 USDC smallest unit at 1:1 price
+      const sharesAmount = BigInt(Math.round(parsedAmount * 10 ** USDC_DECIMALS))
+
+      const requestIx = await buildRequestWithdrawInstruction(
+        publicKey,
+        riskLevelNum,
+        sharesAmount,
+      )
+
+      const tx = new Transaction().add(requestIx)
+
+      // If redemption period is 0 (devnet), chain the complete-withdraw instruction too
+      const isInstantRedemption = redemptionPeriodSlots === 0n
+      if (isInstantRedemption && shareMint) {
+        const withdrawIx = await buildWithdrawInstruction(
+          publicKey,
+          riskLevelNum,
+          shareMint,
+        )
+        tx.add(withdrawIx)
+      }
+
+      const signature = await sendTransaction(tx, connection)
+
+      toast('Confirming transaction...', 'info')
+      await connection.confirmTransaction(signature, 'confirmed')
+
+      if (isInstantRedemption && shareMint) {
+        toast('Withdrawal complete!', 'success')
+      } else {
+        toast('Withdrawal requested — complete after redemption period.', 'success')
+      }
+
+      setAmount('')
+      onSuccess?.()
+    } catch (err) {
+      const message = parseAllocatorError(err)
+      toast(message, 'error')
+    } finally {
+      setLoading(false)
+    }
+  }, [publicKey, parsedAmount, riskLevelNum, shareMint, redemptionPeriodSlots, sendTransaction, connection, toast, onSuccess])
+
+  function handleSubmit() {
+    if (mode === 'deposit') {
+      handleDeposit()
+    } else {
+      handleWithdraw()
+    }
+  }
+
+  // ─── Render ───────────────────────────────────────────────────────────────
+
+  const isDisabled = mode === 'deposit' ? !canDeposit : !canWithdraw
 
   return (
     <GlassCard className="p-6 relative overflow-hidden">
@@ -70,9 +206,14 @@ export function DepositForm({
       <div className="space-y-2 mb-5">
         <div className="flex items-center justify-between">
           <label className="text-sm text-slate-400">Amount</label>
-          {walletBalance !== undefined && (
+          {mode === 'deposit' && walletBalance !== undefined && (
             <span className="text-xs text-slate-500 font-mono">
               Balance: {walletBalance.toLocaleString('en-US', { maximumFractionDigits: 2 })} USDC
+            </span>
+          )}
+          {mode === 'withdraw' && userShares !== undefined && (
+            <span className="text-xs text-slate-500 font-mono">
+              Shares: {(Number(userShares) / 10 ** USDC_DECIMALS).toLocaleString('en-US', { maximumFractionDigits: 2 })}
             </span>
           )}
         </div>
@@ -88,13 +229,15 @@ export function DepositForm({
             placeholder="0.00"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-full bg-[#030407] border border-white/10 rounded-xl py-4 pl-12 pr-20 text-2xl font-mono text-white placeholder:text-slate-600 focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/50 focus:outline-none transition-all"
+            disabled={loading}
+            className="w-full bg-[#030407] border border-white/10 rounded-xl py-4 pl-12 pr-20 text-2xl font-mono text-white placeholder:text-slate-600 focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/50 focus:outline-none transition-all disabled:opacity-50"
           />
           {/* MAX button */}
           <button
             type="button"
             onClick={handleMax}
-            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/5 text-sky-400 font-mono text-xs px-2.5 py-1 rounded-md border border-white/5 hover:bg-white/10 transition-colors"
+            disabled={loading}
+            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/5 text-sky-400 font-mono text-xs px-2.5 py-1 rounded-md border border-white/5 hover:bg-white/10 transition-colors disabled:opacity-50"
           >
             MAX
           </button>
@@ -122,14 +265,38 @@ export function DepositForm({
         </div>
       </div>
 
+      {/* Wallet not connected hint */}
+      {!isWalletConnected && (
+        <p className="text-xs text-amber-400/80 text-center mb-3">
+          Connect your wallet to {mode === 'deposit' ? 'deposit' : 'withdraw'}
+        </p>
+      )}
+
+      {/* Share mint loading hint (deposit only) */}
+      {isWalletConnected && !isShareMintReady && mode === 'deposit' && (
+        <p className="text-xs text-slate-500 text-center mb-3">
+          Loading vault data...
+        </p>
+      )}
+
       {/* Submit button */}
       <button
         type="button"
-        disabled={parsedAmount <= 0}
+        onClick={handleSubmit}
+        disabled={isDisabled}
         className="w-full py-4 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 font-semibold text-lg border border-sky-500/30 shadow-[0_0_20px_rgba(14,165,233,0.15)] hover:shadow-[0_0_30px_rgba(14,165,233,0.3)] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
-        {mode === 'deposit' ? 'Confirm Deposit' : 'Confirm Withdrawal'}
-        <ArrowRight className="h-5 w-5" />
+        {loading ? (
+          <>
+            <Loader2 className="h-5 w-5 animate-spin" />
+            Processing...
+          </>
+        ) : (
+          <>
+            {mode === 'deposit' ? 'Confirm Deposit' : 'Confirm Withdrawal'}
+            <ArrowRight className="h-5 w-5" />
+          </>
+        )}
       </button>
 
       {/* AI Context */}
