@@ -12,17 +12,17 @@ import {
   getWeightedApy,
 } from '@/lib/mock-data'
 
-function useMinutesAgo(isoTimestamp: string | undefined): number | null {
+function useMinutesAgo(timestampMs: number | undefined): number | null {
   const subscribe = useCallback((onStoreChange: () => void) => {
-    if (!isoTimestamp) return () => {}
+    if (!timestampMs) return () => {}
     const interval = setInterval(onStoreChange, 60_000)
     return () => clearInterval(interval)
-  }, [isoTimestamp])
+  }, [timestampMs])
 
   const getSnapshot = useCallback(() => {
-    if (!isoTimestamp) return null
-    return Math.round((Date.now() - new Date(isoTimestamp).getTime()) / 60000)
-  }, [isoTimestamp])
+    if (!timestampMs) return null
+    return Math.round((Date.now() - timestampMs) / 60000)
+  }, [timestampMs])
 
   return useSyncExternalStore(subscribe, getSnapshot, () => null)
 }
@@ -58,8 +58,10 @@ export function PortfolioSummary() {
       : getTotalTvl()
 
   // APY: keeper API > mock (on-chain doesn't store APY)
-  const modApy = modKeeper.data?.apy ?? modMock?.apy ?? 0
-  const aggApy = aggKeeper.data?.apy ?? aggMock?.apy ?? 0
+  // Keeper may return APY as percentage (e.g. 6.5) or decimal (0.065) — normalize to decimal
+  const normalizeApy = (v: number) => v > 1 ? v / 100 : v
+  const modApy = normalizeApy(modKeeper.data?.apy ?? modMock?.apy ?? 0)
+  const aggApy = normalizeApy(aggKeeper.data?.apy ?? aggMock?.apy ?? 0)
 
   // Weighted APY by TVL
   const totalTvlForWeight = modTvl + aggTvl
@@ -71,7 +73,7 @@ export function PortfolioSummary() {
   const dailyEarnings = tvl * apy / 365
 
   // AI Pulse: keeper health determines status
-  const minutesAgo = useMinutesAgo(health.data?.lastCycle)
+  const minutesAgo = useMinutesAgo(health.data?.lastCycleTimestamp)
   const isKeeperOnline = !!health.data && !health.loading
   const pulseColor = isKeeperOnline ? 'bg-emerald-400' : 'bg-amber-400'
   const pulseText = health.loading

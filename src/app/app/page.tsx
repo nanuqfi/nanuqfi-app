@@ -7,7 +7,7 @@ import { PortfolioSummary } from '@/components/app/portfolio-summary'
 import { VaultCard } from '@/components/app/vault-card'
 import { YieldChart } from '@/components/app/yield-chart'
 import { DecisionFeedItem } from '@/components/app/decision-feed-item'
-import { useVaultData, useKeeperDecisions } from '@/hooks/use-keeper-api'
+import { useVaultData, useAllDecisions } from '@/hooks/use-keeper-api'
 import {
   mockVaults,
   mockDecisions,
@@ -55,7 +55,7 @@ export default function DashboardPage() {
 
   const vaults = [conservativeVault, moderateVault, aggressiveVault]
 
-  const decisionsHook = useKeeperDecisions('all')
+  const decisionsHook = useAllDecisions()
   const decisions = decisionsHook.data
     ? decisionsHook.data.slice(0, 3).map(d => ({
         id: d.id,

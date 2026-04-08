@@ -28,9 +28,17 @@ function StatItem({ label, value, period }: StatItemProps) {
 export function KeeperStatsBar() {
   const { data, loading } = useKeeperHealth()
 
+  const completed = data?.cyclesCompleted ?? 0
+  const failed = data?.cyclesFailed ?? 0
+  const total = completed + failed
+
+  const decisionsValue = data ? String(completed) : '--'
+  const successRate = total > 0
+    ? `${((completed / total) * 100).toFixed(1)}%`
+    : '--'
   const uptimeValue = data?.uptime
-    ? `${(data.uptime * 100).toFixed(1)}%`
-    : '99.2%'
+    ? `${Math.floor(data.uptime / 86400)}d`
+    : '--'
 
   if (loading) {
     return (
@@ -51,10 +59,10 @@ export function KeeperStatsBar() {
   return (
     <GlassCard className="p-6">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:divide-x divide-white/5">
-        <StatItem label="Decisions" value="142" period="(30 days)" />
-        <StatItem label="Success Rate" value="98.6%" period="(30 days)" />
-        <StatItem label="Avg Confidence" value="86%" period="(30 days)" />
-        <StatItem label="Uptime" value={uptimeValue} period="(7 days)" />
+        <StatItem label="Decisions" value={decisionsValue} period="(total)" />
+        <StatItem label="Success Rate" value={successRate} period="(all time)" />
+        <StatItem label="AI Status" value={data?.aiLayerStatus ?? 'unknown'} period="" />
+        <StatItem label="Uptime" value={uptimeValue} period="(continuous)" />
       </div>
     </GlassCard>
   )
