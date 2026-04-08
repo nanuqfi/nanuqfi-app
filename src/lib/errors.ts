@@ -37,9 +37,23 @@ const ERROR_MAP: Record<number, string> = {
  * Handles Anchor error objects, hex codes in logs, and unknown shapes.
  */
 export function parseAllocatorError(error: unknown): string {
+  // Wallet rejection — user cancelled in their wallet
+  if (isWalletRejection(error)) return 'Transaction cancelled.'
+
   const code = extractErrorCode(error)
   if (code !== null && ERROR_MAP[code]) return ERROR_MAP[code]!
   return 'Transaction failed. Please try again.'
+}
+
+function isWalletRejection(error: unknown): boolean {
+  if (typeof error !== 'object' || error === null) return false
+  const msg = String((error as Record<string, unknown>).message ?? '')
+  return (
+    msg.includes('User rejected') ||
+    msg.includes('user rejected') ||
+    msg.includes('Transaction cancelled') ||
+    msg.includes('WalletSignTransactionError')
+  )
 }
 
 function extractErrorCode(error: unknown): number | null {
