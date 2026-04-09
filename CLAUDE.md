@@ -12,14 +12,14 @@
 **Tech Stack:** Next.js 16 (App Router), React 19, Tailwind CSS 4, TypeScript, Vitest
 **Deployment:** Docker → VPS reclabs3, port 9001
 **Domains:** nanuqfi.com (marketing + app) + app.nanuqfi.com (alias)
-**Tests:** 26 passing (UI component tests + error mapping)
+**Tests:** 62 passing (8 UI primitives + 14 YieldEstimator + 6 PortfolioSummary + 8 VaultCard + 14 mock-data + 12 errors)
 **Design System:** Pendle glassmorphism + Ethena data UX hybrid (spec: `docs/superpowers/specs/2026-04-07-ui-revamp-design.md`)
 
 **Key Commands:**
 ```bash
 pnpm dev                        # local dev server (http://localhost:3000)
 pnpm build                      # production build (standalone for Docker)
-pnpm test                       # run tests (26 tests, Vitest + jsdom)
+pnpm test                       # run tests (62 tests, Vitest + jsdom)
 pnpm lint                       # ESLint
 ```
 
@@ -56,8 +56,9 @@ src/components/
   app/                    # App-specific components
     nav.tsx               # Glassmorphism top nav with pill navigation
     system-status.tsx     # Keeper health indicator in nav
-    portfolio-summary.tsx # Hero card (total value, daily earnings, APY, AI pulse)
-    vault-card.tsx        # Tier-colored card with APY, daily earnings, confidence
+    portfolio-summary.tsx # Wallet-aware hero: yield estimator (disconnected) / portfolio (connected)
+    yield-estimator.tsx   # Interactive deposit presets + projected earnings + CTA
+    vault-card.tsx        # Tier-colored card with APY, wallet-aware deposited/CTA row
     yield-chart.tsx       # Time-range SVG chart (placeholder for real charting)
     protocol-bar.tsx      # Allocation bar with expandable AI reasoning
     deposit-form.tsx      # Deposit/withdraw with wallet transaction execution
@@ -141,4 +142,4 @@ Withdraw uses two-phase: `buildRequestWithdrawInstruction` → `buildWithdrawIns
 
 ---
 
-**Last Updated:** 2026-04-08
+**Last Updated:** 2026-04-10
