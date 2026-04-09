@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { VaultCard } from './vault-card'
 import type { Vault } from '@/lib/mock-data'
 
@@ -45,17 +45,15 @@ describe('VaultCard', () => {
   })
 
   it('without position: renders "Deposit →" in the CTA row (not hover overlay)', () => {
-    const { container } = render(<VaultCard vault={mockVault} isConnected={true} />)
+    render(<VaultCard vault={mockVault} isConnected={true} />)
 
-    // The CTA row is NOT the hover overlay. Target the non-hover row by its sibling "Earn X%"
-    // Both "Deposit →" nodes exist; we confirm the CTA row specifically by finding its container
     const ctaRows = screen.getAllByText(/Deposit →/)
     // There are two: one in the interactive row, one in the hover overlay — both is fine to assert
     expect(ctaRows.length).toBeGreaterThanOrEqual(1)
   })
 
   it('without position: renders "Earn X%" in the CTA row', () => {
-    const { container } = render(<VaultCard vault={mockVault} isConnected={true} />)
+    render(<VaultCard vault={mockVault} isConnected={true} />)
 
     // "Earn " and "6.5%" live in separate child text nodes inside the same <span>.
     // Query the span by its role-adjacent text using a function matcher.

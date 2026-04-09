@@ -190,6 +190,7 @@ export function PortfolioSummary({
       </div>
       <div className="border-t border-white/5 pt-5">
         <YieldEstimator
+          key={walletBalance ?? 'disconnected'}
           apy={apy}
           walletBalance={walletBalance}
           ctaMode={isConnected ? 'deposit' : 'connect'}

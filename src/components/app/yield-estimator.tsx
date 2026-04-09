@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { formatDailyEarnings } from '@/lib/mock-data'
 
@@ -34,15 +34,6 @@ export function YieldEstimator({
   const defaultPreset = PRESETS.includes(defaultAmount) ? defaultAmount : null
   const [selectedAmount, setSelectedAmount] = useState(defaultAmount)
   const [activePreset, setActivePreset] = useState<number | null>(defaultPreset)
-
-  // Sync default selection when wallet balance becomes available
-  useEffect(() => {
-    if (walletBalance !== undefined && walletBalance > 0) {
-      const newDefault = Math.min(walletBalance, MAX_DEFAULT)
-      setSelectedAmount(newDefault)
-      setActivePreset(PRESETS.includes(newDefault) ? newDefault : null)
-    }
-  }, [walletBalance])
 
   const projectedDaily = selectedAmount * apy / 365
   const projectedMonthly = projectedDaily * 30
