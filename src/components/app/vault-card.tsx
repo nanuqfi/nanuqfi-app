@@ -22,9 +22,10 @@ interface VaultCardProps {
   vault: Vault
   deposited?: number
   confidence?: number
+  isConnected?: boolean
 }
 
-export function VaultCard({ vault, deposited, confidence }: VaultCardProps) {
+export function VaultCard({ vault, deposited, confidence, isConnected }: VaultCardProps) {
   const hasPosition = deposited !== undefined && deposited > 0
   const apy = normalizeApy(vault.apy)
   const dailyProjection = vault.tvl * apy / 365
@@ -52,12 +53,21 @@ export function VaultCard({ vault, deposited, confidence }: VaultCardProps) {
             </span>
           </div>
 
-          <div className="flex items-center justify-between border-b border-white/5 pb-3">
-            <span className="text-xs text-slate-400">Deposited</span>
-            <span className="font-mono text-sm text-slate-200">
-              {hasPosition ? formatUsd(deposited) : '--'}
-            </span>
-          </div>
+          {hasPosition ? (
+            <div className="flex items-center justify-between border-b border-white/5 pb-3">
+              <span className="text-xs text-slate-400">Deposited</span>
+              <span className="font-mono text-sm text-slate-200">
+                {formatUsd(deposited)}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between border-b border-white/5 pb-3">
+              <span className="text-xs text-emerald-400 font-medium">Deposit →</span>
+              <span className="text-xs text-slate-400">
+                Earn {formatApy(apy)}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Confidence */}
