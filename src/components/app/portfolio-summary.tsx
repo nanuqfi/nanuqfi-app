@@ -1,12 +1,11 @@
 'use client'
 
 import { useCallback, useSyncExternalStore } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react'
 import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 import { useRouter } from 'next/navigation'
 import { GlassCard } from '@/components/ui/glass-card'
 import { YieldEstimator } from '@/components/app/yield-estimator'
-import { useAllocatorState, useRiskVault, useUserPosition, useUsdcBalance } from '@/hooks/use-allocator'
+import { useAllocatorState, useRiskVault } from '@/hooks/use-allocator'
 import { useKeeperHealth, useVaultData } from '@/hooks/use-keeper-api'
 import {
   mockVaults,
@@ -33,11 +32,23 @@ function useMinutesAgo(timestampMs: number | undefined): number | null {
   return useSyncExternalStore(subscribe, getSnapshot, () => null)
 }
 
-export function PortfolioSummary() {
-  const { publicKey } = useWallet()
+interface PortfolioSummaryProps {
+  isConnected: boolean
+  positionsLoading: boolean
+  userModValue: number  // current value (shares * sharePrice), not cost basis
+  userAggValue: number
+  walletBalance?: number
+}
+
+export function PortfolioSummary({
+  isConnected,
+  positionsLoading,
+  userModValue,
+  userAggValue,
+  walletBalance,
+}: PortfolioSummaryProps) {
   const { setVisible } = useWalletModal()
   const router = useRouter()
-  const isConnected = !!publicKey
 
   // Protocol data (always fetched)
   const allocator = useAllocatorState()
@@ -47,18 +58,8 @@ export function PortfolioSummary() {
   const aggKeeper = useVaultData('aggressive')
   const health = useKeeperHealth()
 
-  // User position data (only meaningful when connected)
-  const modPosition = useUserPosition(1)
-  const aggPosition = useUserPosition(2)
-  const usdcBalance = useUsdcBalance()
-
-  // Wait for position data to load before determining state — prevents
-  // flash of estimator when user actually has deposits
-  const positionsLoading = isConnected && (modPosition.loading || aggPosition.loading)
-  const hasPosition = isConnected && !positionsLoading && (
-    (modPosition.data?.shares ?? 0n) > 0n ||
-    (aggPosition.data?.shares ?? 0n) > 0n
-  )
+  const hasPosition = isConnected && !positionsLoading
+    && (userModValue + userAggValue) > 0
 
   // Protocol TVL
   const modMock = mockVaults.find(v => v.riskLevel === 'moderate')
@@ -85,20 +86,9 @@ export function PortfolioSummary() {
     ? (modApy * modTvl + aggApy * aggTvl) / totalTvlForWeight
     : getWeightedApy()
 
-  // User TVL (shares * share price)
-  const userModValue = modPosition.data && modOnChain.data
-    ? Number(modPosition.data.shares) * modOnChain.data.sharePrice / 1e6
-    : 0
-  const userAggValue = aggPosition.data && aggOnChain.data
-    ? Number(aggPosition.data.shares) * aggOnChain.data.sharePrice / 1e6
-    : 0
+  // User TVL and earnings (values passed as props from parent)
   const userTvl = userModValue + userAggValue
   const userDailyEarnings = userTvl * apy / 365
-
-  // Wallet USDC balance (human readable)
-  const walletUsdcBalance = usdcBalance.data !== null
-    ? Number(usdcBalance.data) / 1e6
-    : undefined
 
   // AI Pulse
   const minutesAgo = useMinutesAgo(health.data?.lastCycleTimestamp)
@@ -201,7 +191,7 @@ export function PortfolioSummary() {
       <div className="border-t border-white/5 pt-5">
         <YieldEstimator
           apy={apy}
-          walletBalance={isConnected ? walletUsdcBalance : undefined}
+          walletBalance={walletBalance}
           ctaMode={isConnected ? 'deposit' : 'connect'}
           onConnect={() => {
             if (isConnected) {
