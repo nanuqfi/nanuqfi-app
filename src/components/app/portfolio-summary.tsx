@@ -1,8 +1,12 @@
 'use client'
 
 import { useCallback, useSyncExternalStore } from 'react'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useWalletModal } from '@solana/wallet-adapter-react-ui'
+import { useRouter } from 'next/navigation'
 import { GlassCard } from '@/components/ui/glass-card'
-import { useAllocatorState, useRiskVault } from '@/hooks/use-allocator'
+import { YieldEstimator } from '@/components/app/yield-estimator'
+import { useAllocatorState, useRiskVault, useUserPosition, useUsdcBalance } from '@/hooks/use-allocator'
 import { useKeeperHealth, useVaultData } from '@/hooks/use-keeper-api'
 import {
   mockVaults,
@@ -30,21 +34,33 @@ function useMinutesAgo(timestampMs: number | undefined): number | null {
 }
 
 export function PortfolioSummary() {
-  // Layer 1: On-chain data (primary)
+  const { publicKey } = useWallet()
+  const { setVisible } = useWalletModal()
+  const router = useRouter()
+  const isConnected = !!publicKey
+
+  // Protocol data (always fetched)
   const allocator = useAllocatorState()
   const modOnChain = useRiskVault(1)
   const aggOnChain = useRiskVault(2)
-
-  // Layer 2: Keeper API (secondary)
   const modKeeper = useVaultData('moderate')
   const aggKeeper = useVaultData('aggressive')
   const health = useKeeperHealth()
 
-  // Data cascade: on-chain > keeper API > mock
+  // User position data (only meaningful when connected)
+  const modPosition = useUserPosition(1)
+  const aggPosition = useUserPosition(2)
+  const usdcBalance = useUsdcBalance()
+
+  const hasPosition = isConnected && (
+    (modPosition.data?.shares ?? 0n) > 0n ||
+    (aggPosition.data?.shares ?? 0n) > 0n
+  )
+
+  // Protocol TVL
   const modMock = mockVaults.find(v => v.riskLevel === 'moderate')
   const aggMock = mockVaults.find(v => v.riskLevel === 'aggressive')
 
-  // TVL: on-chain totalAssets (in USDC smallest unit) > keeper > mock
   const modTvl = modOnChain.data
     ? Number(modOnChain.data.totalAssets) / 1e6
     : modKeeper.data?.tvl ?? modMock?.tvl ?? 0
@@ -52,27 +68,36 @@ export function PortfolioSummary() {
     ? Number(aggOnChain.data.totalAssets) / 1e6
     : aggKeeper.data?.tvl ?? aggMock?.tvl ?? 0
 
-  // Total TVL: prefer allocator.totalTvl if available
-  const tvl = allocator.data
+  const protocolTvl = allocator.data
     ? Number(allocator.data.totalTvl) / 1e6
     : (modTvl + aggTvl) > 0
       ? modTvl + aggTvl
       : getTotalTvl()
 
-  // APY: keeper API > mock (on-chain doesn't store APY)
+  // Weighted APY
   const modApy = normalizeApy(modKeeper.data?.apy ?? modMock?.apy ?? 0)
   const aggApy = normalizeApy(aggKeeper.data?.apy ?? aggMock?.apy ?? 0)
-
-  // Weighted APY by TVL
   const totalTvlForWeight = modTvl + aggTvl
   const apy = totalTvlForWeight > 0
     ? (modApy * modTvl + aggApy * aggTvl) / totalTvlForWeight
     : getWeightedApy()
 
-  // Daily earnings: TVL * APY / 365
-  const dailyEarnings = tvl * apy / 365
+  // User TVL (shares * share price)
+  const userModValue = modPosition.data && modOnChain.data
+    ? Number(modPosition.data.shares) * modOnChain.data.sharePrice / 1e6
+    : 0
+  const userAggValue = aggPosition.data && aggOnChain.data
+    ? Number(aggPosition.data.shares) * aggOnChain.data.sharePrice / 1e6
+    : 0
+  const userTvl = userModValue + userAggValue
+  const userDailyEarnings = userTvl * apy / 365
 
-  // AI Pulse: keeper health determines status
+  // Wallet USDC balance (human readable)
+  const walletUsdcBalance = usdcBalance.data !== null
+    ? Number(usdcBalance.data) / 1e6
+    : undefined
+
+  // AI Pulse
   const minutesAgo = useMinutesAgo(health.data?.lastCycleTimestamp)
   const isKeeperOnline = !!health.data && !health.loading
   const pulseColor = isKeeperOnline ? 'bg-emerald-400' : 'bg-amber-400'
@@ -83,50 +108,89 @@ export function PortfolioSummary() {
       : 'Offline'
   const pulseTextColor = isKeeperOnline ? 'text-emerald-400' : 'text-amber-400'
 
+  // ─── AI Pulse element (reused across states) ──────────────────────────────
+
+  const aiPulse = (
+    <div className="space-y-1 sm:pl-6">
+      <p className="text-xs text-slate-400 uppercase tracking-wider">AI Pulse</p>
+      <div className="flex items-center gap-2">
+        <span className="relative flex h-2 w-2">
+          {isKeeperOnline && (
+            <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${pulseColor} opacity-75`} />
+          )}
+          <span className={`relative inline-flex h-2 w-2 rounded-full ${pulseColor}`} />
+        </span>
+        <span className={`text-lg font-mono tabular-nums ${pulseTextColor}`}>
+          {pulseText}
+        </span>
+      </div>
+    </div>
+  )
+
+  // ─── State 3: Connected with position ─────────────────────────────────────
+
+  if (hasPosition) {
+    return (
+      <GlassCard className="p-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:divide-x divide-white/5">
+          <div className="space-y-1">
+            <p className="text-xs text-slate-400 uppercase tracking-wider">Your Value</p>
+            <p className="text-2xl font-mono tabular-nums text-white">
+              {formatUsd(userTvl)}
+            </p>
+          </div>
+          <div className="relative space-y-1 sm:pl-6">
+            <div className="absolute -left-2 top-0 h-full w-[2px] bg-sky-500 blur-[2px] hidden sm:block" />
+            <p className="text-xs text-sky-400/80 uppercase tracking-wider">Daily Earnings</p>
+            <p className="text-3xl font-mono tabular-nums text-sky-400">
+              {formatDailyEarnings(userDailyEarnings)}
+              <span className="text-sm text-sky-400/60 ml-1">/day</span>
+            </p>
+          </div>
+          <div className="space-y-1 sm:pl-6">
+            <p className="text-xs text-slate-400 uppercase tracking-wider">Weighted APY</p>
+            <p className="text-2xl font-mono tabular-nums text-white">
+              {formatApy(apy)}
+            </p>
+          </div>
+          {aiPulse}
+        </div>
+      </GlassCard>
+    )
+  }
+
+  // ─── State 1 & 2: Disconnected / Connected without position ───────────────
+
   return (
-    <GlassCard className="p-6">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:divide-x divide-white/5">
-        {/* Total Value */}
+    <GlassCard className="p-6 space-y-5">
+      <div className="grid grid-cols-3 gap-6 sm:divide-x divide-white/5">
         <div className="space-y-1">
-          <p className="text-xs text-slate-400 uppercase tracking-wider">Total Value</p>
+          <p className="text-xs text-slate-400 uppercase tracking-wider">Protocol TVL</p>
           <p className="text-2xl font-mono tabular-nums text-white">
-            {formatUsd(tvl)}
+            {formatUsd(protocolTvl)}
           </p>
         </div>
-
-        {/* Daily Earnings — hero metric */}
-        <div className="relative space-y-1 sm:pl-6">
-          <div className="absolute -left-2 top-0 h-full w-[2px] bg-sky-500 blur-[2px] hidden sm:block" />
-          <p className="text-xs text-sky-400/80 uppercase tracking-wider">Daily Earnings</p>
-          <p className="text-3xl font-mono tabular-nums text-sky-400">
-            {formatDailyEarnings(dailyEarnings)}
-            <span className="text-sm text-sky-400/60 ml-1">/day</span>
-          </p>
-        </div>
-
-        {/* Weighted APY */}
         <div className="space-y-1 sm:pl-6">
           <p className="text-xs text-slate-400 uppercase tracking-wider">Weighted APY</p>
           <p className="text-2xl font-mono tabular-nums text-white">
             {formatApy(apy)}
           </p>
         </div>
-
-        {/* AI Pulse */}
-        <div className="space-y-1 sm:pl-6">
-          <p className="text-xs text-slate-400 uppercase tracking-wider">AI Pulse</p>
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              {isKeeperOnline && (
-                <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${pulseColor} opacity-75`} />
-              )}
-              <span className={`relative inline-flex h-2 w-2 rounded-full ${pulseColor}`} />
-            </span>
-            <span className={`text-lg font-mono tabular-nums ${pulseTextColor}`}>
-              {pulseText}
-            </span>
-          </div>
-        </div>
+        {aiPulse}
+      </div>
+      <div className="border-t border-white/5 pt-5">
+        <YieldEstimator
+          apy={apy}
+          walletBalance={isConnected ? walletUsdcBalance : undefined}
+          ctaMode={isConnected ? 'deposit' : 'connect'}
+          onConnect={() => {
+            if (isConnected) {
+              router.push('/app/vaults/moderate')
+            } else {
+              setVisible(true)
+            }
+          }}
+        />
       </div>
     </GlassCard>
   )
