@@ -11,6 +11,7 @@ import { ProtocolBar } from '@/components/app/protocol-bar'
 import { GuardrailCard } from '@/components/app/guardrail-card'
 import { DecisionFeedItem } from '@/components/app/decision-feed-item'
 import { DepositForm } from '@/components/app/deposit-form'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { useRiskVault, useUserPosition, useUsdcBalance } from '@/hooks/use-allocator'
 import { useVaultData, useKeeperDecisions } from '@/hooks/use-keeper-api'
 import {
@@ -82,6 +83,10 @@ function VaultDetailContent({
   riskLevel: RiskLevel
   riskLevelNum: number
 }) {
+  // Wallet state
+  const { publicKey } = useWallet()
+  const isConnected = !!publicKey
+
   // On-chain data
   const onChain = useRiskVault(riskLevelNum)
   const userPosition = useUserPosition(riskLevelNum)
@@ -101,6 +106,13 @@ function VaultDetailContent({
   const apy = normalizeApy(keeper.data?.apy ?? mockVault?.apy ?? 0)
   const weights = keeper.data?.weights ?? mockVault?.weights ?? {}
   const dailyEarnings = tvl * apy / 365
+
+  // User-specific daily earnings when they have a position
+  const userHasPosition = isConnected && (userPosition.data?.shares ?? 0n) > 0n
+  const userValue = userHasPosition && onChain.data && userPosition.data
+    ? Number(userPosition.data.shares) * onChain.data.sharePrice / 1e6
+    : 0
+  const displayDaily = userHasPosition ? userValue * apy / 365 : dailyEarnings
 
   // Wallet balance in USDC (human-readable)
   const walletBalance = usdcBalance.data !== null
@@ -164,8 +176,8 @@ function VaultDetailContent({
           </div>
           <div className="w-px h-8 bg-white/10" />
           <div className="text-center px-4">
-            <p className="text-[11px] text-slate-500 uppercase tracking-widest mb-0.5">Daily</p>
-            <p className="text-lg font-bold font-mono text-slate-200">{formatDailyEarnings(dailyEarnings)}</p>
+            <p className="text-[11px] text-slate-500 uppercase tracking-widest mb-0.5">{userHasPosition ? 'Daily (yours)' : 'Daily (vault)'}</p>
+            <p className="text-lg font-bold font-mono text-slate-200">{formatDailyEarnings(displayDaily)}</p>
           </div>
           <div className="w-px h-8 bg-white/10" />
           <div className="text-center px-4">

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 import { GlassCard } from '@/components/ui/glass-card'
 import { Badge } from '@/components/ui/badge'
 import { ConfidenceBar } from '@/components/ui/confidence-bar'
@@ -22,15 +23,27 @@ interface VaultCardProps {
   vault: Vault
   deposited?: number
   confidence?: number
+  isConnected?: boolean
 }
 
-export function VaultCard({ vault, deposited, confidence }: VaultCardProps) {
+export function VaultCard({ vault, deposited, confidence, isConnected }: VaultCardProps) {
+  const { setVisible } = useWalletModal()
   const hasPosition = deposited !== undefined && deposited > 0
   const apy = normalizeApy(vault.apy)
-  const dailyProjection = vault.tvl * apy / 365
+  // User-specific daily when they have a position, vault-level otherwise
+  const dailyProjection = hasPosition
+    ? deposited * apy / 365
+    : vault.tvl * apy / 365
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (!isConnected) {
+      e.preventDefault()
+      setVisible(true)
+    }
+  }
 
   return (
-    <Link href={`/app/vaults/${vault.riskLevel}`}>
+    <Link href={`/app/vaults/${vault.riskLevel}`} onClick={handleClick}>
       <GlassCard
         tier={vault.riskLevel}
         className="group relative p-6 transition-all duration-200 hover:border-white/10"
@@ -52,12 +65,21 @@ export function VaultCard({ vault, deposited, confidence }: VaultCardProps) {
             </span>
           </div>
 
-          <div className="flex items-center justify-between border-b border-white/5 pb-3">
-            <span className="text-xs text-slate-400">Deposited</span>
-            <span className="font-mono text-sm text-slate-200">
-              {hasPosition ? formatUsd(deposited) : '--'}
-            </span>
-          </div>
+          {hasPosition ? (
+            <div className="flex items-center justify-between border-b border-white/5 pb-3">
+              <span className="text-xs text-slate-400">Deposited</span>
+              <span className="font-mono text-sm text-slate-200">
+                {formatUsd(deposited)}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between border-b border-white/5 pb-3">
+              <span className="text-xs text-emerald-400 font-medium">Deposit →</span>
+              <span className="text-xs text-slate-400">
+                Earn {formatApy(apy)}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Confidence */}

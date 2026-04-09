@@ -2,11 +2,13 @@
 
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { GlassCard } from '@/components/ui/glass-card'
 import { PortfolioSummary } from '@/components/app/portfolio-summary'
 import { VaultCard } from '@/components/app/vault-card'
 import { YieldChart } from '@/components/app/yield-chart'
 import { DecisionFeedItem } from '@/components/app/decision-feed-item'
+import { useUserPosition, useRiskVault, useUsdcBalance } from '@/hooks/use-allocator'
 import { useVaultData, useAllDecisions } from '@/hooks/use-keeper-api'
 import {
   mockVaults,
@@ -15,11 +17,6 @@ import {
   type Vault,
   type RiskLevel,
 } from '@/lib/mock-data'
-
-const VAULT_DEPOSITS: Record<string, number> = {
-  moderate: 210,
-  aggressive: 50,
-}
 
 const VAULT_CONFIDENCE: Record<string, number> = {
   moderate: 87,
@@ -48,6 +45,30 @@ function useVaultWithFallback(riskLevel: RiskLevel): Vault {
 }
 
 export default function DashboardPage() {
+  const { publicKey } = useWallet()
+  const isConnected = !!publicKey
+
+  // User position + vault data (single source for both PortfolioSummary and VaultCards)
+  const modPosition = useUserPosition(1)
+  const aggPosition = useUserPosition(2)
+  const modOnChain = useRiskVault(1)
+  const aggOnChain = useRiskVault(2)
+  const usdcBalance = useUsdcBalance()
+
+  const positionsLoading = isConnected && (modPosition.loading || aggPosition.loading)
+
+  // Current value (shares * sharePrice), not cost basis (depositedUsdc)
+  const userModValue = modPosition.data && modOnChain.data
+    ? Number(modPosition.data.shares) * modOnChain.data.sharePrice / 1e6
+    : 0
+  const userAggValue = aggPosition.data && aggOnChain.data
+    ? Number(aggPosition.data.shares) * aggOnChain.data.sharePrice / 1e6
+    : 0
+
+  const walletBalance = isConnected && usdcBalance.data !== null
+    ? Number(usdcBalance.data) / 1e6
+    : undefined
+
   const moderateVault = useVaultWithFallback('moderate')
   const aggressiveVault = useVaultWithFallback('aggressive')
 
@@ -73,7 +94,13 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       {/* Portfolio Summary */}
-      <PortfolioSummary />
+      <PortfolioSummary
+        isConnected={isConnected}
+        positionsLoading={positionsLoading}
+        userModValue={userModValue}
+        userAggValue={userAggValue}
+        walletBalance={walletBalance}
+      />
 
       {/* Yield Chart */}
       <YieldChart subtitle="Simulated yield growth across all vaults" />
@@ -86,8 +113,9 @@ export default function DashboardPage() {
             <VaultCard
               key={level}
               vault={vaults[level]}
-              deposited={VAULT_DEPOSITS[level]}
+              deposited={isConnected ? (level === 'moderate' ? userModValue : userAggValue) : undefined}
               confidence={VAULT_CONFIDENCE[level]}
+              isConnected={isConnected}
             />
           ))}
         </div>
