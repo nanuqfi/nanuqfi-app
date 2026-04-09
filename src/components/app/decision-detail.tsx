@@ -99,24 +99,35 @@ export function DecisionDetail({ decision }: DecisionDetailProps) {
           </p>
         </div>
 
-        {/* Weight changes */}
-        {decision.weightChanges.length > 0 && (
-          <div className="space-y-1">
-            <span className="text-[11px] uppercase tracking-wider text-slate-400">
-              Weight Changes
-            </span>
-            <div className="divide-y divide-white/5">
-              {decision.weightChanges.map((change, i) => (
-                <WeightChangeRow
-                  key={i}
-                  source={change.source}
-                  from={change.from}
-                  to={change.to}
-                />
-              ))}
+        {/* Weight changes — only show rows where weights actually changed */}
+        {decision.weightChanges.length > 0 && (() => {
+          const changed = decision.weightChanges.filter(c => c.from !== c.to)
+          if (changed.length === 0) return (
+            <div className="space-y-1">
+              <span className="text-[11px] uppercase tracking-wider text-slate-400">
+                Weight Changes
+              </span>
+              <p className="text-sm text-slate-500 italic">No changes — weights held steady</p>
             </div>
-          </div>
-        )}
+          )
+          return (
+            <div className="space-y-1">
+              <span className="text-[11px] uppercase tracking-wider text-slate-400">
+                Weight Changes
+              </span>
+              <div className="divide-y divide-white/5">
+                {changed.map((change, i) => (
+                  <WeightChangeRow
+                    key={i}
+                    source={change.source}
+                    from={change.from}
+                    to={change.to}
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        })()}
 
         {/* AI Reasoning */}
         <div className="space-y-1.5">
