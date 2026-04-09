@@ -109,8 +109,8 @@ function VaultDetailContent({
 
   // User-specific daily earnings when they have a position
   const userHasPosition = isConnected && (userPosition.data?.shares ?? 0n) > 0n
-  const userValue = userHasPosition && onChain.data
-    ? Number(userPosition.data!.shares) * onChain.data.sharePrice / 1e6
+  const userValue = userHasPosition && onChain.data && userPosition.data
+    ? Number(userPosition.data.shares) * onChain.data.sharePrice / 1e6
     : 0
   const displayDaily = userHasPosition ? userValue * apy / 365 : dailyEarnings
 

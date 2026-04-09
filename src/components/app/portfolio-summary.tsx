@@ -52,7 +52,10 @@ export function PortfolioSummary() {
   const aggPosition = useUserPosition(2)
   const usdcBalance = useUsdcBalance()
 
-  const hasPosition = isConnected && (
+  // Wait for position data to load before determining state — prevents
+  // flash of estimator when user actually has deposits
+  const positionsLoading = isConnected && (modPosition.loading || aggPosition.loading)
+  const hasPosition = isConnected && !positionsLoading && (
     (modPosition.data?.shares ?? 0n) > 0n ||
     (aggPosition.data?.shares ?? 0n) > 0n
   )
@@ -126,6 +129,23 @@ export function PortfolioSummary() {
       </div>
     </div>
   )
+
+  // ─── Loading: wallet connected but positions still fetching ────────────────
+
+  if (positionsLoading) {
+    return (
+      <GlassCard className="p-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:divide-x divide-white/5">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className={`space-y-2 ${i > 0 ? 'sm:pl-6' : ''}`}>
+              <div className="h-3 w-20 animate-pulse rounded bg-slate-700" />
+              <div className="h-7 w-24 animate-pulse rounded bg-slate-700" />
+            </div>
+          ))}
+        </div>
+      </GlassCard>
+    )
+  }
 
   // ─── State 3: Connected with position ─────────────────────────────────────
 

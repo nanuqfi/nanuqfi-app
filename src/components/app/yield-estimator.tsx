@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { formatDailyEarnings } from '@/lib/mock-data'
 
@@ -35,6 +35,15 @@ export function YieldEstimator({
   const [selectedAmount, setSelectedAmount] = useState(defaultAmount)
   const [activePreset, setActivePreset] = useState<number | null>(defaultPreset)
 
+  // Sync default selection when wallet balance becomes available
+  useEffect(() => {
+    if (walletBalance !== undefined && walletBalance > 0) {
+      const newDefault = Math.min(walletBalance, MAX_DEFAULT)
+      setSelectedAmount(newDefault)
+      setActivePreset(PRESETS.includes(newDefault) ? newDefault : null)
+    }
+  }, [walletBalance])
+
   const projectedDaily = selectedAmount * apy / 365
   const projectedMonthly = projectedDaily * 30
   const projectedYearly = selectedAmount * apy
@@ -55,9 +64,10 @@ export function YieldEstimator({
         {PRESETS.map(amount => (
           <button
             key={amount}
+            aria-pressed={activePreset === amount}
             onClick={() => { setSelectedAmount(amount); setActivePreset(amount) }}
             className={[
-              'px-3 py-1.5 rounded-lg text-xs font-medium font-mono transition-colors',
+              'px-3 py-1.5 rounded-lg text-xs font-medium font-mono transition-colors focus-visible:ring-2 focus-visible:ring-sky-500/50 focus-visible:ring-offset-1 focus-visible:ring-offset-slate-900 outline-none',
               activePreset === amount
                 ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30'
                 : 'text-slate-400 border border-white/5 hover:text-white hover:bg-white/5',
