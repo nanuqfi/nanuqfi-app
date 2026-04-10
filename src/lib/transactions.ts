@@ -8,10 +8,13 @@ import {
   getAssociatedTokenAddress,
 } from '@solana/spl-token'
 
-const PROGRAM_ID = new PublicKey(
-  process.env.NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID ??
-    'CDhkMBnc43wJQyVaSrreXk2ojvQvZMWrAWNBLSjaRJxq'
-)
+const _PROGRAM_ID_ADDR = process.env.NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID
+if (!_PROGRAM_ID_ADDR) {
+  throw new Error(
+    'NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID is not set. Set it to 2QtJ5kmxLuW2jYCFpJMtzZ7PCnKdoMwkeueYoDUi5z5P in your .env.local.'
+  )
+}
+const PROGRAM_ID = new PublicKey(_PROGRAM_ID_ADDR)
 
 const _USDC_MINT_ADDR = process.env.NEXT_PUBLIC_USDC_MINT
 if (!_USDC_MINT_ADDR) {

@@ -408,10 +408,13 @@ function parseRebalanceRecord(raw: Uint8Array | ArrayBuffer): RebalanceRecordAcc
 
 // ─── useRebalanceRecords ────────────────────────────────────────────────
 
-const PROGRAM_ID_PK = new PublicKey(
-  process.env.NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID ??
-    'CDhkMBnc43wJQyVaSrreXk2ojvQvZMWrAWNBLSjaRJxq'
-)
+const _HOOK_PROGRAM_ID_ADDR = process.env.NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID
+if (!_HOOK_PROGRAM_ID_ADDR) {
+  throw new Error(
+    'NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID is not set. Set it to 2QtJ5kmxLuW2jYCFpJMtzZ7PCnKdoMwkeueYoDUi5z5P in your .env.local.'
+  )
+}
+const PROGRAM_ID_PK = new PublicKey(_HOOK_PROGRAM_ID_ADDR)
 
 /**
  * Compute the 8-byte Anchor account discriminator for RebalanceRecord.
