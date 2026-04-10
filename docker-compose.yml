@@ -12,6 +12,7 @@ services:
       - NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID=${NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID:-2QtJ5kmxLuW2jYCFpJMtzZ7PCnKdoMwkeueYoDUi5z5P}
       - NEXT_PUBLIC_USDC_MINT=${NEXT_PUBLIC_USDC_MINT:-BiTXT15XyfSakk5Yz8L8QrzHPWbK8NjoZeEMFrDvKdKh}
       - NEXT_PUBLIC_KEEPER_API_URL=${NEXT_PUBLIC_KEEPER_API_URL:-https://keeper.nanuqfi.xyz}
+      - MINT_AUTHORITY_KEYPAIR=${MINT_AUTHORITY_KEYPAIR:-/data/secrets/solana-devnet.json}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 60s
