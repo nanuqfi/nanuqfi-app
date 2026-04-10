@@ -28,6 +28,7 @@ interface DepositFormProps {
   userShares?: bigint
   sharePrice?: number
   redemptionPeriodSlots?: bigint
+  presetAmounts?: number[]
   onSuccess?: () => void
 }
 
@@ -48,6 +49,7 @@ export function DepositForm({
   userShares,
   sharePrice,
   redemptionPeriodSlots,
+  presetAmounts,
   onSuccess,
 }: DepositFormProps) {
   const [mode, setMode] = useState<'deposit' | 'withdraw'>('deposit')
@@ -275,6 +277,27 @@ export function DepositForm({
             </span>
           )}
         </div>
+
+        {/* Preset amount buttons — deposit mode only */}
+        {mode === 'deposit' && presetAmounts && presetAmounts.length > 0 && (
+          <div className="flex gap-2 mb-2">
+            {presetAmounts.map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => {
+                  setAmount(String(preset))
+                  setValidationError(null)
+                }}
+                disabled={loading}
+                className="px-3 py-1.5 bg-white/5 text-slate-300 border border-white/10 rounded-lg hover:bg-white/10 transition-colors text-xs font-mono disabled:opacity-50"
+              >
+                ${preset.toLocaleString()}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="relative">
           {/* USDC icon */}
           <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center justify-center w-6 h-6 rounded-full bg-blue-600">
