@@ -15,6 +15,8 @@ interface GuardrailCardProps {
   className?: string
 }
 
+// Display-only fallback — this is a Solscan link, not a transaction target.
+// Money-handling code in transactions.ts throws on missing env var.
 const DEFAULT_PROGRAM_ID =
   process.env.NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID ?? '2QtJ5kmxLuW2jYCFpJMtzZ7PCnKdoMwkeueYoDUi5z5P'
 

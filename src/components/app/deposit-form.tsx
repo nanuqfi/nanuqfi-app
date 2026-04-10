@@ -111,10 +111,12 @@ export function DepositForm({
   function handleMax() {
     if (mode === 'deposit' && walletBalance !== undefined && walletBalance > 0) {
       setAmount(String(walletBalance))
+      setValidationError(null)
     } else if (mode === 'withdraw' && userShares !== undefined && userShares > 0n) {
       // Convert shares to USDC using actual share price
       const price = sharePrice ?? 1
       setAmount(String(Number(userShares) * price / 10 ** USDC_DECIMALS))
+      setValidationError(null)
     }
   }
 
