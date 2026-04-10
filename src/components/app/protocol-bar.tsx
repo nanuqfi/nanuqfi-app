@@ -47,12 +47,15 @@ export function ProtocolBar({ name, percentage, apy, color, reasoning }: Protoco
           {reasoning && (
             <button
               type="button"
+              aria-label={`${expanded ? 'Hide' : 'Show'} allocation reasoning for ${name}`}
+              aria-expanded={expanded}
               onClick={() => setExpanded(!expanded)}
               className="flex items-center gap-0.5 text-[11px] text-slate-500 hover:text-slate-300 transition-colors"
             >
-              why {percentage}%?
+              why {percentage.toFixed(1)}%?
               <ChevronDown
                 className={`h-3 w-3 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+                aria-hidden="true"
               />
             </button>
           )}
