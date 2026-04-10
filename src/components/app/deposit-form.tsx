@@ -135,11 +135,15 @@ export function DepositForm({
         shareMint,
       )
 
-      const tx = new Transaction().add(instruction)
+      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash()
+      const tx = new Transaction()
+      tx.recentBlockhash = blockhash
+      tx.feePayer = publicKey
+      tx.add(instruction)
       const signature = await sendTransaction(tx, connection)
 
       toast('Confirming transaction...', 'info')
-      await connection.confirmTransaction(signature, 'confirmed')
+      await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, 'confirmed')
 
       toast('Deposit confirmed!', 'success')
       setAmount('')
@@ -170,7 +174,11 @@ export function DepositForm({
         sharesAmount,
       )
 
-      const tx = new Transaction().add(requestIx)
+      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash()
+      const tx = new Transaction()
+      tx.recentBlockhash = blockhash
+      tx.feePayer = publicKey
+      tx.add(requestIx)
 
       // If redemption period is 0 (devnet), chain the complete-withdraw instruction too
       const isInstantRedemption = redemptionPeriodSlots === 0n
@@ -186,7 +194,7 @@ export function DepositForm({
       const signature = await sendTransaction(tx, connection)
 
       toast('Confirming transaction...', 'info')
-      await connection.confirmTransaction(signature, 'confirmed')
+      await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, 'confirmed')
 
       if (isInstantRedemption && shareMint) {
         toast('Withdrawal complete!', 'success')
