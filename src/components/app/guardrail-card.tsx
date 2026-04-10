@@ -1,5 +1,6 @@
 import { ShieldCheck, ExternalLink } from 'lucide-react'
 import { GlassCard } from '@/components/ui/glass-card'
+import { solscanAccountUrl, DEVNET_PROGRAM_ID } from '@/lib/network-config'
 
 interface Guardrail {
   label: string
@@ -15,8 +16,9 @@ interface GuardrailCardProps {
 
 // Display-only fallback — this is a Solscan link, not a transaction target.
 // Money-handling code in transactions.ts throws on missing env var.
+// MAINNET: update DEVNET_PROGRAM_ID in network-config.ts after redeployment.
 const DEFAULT_PROGRAM_ID =
-  process.env.NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID ?? '2QtJ5kmxLuW2jYCFpJMtzZ7PCnKdoMwkeueYoDUi5z5P'
+  process.env.NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID ?? DEVNET_PROGRAM_ID
 
 function truncateId(id: string): string {
   if (id.length <= 10) return id
@@ -28,7 +30,7 @@ export function GuardrailCard({
   programId = DEFAULT_PROGRAM_ID,
   className,
 }: GuardrailCardProps) {
-  const solscanUrl = `https://solscan.io/account/${programId}?cluster=devnet`
+  const solscanUrl = solscanAccountUrl(programId)
 
   return (
     <GlassCard className={['p-6 bg-[#111622]/40', className].filter(Boolean).join(' ')}>
