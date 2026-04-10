@@ -40,7 +40,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            NEXT_PUBLIC_RPC_URL=${{ secrets.NEXT_PUBLIC_RPC_URL }}
+            HELIUS_RPC_URL=${{ secrets.HELIUS_RPC_URL }}
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3
         with:

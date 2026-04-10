@@ -265,6 +265,7 @@ function VaultDetailContent({
             walletBalance={walletBalance}
             shareMint={onChain.data?.shareMint}
             userShares={userPosition.data?.shares}
+            sharePrice={onChain.data?.sharePrice}
             redemptionPeriodSlots={onChain.data?.redemptionPeriodSlots}
             onSuccess={() => {
               onChain.refresh()
