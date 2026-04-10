@@ -16,10 +16,13 @@ import {
 
 const ANCHOR_DISCRIMINATOR_SIZE = 8
 
-const USDC_MINT = new PublicKey(
-  process.env.NEXT_PUBLIC_USDC_MINT ??
-    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
-)
+const _HOOK_USDC_MINT_ADDR = process.env.NEXT_PUBLIC_USDC_MINT
+if (!_HOOK_USDC_MINT_ADDR) {
+  throw new Error(
+    'NEXT_PUBLIC_USDC_MINT is not set. Set it to BiTXT15XyfSakk5Yz8L8QrzHPWbK8NjoZeEMFrDvKdKh (devnet test mint) in your .env.local.'
+  )
+}
+const USDC_MINT = new PublicKey(_HOOK_USDC_MINT_ADDR)
 
 export interface AllocatorAccount {
   admin: PublicKey

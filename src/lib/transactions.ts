@@ -13,10 +13,13 @@ const PROGRAM_ID = new PublicKey(
     'CDhkMBnc43wJQyVaSrreXk2ojvQvZMWrAWNBLSjaRJxq'
 )
 
-const USDC_MINT = new PublicKey(
-  process.env.NEXT_PUBLIC_USDC_MINT ??
-    'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
-)
+const _USDC_MINT_ADDR = process.env.NEXT_PUBLIC_USDC_MINT
+if (!_USDC_MINT_ADDR) {
+  throw new Error(
+    'NEXT_PUBLIC_USDC_MINT is not set. Set it to BiTXT15XyfSakk5Yz8L8QrzHPWbK8NjoZeEMFrDvKdKh (devnet test mint) in your .env.local.'
+  )
+}
+const USDC_MINT = new PublicKey(_USDC_MINT_ADDR)
 
 // ─── Browser-Safe Helpers ────────────────────────────────────────────────────
 
