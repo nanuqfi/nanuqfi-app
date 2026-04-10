@@ -271,6 +271,7 @@ function VaultDetailContent({
             userShares={userPosition.data?.shares}
             sharePrice={onChain.data?.sharePrice}
             redemptionPeriodSlots={onChain.data?.redemptionPeriodSlots}
+            presetAmounts={[100, 1000]}
             onSuccess={() => {
               onChain.refresh()
               userPosition.refresh()
