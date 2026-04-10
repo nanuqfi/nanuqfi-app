@@ -3,7 +3,7 @@
 <img src="assets/header.svg" alt="NanuqFi App — Yield Dashboard + Marketing" width="800"/>
 
 [![CI/Deploy](https://github.com/nanuqfi/nanuqfi-app/actions/workflows/deploy.yml/badge.svg)](https://github.com/nanuqfi/nanuqfi-app/actions/workflows/deploy.yml)
-![Tests](https://img.shields.io/badge/tests-26-brightgreen)
+![Tests](https://img.shields.io/badge/tests-97-brightgreen)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black)
 ![React](https://img.shields.io/badge/React-19-61dafb)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-4-38bdf8)
@@ -49,11 +49,11 @@ CSS utilities in `globals.css`: `.glass`, `.glass-elevated`, `.tabular-nums`
 ```
 src/components/
   ui/        -- 8 shared primitives (GlassCard, Button, Badge, Toast, etc.)
-  app/       -- 12 app components (Nav, PortfolioSummary, DepositForm, etc.)
+  app/       -- 13 app components (Nav, PortfolioSummary, YieldEstimator, DepositForm, etc.)
   marketing/ -- 7 marketing sections (Hero, TierShowcase, PerformanceProof, etc.)
 ```
 
-27 components total, all custom -- zero UI libraries.
+28 components total, all custom -- zero UI libraries.
 
 ---
 
@@ -69,13 +69,26 @@ src/components/
 
 ---
 
+## Security & Quality
+
+- **Server-side RPC proxy** -- Helius API key never exposed in client bundle
+- **Input validation** -- deposit/withdraw amounts validated before submission
+- **Error boundaries** -- three-layer error catching (root, app, global) prevents white-screen
+- **Security headers** -- X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy
+- **Network validation** -- warns users on wrong Solana cluster
+- **Blockhash confirmation** -- prevents transaction hangs on dropped txs
+- **Static Tailwind classes** -- no dynamic class construction, all production-safe
+- **97 tests** across UI components, transaction builders, and API routes
+
+---
+
 ## Quick Start
 
 ```bash
 pnpm install
 pnpm dev          # http://localhost:3000
 pnpm build        # production build (standalone output)
-pnpm test         # 26 tests (Vitest + jsdom)
+pnpm test         # 97 tests (Vitest + jsdom)
 pnpm lint         # ESLint
 ```
 
