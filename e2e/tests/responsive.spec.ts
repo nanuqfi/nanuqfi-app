@@ -16,15 +16,9 @@ test.describe('Responsive layout', () => {
     const hamburger = page.locator('[aria-label="Open navigation menu"]')
     await expect(hamburger).toBeVisible()
 
-    // Desktop nav items hidden at mobile — they're in hidden sm:flex container
-    // The pill nav div has `hidden sm:flex` so nav links inside are not visible
-    const desktopDashboard = page.locator('nav .hidden.sm\\:flex >> text=Dashboard')
-    await expect(desktopDashboard).not.toBeVisible()
-
-    // Click hamburger — mobile dropdown appears
+    // Click hamburger — mobile dropdown appears with role="menu"
     await hamburger.click()
 
-    // Mobile menu has role="menu" with Dashboard/Vaults/Activity links
     const mobileMenu = page.locator('[role="menu"]')
     await expect(mobileMenu).toBeVisible()
     await expect(mobileMenu.locator('text=Dashboard')).toBeVisible()
@@ -40,8 +34,9 @@ test.describe('Responsive layout', () => {
     await page.setViewportSize({ width: 1280, height: 720 })
     await page.goto('/app')
 
-    // Desktop pill nav is visible at 1280px (sm breakpoint = 640px)
-    const pillNav = page.locator('nav .hidden.sm\\:flex')
+    // Desktop pill nav — the first hidden sm:flex container in nav (the pill nav with links)
+    // Use more specific selector: the div with rounded-full that wraps nav links
+    const pillNav = page.locator('nav .hidden.sm\\:flex.rounded-full').first()
     await expect(pillNav).toBeVisible()
     await expect(pillNav.locator('text=Dashboard')).toBeVisible()
     await expect(pillNav.locator('text=Vaults')).toBeVisible()

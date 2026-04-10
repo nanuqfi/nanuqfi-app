@@ -13,16 +13,21 @@ test.describe('Vault detail page', () => {
     await mockWallet(page)
     await page.goto('/app/vaults/moderate')
 
-    // Submit with no amount — validation fires on submit, not on empty input
-    await page.click('text=Confirm Deposit')
-    // Validation error role="alert" appears
-    await expect(page.locator('[role="alert"]')).toBeVisible()
+    // Wait for deposit form to render
+    await page.waitForSelector('input[placeholder="0.00"]', { timeout: 10_000 })
 
-    // Try negative value
+    // The "Confirm Deposit" button is disabled when wallet not connected or shareMint
+    // is not loaded — use the input to trigger validation directly.
+    // Fill a negative value and verify the validation fires inline
     const input = page.locator('input[placeholder="0.00"]')
     await input.fill('-10')
-    await page.click('text=Confirm Deposit')
-    await expect(page.locator('[role="alert"]')).toBeVisible()
+    // Validation error appears on change via handleAmountChange
+    // Target the <p role="alert"> specifically (not the Next.js route announcer div)
+    await expect(page.locator('p[role="alert"]')).toBeVisible({ timeout: 5_000 })
+
+    // Verify the error message has content
+    const alertText = await page.locator('p[role="alert"]').first().textContent()
+    expect(alertText).toBeTruthy()
   })
 
   test('MAX button fills correct amount in deposit mode', async ({ page }) => {
@@ -32,12 +37,15 @@ test.describe('Vault detail page', () => {
     // Wait for the deposit form to fully render
     await page.waitForSelector('input[placeholder="0.00"]', { timeout: 10_000 })
 
-    // Click MAX — fills deposit input with wallet balance (or 0 if no balance loaded yet)
-    await page.click('text=MAX')
+    // The MAX button is present regardless of wallet connection
+    const maxButton = page.locator('text=MAX').first()
+    await expect(maxButton).toBeVisible()
+    await maxButton.click()
+
+    // Input value should be set (to wallet balance or remain empty if no balance)
     const input = page.locator('input[placeholder="0.00"]')
     const value = await input.inputValue()
-    // MAX without wallet connected fills 0 — verify the button is present and clickable
-    // The actual fill depends on wallet connection state in the adapter
+    // Button is present and clickable — value may be empty if no connected wallet balance
     expect(typeof value).toBe('string')
   })
 
@@ -46,16 +54,17 @@ test.describe('Vault detail page', () => {
 
     // Switch to withdraw tab
     await page.click('text=Withdraw')
-    // In withdraw mode, the form label shows "Value: X USDC" for share balance
-    // and the submit button changes to "Confirm Withdrawal"
+    // Confirm Withdrawal button appears in withdraw mode
     await expect(page.locator('text=Confirm Withdrawal').first()).toBeVisible()
+    // USDC mention present (Balance or Value label)
     await expect(page.locator('text=USDC').first()).toBeVisible()
   })
 
   test('protocol allocation bars visible', async ({ page }) => {
     await page.goto('/app/vaults/moderate')
 
-    // ProtocolBar renders source display names — "Kamino" and "Marginfi" from sourceDisplayName()
+    // ProtocolBar renders source display names — "Kamino" and "Marginfi"
+    // These come from the mock vault weights and sourceDisplayName()
     await expect(page.locator('text=/Kamino/i').first()).toBeVisible({ timeout: 10_000 })
     await expect(page.locator('text=/Marginfi/i').first()).toBeVisible()
   })
