@@ -1,5 +1,3 @@
-'use client'
-
 import { FadeIn } from '@/components/ui/fade-in'
 
 const items = [

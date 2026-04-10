@@ -1,5 +1,3 @@
-'use client'
-
 import { FadeIn } from '@/components/ui/fade-in'
 import { GlassCard } from '@/components/ui/glass-card'
 import backtestData from '@/data/backtest-results.json'

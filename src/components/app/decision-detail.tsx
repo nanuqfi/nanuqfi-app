@@ -1,5 +1,3 @@
-'use client'
-
 import { ExternalLink, Bot, Cpu } from 'lucide-react'
 import { GlassCard } from '@/components/ui/glass-card'
 import { Badge } from '@/components/ui/badge'

@@ -1,5 +1,3 @@
-'use client'
-
 import { ShieldCheck, ExternalLink } from 'lucide-react'
 import { GlassCard } from '@/components/ui/glass-card'
 

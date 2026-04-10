@@ -1,5 +1,3 @@
-'use client'
-
 import { GlassCard } from '@/components/ui/glass-card'
 import { TimeRangeSelector } from '@/components/ui/time-range-selector'
 
