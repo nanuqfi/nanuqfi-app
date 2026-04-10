@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FadeIn } from '@/components/ui/fade-in'
 import { GlassCard } from '@/components/ui/glass-card'
 import {
