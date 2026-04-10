@@ -157,7 +157,7 @@ export function DepositForm({
     } finally {
       setLoading(false)
     }
-  }, [publicKey, parsedAmount, riskLevelNum, shareMint, redemptionPeriodSlots, sendTransaction, connection, toast, onSuccess])
+  }, [publicKey, parsedAmount, riskLevelNum, shareMint, sharePrice, redemptionPeriodSlots, sendTransaction, connection, toast, onSuccess])
 
   function handleSubmit() {
     if (mode === 'deposit') {

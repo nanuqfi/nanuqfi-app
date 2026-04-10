@@ -7,7 +7,9 @@ import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adap
 
 import '@solana/wallet-adapter-react-ui/styles.css'
 
-const RPC_URL = '/api/rpc'
+const RPC_URL = typeof window !== 'undefined'
+  ? `${window.location.origin}/api/rpc`
+  : (process.env.HELIUS_RPC_URL ?? 'https://api.devnet.solana.com')
 
 export function SolanaProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false)
