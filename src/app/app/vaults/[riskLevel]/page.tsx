@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react'
 import { GlassCard } from '@/components/ui/glass-card'
-import { Badge } from '@/components/ui/badge'
+import { Badge, MockDataBadge } from '@/components/ui/badge'
 import { YieldChart } from '@/components/app/yield-chart'
 import { ProtocolBar } from '@/components/app/protocol-bar'
 import { GuardrailCard } from '@/components/app/guardrail-card'
@@ -59,7 +59,7 @@ export default function VaultDetailPage() {
             : 'Invalid risk level.'}
         </p>
         <Link
-          href="/vaults"
+          href="/app/vaults"
           className="inline-flex items-center gap-1.5 text-sm text-sky-400 hover:text-sky-300 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -126,6 +126,9 @@ function VaultDetailContent({
   const maxSingleAsset = maxSingleAssetBps / 100
   const redemptionSlots = onChain.data?.redemptionPeriodSlots ?? 0n
 
+  // Detect mock-tier fallback: neither on-chain nor keeper data is available
+  const isMockData = !onChain.loading && !keeper.loading && !onChain.data && !keeper.data
+
   // Decisions: keeper API > mock fallback
   const decisions: KeeperDecision[] = useMemo(() => {
     if (keeperDecisions.data && keeperDecisions.data.length > 0) {
@@ -151,7 +154,7 @@ function VaultDetailContent({
     <div className="space-y-8">
       {/* Back link */}
       <Link
-        href="/vaults"
+        href="/app/vaults"
         className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-200 transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
@@ -166,6 +169,7 @@ function VaultDetailContent({
           <h1 className="text-4xl font-bold text-white tracking-tight">
             USDC Optimal Yield
           </h1>
+          {isMockData && <MockDataBadge />}
         </div>
 
         {/* Right: stats pill */}
@@ -232,7 +236,7 @@ function VaultDetailContent({
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-lg font-semibold text-white">Recent Decisions</h3>
               <Link
-                href="/activity"
+                href="/app/activity"
                 className="flex items-center gap-1 text-xs text-slate-500 hover:text-sky-400 transition-colors"
               >
                 View all

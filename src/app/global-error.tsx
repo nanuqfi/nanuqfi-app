@@ -1,5 +1,8 @@
 'use client'
 
+import { useEffect } from 'react'
+import { reportError } from '@/lib/error-reporting'
+
 export default function GlobalError({
   error,
   reset,
@@ -7,6 +10,10 @@ export default function GlobalError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  useEffect(() => {
+    reportError(error, { domain: 'render', extra: { digest: error.digest, boundary: 'global' } })
+  }, [error])
+
   return (
     <html lang="en">
       <body className="bg-[#080B11] text-white">

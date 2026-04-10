@@ -1,4 +1,4 @@
-import { ShieldCheck, Scale, Zap } from 'lucide-react'
+import { ShieldCheck, Scale, Zap, FlaskConical } from 'lucide-react'
 import type { RiskLevel } from '@/lib/mock-data'
 
 // ─── Static class maps ────────────────────────────────────────────────────────
@@ -25,6 +25,32 @@ interface BadgeProps {
   tier: RiskLevel
   className?: string
 }
+
+// ─── MockDataBadge ────────────────────────────────────────────────────────────
+// Shown when live on-chain and keeper data are unavailable — alerts users
+// they're seeing demo/fallback values, not real-time protocol data.
+
+interface MockDataBadgeProps {
+  className?: string
+}
+
+export function MockDataBadge({ className }: MockDataBadgeProps) {
+  return (
+    <span
+      className={[
+        'inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium',
+        'bg-slate-700/50 text-slate-500 border border-slate-700 rounded-full',
+        className,
+      ].filter(Boolean).join(' ')}
+      title="Live on-chain and keeper data unavailable — showing demo values"
+    >
+      <FlaskConical className="w-2.5 h-2.5" />
+      Demo data
+    </span>
+  )
+}
+
+// ─── Badge ────────────────────────────────────────────────────────────────────
 
 export function Badge({ tier, className }: BadgeProps) {
   const { label, icon: Icon } = tierConfig[tier]

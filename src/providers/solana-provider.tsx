@@ -6,16 +6,13 @@ import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
 import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets'
 
 import '@solana/wallet-adapter-react-ui/styles.css'
+import { DEVNET_GENESIS_HASH, DEVNET_RPC_FALLBACK } from '@/lib/network-config'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const RPC_URL = typeof window !== 'undefined'
   ? `${window.location.origin}/api/rpc`
-  : (process.env.HELIUS_RPC_URL ?? 'https://api.devnet.solana.com')
-
-// Solana devnet genesis hash — stable, canonical identifier.
-// From: https://api.devnet.solana.com getGenesisHash
-const DEVNET_GENESIS_HASH = 'EtWTRABZaYq6iMfeYKouRu166VU2xqa1wcaWoxPkrZBG'
+  : (process.env.HELIUS_RPC_URL ?? DEVNET_RPC_FALLBACK)
 
 // ─── Network Guard ────────────────────────────────────────────────────────────
 

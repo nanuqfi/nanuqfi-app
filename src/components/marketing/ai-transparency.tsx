@@ -1,5 +1,3 @@
-'use client'
-
 import { Bot } from 'lucide-react'
 import { FadeIn } from '@/components/ui/fade-in'
 import { GlassCard } from '@/components/ui/glass-card'

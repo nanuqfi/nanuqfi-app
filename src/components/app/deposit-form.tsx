@@ -38,7 +38,8 @@ const USDC_DECIMALS = 6
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export function DepositForm({
-  riskLevel,
+  // riskLevel is reserved for future use (e.g. analytics, display labels)
+  riskLevel: _riskLevel, // eslint-disable-line @typescript-eslint/no-unused-vars
   riskLevelNum,
   apy,
   dailyEarnings,

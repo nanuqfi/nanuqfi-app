@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 import { GlassCard } from '@/components/ui/glass-card'
-import { Badge } from '@/components/ui/badge'
+import { Badge, MockDataBadge } from '@/components/ui/badge'
 import { ConfidenceBar } from '@/components/ui/confidence-bar'
 import { formatUsd, formatApy, formatDailyEarnings, normalizeApy, type Vault } from '@/lib/mock-data'
 
@@ -24,9 +24,10 @@ interface VaultCardProps {
   deposited?: number
   confidence?: number
   isConnected?: boolean
+  isMockData?: boolean
 }
 
-export function VaultCard({ vault, deposited, confidence, isConnected }: VaultCardProps) {
+export function VaultCard({ vault, deposited, confidence, isConnected, isMockData }: VaultCardProps) {
   const { setVisible } = useWalletModal()
   const hasPosition = deposited !== undefined && deposited > 0
   const apy = normalizeApy(vault.apy)
@@ -50,7 +51,10 @@ export function VaultCard({ vault, deposited, confidence, isConnected }: VaultCa
       >
         {/* Top — Badge + APY */}
         <div className="flex items-center justify-between">
-          <Badge tier={vault.riskLevel} />
+          <div className="flex items-center gap-2">
+            <Badge tier={vault.riskLevel} />
+            {isMockData && <MockDataBadge />}
+          </div>
           <span className="text-3xl font-mono tabular-nums text-white">
             {formatApy(apy)}
           </span>

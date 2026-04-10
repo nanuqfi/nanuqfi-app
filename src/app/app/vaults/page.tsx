@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { GlassCard } from '@/components/ui/glass-card'
-import { Badge } from '@/components/ui/badge'
+import { Badge, MockDataBadge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ProtocolBar } from '@/components/app/protocol-bar'
 import { GuardrailCard } from '@/components/app/guardrail-card'
@@ -84,14 +84,18 @@ function VaultColumn({ vault }: { vault: Vault }) {
   const dailyEarnings = tvl * apy / 365
   const drawdown = vault.guardrails.maxDrawdown
 
+  // Mock-tier fallback: neither live source returned data
+  const isMockData = !onChain.loading && !keeper.loading && !onChain.data && !keeper.data
+
   return (
     <GlassCard
       tier={vault.riskLevel}
       className="relative flex flex-col p-0 overflow-hidden"
     >
       {/* Tier badge header */}
-      <div className={`bg-gradient-to-b ${config.gradient} px-6 pt-5 pb-4`}>
+      <div className={`bg-gradient-to-b ${config.gradient} px-6 pt-5 pb-4 flex items-center justify-between`}>
         <Badge tier={vault.riskLevel} />
+        {isMockData && <MockDataBadge />}
       </div>
 
       {/* Stats rows */}

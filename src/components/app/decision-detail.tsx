@@ -1,5 +1,3 @@
-'use client'
-
 import { ExternalLink, Bot, Cpu } from 'lucide-react'
 import { GlassCard } from '@/components/ui/glass-card'
 import { Badge } from '@/components/ui/badge'
@@ -9,6 +7,7 @@ import {
   sourceDisplayName,
   type KeeperDecision,
 } from '@/lib/mock-data'
+import { solscanTxUrl } from '@/lib/network-config'
 
 interface DecisionDetailProps {
   decision: KeeperDecision | null
@@ -160,7 +159,7 @@ export function DecisionDetail({ decision }: DecisionDetailProps) {
           </span>
           {txSignature && truncatedTx ? (
             <a
-              href={`https://solscan.io/tx/${txSignature}?cluster=devnet`}
+              href={solscanTxUrl(txSignature)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-sm text-sky-400 hover:text-sky-300 transition-colors font-mono"
