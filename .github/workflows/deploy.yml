@@ -15,6 +15,15 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm lint
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install chromium --with-deps
+      - name: Run E2E tests
+        run: pnpm test:e2e
+        env:
+          HELIUS_RPC_URL: https://api.devnet.solana.com
+          NEXT_PUBLIC_ALLOCATOR_PROGRAM_ID: 2QtJ5kmxLuW2jYCFpJMtzZ7PCnKdoMwkeueYoDUi5z5P
+          NEXT_PUBLIC_USDC_MINT: BiTXT15XyfSakk5Yz8L8QrzHPWbK8NjoZeEMFrDvKdKh
+          NEXT_PUBLIC_KEEPER_API_URL: http://localhost:3001
 
   deploy:
     needs: build-test
