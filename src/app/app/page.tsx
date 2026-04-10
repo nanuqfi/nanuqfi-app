@@ -20,22 +20,31 @@ import {
 
 const ACTIVE_RISK_LEVELS: RiskLevel[] = ['moderate', 'aggressive']
 
-function useVaultWithFallback(riskLevel: RiskLevel): Vault {
+interface VaultWithMeta {
+  vault: Vault
+  isMockData: boolean
+}
+
+function useVaultWithFallback(riskLevel: RiskLevel): VaultWithMeta {
   const live = useVaultData(riskLevel)
   const mock = mockVaults.find(v => v.riskLevel === riskLevel)
+  const isMockData = !live.loading && !live.data
 
   return {
-    riskLevel,
-    tvl: live.data?.tvl ?? mock?.tvl ?? 0,
-    apy: normalizeApy(live.data?.apy ?? mock?.apy ?? 0),
-    drawdown: live.data?.drawdown ?? mock?.drawdown ?? 0,
-    weights: live.data?.weights ?? mock?.weights ?? {},
-    guardrails: mock?.guardrails ?? {
-      maxDrawdown: 5,
-      currentDrawdown: 0,
-      maxPerp: 0,
-      currentPerp: 0,
+    vault: {
+      riskLevel,
+      tvl: live.data?.tvl ?? mock?.tvl ?? 0,
+      apy: normalizeApy(live.data?.apy ?? mock?.apy ?? 0),
+      drawdown: live.data?.drawdown ?? mock?.drawdown ?? 0,
+      weights: live.data?.weights ?? mock?.weights ?? {},
+      guardrails: mock?.guardrails ?? {
+        maxDrawdown: 5,
+        currentDrawdown: 0,
+        maxPerp: 0,
+        currentPerp: 0,
+      },
     },
+    isMockData,
   }
 }
 
@@ -64,12 +73,17 @@ export default function DashboardPage() {
     ? Number(usdcBalance.data) / 1e6
     : undefined
 
-  const moderateVault = useVaultWithFallback('moderate')
-  const aggressiveVault = useVaultWithFallback('aggressive')
+  const { vault: moderateVault, isMockData: modIsMock } = useVaultWithFallback('moderate')
+  const { vault: aggressiveVault, isMockData: aggIsMock } = useVaultWithFallback('aggressive')
 
   const vaults: Record<string, Vault> = {
     moderate: moderateVault,
     aggressive: aggressiveVault,
+  }
+
+  const mockFlags: Record<string, boolean> = {
+    moderate: modIsMock,
+    aggressive: aggIsMock,
   }
 
   const decisionsHook = useAllDecisions()
@@ -107,9 +121,10 @@ export default function DashboardPage() {
           {ACTIVE_RISK_LEVELS.map(level => (
             <VaultCard
               key={level}
-              vault={vaults[level]}
+              vault={vaults[level]!}
               deposited={isConnected ? (level === 'moderate' ? userModValue : userAggValue) : undefined}
               isConnected={isConnected}
+              isMockData={mockFlags[level]}
             />
           ))}
         </div>

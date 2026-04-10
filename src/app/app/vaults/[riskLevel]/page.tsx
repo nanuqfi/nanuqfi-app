@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react'
 import { GlassCard } from '@/components/ui/glass-card'
-import { Badge } from '@/components/ui/badge'
+import { Badge, MockDataBadge } from '@/components/ui/badge'
 import { YieldChart } from '@/components/app/yield-chart'
 import { ProtocolBar } from '@/components/app/protocol-bar'
 import { GuardrailCard } from '@/components/app/guardrail-card'
@@ -126,6 +126,9 @@ function VaultDetailContent({
   const maxSingleAsset = maxSingleAssetBps / 100
   const redemptionSlots = onChain.data?.redemptionPeriodSlots ?? 0n
 
+  // Detect mock-tier fallback: neither on-chain nor keeper data is available
+  const isMockData = !onChain.loading && !keeper.loading && !onChain.data && !keeper.data
+
   // Decisions: keeper API > mock fallback
   const decisions: KeeperDecision[] = useMemo(() => {
     if (keeperDecisions.data && keeperDecisions.data.length > 0) {
@@ -166,6 +169,7 @@ function VaultDetailContent({
           <h1 className="text-4xl font-bold text-white tracking-tight">
             USDC Optimal Yield
           </h1>
+          {isMockData && <MockDataBadge />}
         </div>
 
         {/* Right: stats pill */}
