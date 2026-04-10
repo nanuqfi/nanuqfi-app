@@ -26,6 +26,7 @@ interface DepositFormProps {
   walletBalance?: number
   shareMint?: PublicKey
   userShares?: bigint
+  sharePrice?: number
   redemptionPeriodSlots?: bigint
   onSuccess?: () => void
 }
@@ -44,6 +45,7 @@ export function DepositForm({
   walletBalance,
   shareMint,
   userShares,
+  sharePrice,
   redemptionPeriodSlots,
   onSuccess,
 }: DepositFormProps) {
@@ -71,9 +73,9 @@ export function DepositForm({
     if (mode === 'deposit' && walletBalance !== undefined && walletBalance > 0) {
       setAmount(String(walletBalance))
     } else if (mode === 'withdraw' && userShares !== undefined && userShares > 0n) {
-      // Convert shares back to approximate USDC for display
-      // Share price ~1:1 at initialization, so shares / 1e6 gives USDC
-      setAmount(String(Number(userShares) / 10 ** USDC_DECIMALS))
+      // Convert shares to USDC using actual share price
+      const price = sharePrice ?? 1
+      setAmount(String(Number(userShares) * price / 10 ** USDC_DECIMALS))
     }
   }
 
@@ -113,9 +115,9 @@ export function DepositForm({
 
     setLoading(true)
     try {
-      // Convert entered USDC amount to shares
-      // For simplicity, treat 1 share = 1 USDC smallest unit at 1:1 price
-      const sharesAmount = BigInt(Math.round(parsedAmount * 10 ** USDC_DECIMALS))
+      // Convert entered USDC amount to shares using actual share price
+      const price = sharePrice ?? 1
+      const sharesAmount = BigInt(Math.round(parsedAmount / price * 10 ** USDC_DECIMALS))
 
       const requestIx = await buildRequestWithdrawInstruction(
         publicKey,
@@ -213,7 +215,7 @@ export function DepositForm({
           )}
           {mode === 'withdraw' && userShares !== undefined && (
             <span className="text-xs text-slate-500 font-mono">
-              Shares: {(Number(userShares) / 10 ** USDC_DECIMALS).toLocaleString('en-US', { maximumFractionDigits: 2 })}
+              Value: {(Number(userShares) * (sharePrice ?? 1) / 10 ** USDC_DECIMALS).toLocaleString('en-US', { maximumFractionDigits: 2 })} USDC
             </span>
           )}
         </div>
