@@ -60,6 +60,7 @@ export function AITransparency() {
                 <span className="text-xs text-slate-500 block mb-1">
                   Confidence
                 </span>
+                {/* Static demo value for marketing showcase */}
                 <ConfidenceBar value={87} />
               </div>
               <div className="text-right">

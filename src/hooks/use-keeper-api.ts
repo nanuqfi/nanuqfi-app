@@ -35,6 +35,8 @@ export interface KeeperDecisionData {
   weightChanges: { source: string; from: number; to: number }[]
   aiInvolved: boolean
   reason: string
+  confidence?: number
+  txSignature?: string
 }
 
 export interface YieldEstimate {
