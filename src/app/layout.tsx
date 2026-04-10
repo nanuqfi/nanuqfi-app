@@ -13,8 +13,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NanuqFi — Yield, Routed.",
-  description: "AI-powered USDC yield routing across Kamino, Marginfi, and Lulo. Transparent allocations, real-time guardrails, and autonomous rebalancing.",
+  title: 'NanuqFi — AI-Powered Yield Routing',
+  description: 'Protocol-agnostic yield routing layer for DeFi. Deposit USDC, pick a risk level, earn optimized yield.',
+  openGraph: {
+    title: 'NanuqFi — AI-Powered Yield Routing',
+    description: 'Protocol-agnostic yield routing layer for DeFi.',
+    url: 'https://nanuqfi.com',
+    siteName: 'NanuqFi',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'NanuqFi — AI-Powered Yield Routing',
+    description: 'Protocol-agnostic yield routing layer for DeFi.',
+  },
 };
 
 export default function RootLayout({
