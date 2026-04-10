@@ -1,7 +1,7 @@
 'use client'
 
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
-import { PublicKey } from '@solana/web3.js'
+import { Connection, PublicKey } from '@solana/web3.js'
 import { getAssociatedTokenAddress } from '@solana/spl-token'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import {
@@ -9,6 +9,31 @@ import {
   getRiskVaultPDA,
   getUserPositionPDA,
 } from '@/lib/transactions'
+
+// ─── In-Flight Request Deduplication ─────────────────────────────────────────
+// When multiple hooks call getAccountInfo on the same address simultaneously
+// (e.g. on mount or visibility change), we deduplicate by caching the in-flight
+// Promise. All callers awaiting the same address share one RPC call.
+// The cache entry is deleted once the promise settles to allow future polls.
+
+type AccountInfoResult = Awaited<ReturnType<Connection['getAccountInfo']>>
+
+const _inFlightGetAccountInfo = new Map<string, Promise<AccountInfoResult>>()
+
+function deduplicatedGetAccountInfo(
+  connection: Connection,
+  pubkey: PublicKey
+): Promise<AccountInfoResult> {
+  const key = pubkey.toBase58()
+  const existing = _inFlightGetAccountInfo.get(key)
+  if (existing) return existing
+
+  const promise = connection.getAccountInfo(pubkey).finally(() => {
+    _inFlightGetAccountInfo.delete(key)
+  })
+  _inFlightGetAccountInfo.set(key, promise)
+  return promise
+}
 
 // ─── Account Parsing ─────────────────────────────────────────────────────────
 // Manual Borsh deserialization matching `programs/allocator/src/state.rs`.
@@ -191,7 +216,12 @@ interface HookResult<T> {
   refresh: () => void
 }
 
-const POLL_INTERVAL = 15_000
+// Increased from 15s to 30s — reduces RPC call frequency by 50% while
+// keeping data fresh enough for a yield dashboard context.
+// All hooks share the same interval, so thundering herd risk is at mount
+// time only (each hook does one immediate fetch). Stagger is handled by
+// the fact that hooks mount sequentially and use independent intervals.
+const POLL_INTERVAL = 30_000
 
 // ─── useAllocatorState ───────────────────────────────────────────────────────
 
@@ -205,7 +235,7 @@ export function useAllocatorState(): HookResult<AllocatorAccount> {
   const fetch = useCallback(async () => {
     try {
       const [pda] = getAllocatorPDA()
-      const info = await connection.getAccountInfo(pda)
+      const info = await deduplicatedGetAccountInfo(connection, pda)
       if (!mountedRef.current) return
 
       if (!info) {
@@ -257,7 +287,7 @@ export function useRiskVault(riskLevel: number): HookResult<RiskVaultAccount> {
   const fetch = useCallback(async () => {
     try {
       const [pda] = getRiskVaultPDA(riskLevel)
-      const info = await connection.getAccountInfo(pda)
+      const info = await deduplicatedGetAccountInfo(connection, pda)
       if (!mountedRef.current) return
 
       if (!info) {
@@ -320,7 +350,7 @@ export function useUserPosition(
     try {
       const [riskVault] = getRiskVaultPDA(riskLevel)
       const [pda] = getUserPositionPDA(publicKey, riskVault)
-      const info = await connection.getAccountInfo(pda)
+      const info = await deduplicatedGetAccountInfo(connection, pda)
       if (!mountedRef.current) return
 
       if (!info) {
@@ -538,7 +568,7 @@ export function useUsdcBalance(): HookResult<bigint> {
 
     try {
       const ata = await getAssociatedTokenAddress(USDC_MINT, publicKey)
-      const info = await connection.getAccountInfo(ata)
+      const info = await deduplicatedGetAccountInfo(connection, ata)
       if (!mountedRef.current) return
 
       if (!info) {
