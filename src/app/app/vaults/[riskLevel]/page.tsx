@@ -59,7 +59,7 @@ export default function VaultDetailPage() {
             : 'Invalid risk level.'}
         </p>
         <Link
-          href="/vaults"
+          href="/app/vaults"
           className="inline-flex items-center gap-1.5 text-sm text-sky-400 hover:text-sky-300 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -151,7 +151,7 @@ function VaultDetailContent({
     <div className="space-y-8">
       {/* Back link */}
       <Link
-        href="/vaults"
+        href="/app/vaults"
         className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-200 transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
@@ -232,7 +232,7 @@ function VaultDetailContent({
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-lg font-semibold text-white">Recent Decisions</h3>
               <Link
-                href="/activity"
+                href="/app/activity"
                 className="flex items-center gap-1 text-xs text-slate-500 hover:text-sky-400 transition-colors"
               >
                 View all
