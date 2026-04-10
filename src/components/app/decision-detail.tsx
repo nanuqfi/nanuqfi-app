@@ -63,9 +63,11 @@ export function DecisionDetail({ decision }: DecisionDetailProps) {
     )
   }
 
-  const fakeTxHash = '4xKmR8vNqJ3pTfW9bLcD2hYs6eAoUg5mXnZ7rQ2'
-  const truncatedHash = '4xKm...7rQ2'
   const isRebalance = decision.action !== 'Risk Check'
+  const txSignature = (decision as KeeperDecision & { txSignature?: string }).txSignature ?? null
+  const truncatedTx = txSignature
+    ? `${txSignature.slice(0, 4)}...${txSignature.slice(-4)}`
+    : null
 
   return (
     <GlassCard className="p-6">
@@ -141,13 +143,16 @@ export function DecisionDetail({ decision }: DecisionDetailProps) {
           </div>
         </div>
 
-        {/* Confidence */}
-        {decision.aiInvolved && (
+        {/* Confidence — rendered only when the decision carries a real value */}
+        {decision.aiInvolved &&
+          typeof (decision as KeeperDecision & { confidence?: number }).confidence === 'number' && (
           <div className="space-y-1.5">
             <span className="text-[11px] uppercase tracking-wider text-slate-400">
               Confidence
             </span>
-            <ConfidenceBar value={87} />
+            <ConfidenceBar
+              value={(decision as KeeperDecision & { confidence?: number }).confidence!}
+            />
           </div>
         )}
 
@@ -156,15 +161,19 @@ export function DecisionDetail({ decision }: DecisionDetailProps) {
           <span className="text-[11px] uppercase tracking-wider text-slate-400">
             On-chain TX
           </span>
-          <a
-            href={`https://solscan.io/tx/${fakeTxHash}?cluster=devnet`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm text-sky-400 hover:text-sky-300 transition-colors font-mono"
-          >
-            {truncatedHash}
-            <ExternalLink className="h-3 w-3" />
-          </a>
+          {txSignature && truncatedTx ? (
+            <a
+              href={`https://solscan.io/tx/${txSignature}?cluster=devnet`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm text-sky-400 hover:text-sky-300 transition-colors font-mono"
+            >
+              {truncatedTx}
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          ) : (
+            <span className="text-sm text-slate-500 font-mono">N/A</span>
+          )}
         </div>
 
         {/* Timestamp */}
