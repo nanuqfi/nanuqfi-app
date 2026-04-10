@@ -18,11 +18,6 @@ import {
   type RiskLevel,
 } from '@/lib/mock-data'
 
-const VAULT_CONFIDENCE: Record<string, number> = {
-  moderate: 87,
-  aggressive: 74,
-}
-
 const ACTIVE_RISK_LEVELS: RiskLevel[] = ['moderate', 'aggressive']
 
 function useVaultWithFallback(riskLevel: RiskLevel): Vault {
@@ -114,7 +109,6 @@ export default function DashboardPage() {
               key={level}
               vault={vaults[level]}
               deposited={isConnected ? (level === 'moderate' ? userModValue : userAggValue) : undefined}
-              confidence={VAULT_CONFIDENCE[level]}
               isConnected={isConnected}
             />
           ))}

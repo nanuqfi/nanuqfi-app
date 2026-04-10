@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { GlassCard } from '@/components/ui/glass-card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ConfidenceBar } from '@/components/ui/confidence-bar'
 import { ProtocolBar } from '@/components/app/protocol-bar'
 import { GuardrailCard } from '@/components/app/guardrail-card'
 import { useVaultData } from '@/hooks/use-keeper-api'
@@ -29,25 +28,21 @@ const tierConfig: Record<RiskLevel, {
   gradient: string
   barColor: string
   confidenceColor: string
-  aiConfidence: number
 }> = {
   conservative: {
     gradient: 'from-emerald-500/10 to-transparent',
     barColor: 'text-emerald-400',
     confidenceColor: 'bg-emerald-500',
-    aiConfidence: 92,
   },
   moderate: {
     gradient: 'from-sky-500/10 to-transparent',
     barColor: 'text-sky-400',
     confidenceColor: 'bg-sky-500',
-    aiConfidence: 87,
   },
   aggressive: {
     gradient: 'from-amber-500/10 to-transparent',
     barColor: 'text-amber-400',
     confidenceColor: 'bg-amber-500',
-    aiConfidence: 74,
   },
 }
 
@@ -137,17 +132,6 @@ function VaultColumn({ vault }: { vault: Vault }) {
         <div className="flex items-center justify-between py-3 border-b border-white/5">
           <span className="text-xs text-slate-400">Max Drawdown</span>
           <span className="font-mono text-sm text-red-400">-{drawdown}%</span>
-        </div>
-
-        {/* AI Confidence */}
-        <div className="py-3 border-b border-white/5">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs text-slate-400">AI Confidence</span>
-          </div>
-          <ConfidenceBar
-            value={config.aiConfidence}
-            color={config.confidenceColor}
-          />
         </div>
 
         {/* Protocol allocation */}

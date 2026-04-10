@@ -64,7 +64,7 @@ export function DecisionDetail({ decision }: DecisionDetailProps) {
   }
 
   const isRebalance = decision.action !== 'Risk Check'
-  const txSignature = (decision as KeeperDecision & { txSignature?: string }).txSignature ?? null
+  const txSignature = decision.txSignature ?? null
   const truncatedTx = txSignature
     ? `${txSignature.slice(0, 4)}...${txSignature.slice(-4)}`
     : null
@@ -144,15 +144,12 @@ export function DecisionDetail({ decision }: DecisionDetailProps) {
         </div>
 
         {/* Confidence — rendered only when the decision carries a real value */}
-        {decision.aiInvolved &&
-          typeof (decision as KeeperDecision & { confidence?: number }).confidence === 'number' && (
+        {decision.aiInvolved && typeof decision.confidence === 'number' && (
           <div className="space-y-1.5">
             <span className="text-[11px] uppercase tracking-wider text-slate-400">
               Confidence
             </span>
-            <ConfidenceBar
-              value={(decision as KeeperDecision & { confidence?: number }).confidence!}
-            />
+            <ConfidenceBar value={decision.confidence} />
           </div>
         )}
 
