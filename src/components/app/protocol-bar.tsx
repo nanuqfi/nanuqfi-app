@@ -3,6 +3,27 @@
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 
+// ─── Static color map ─────────────────────────────────────────────────────────
+// The `color` prop carries Tailwind text-color classes (e.g. "text-sky-400").
+// Converting text-* → bg-* via string replace produces dynamic class names
+// that Tailwind purges in production. Use an explicit lookup instead so all
+// class strings are statically visible to the compiler.
+
+const TEXT_TO_BG: Record<string, string> = {
+  'text-sky-400':    'bg-sky-400',
+  'text-emerald-400': 'bg-emerald-400',
+  'text-amber-400':  'bg-amber-400',
+  'text-violet-400': 'bg-violet-400',
+  'text-rose-400':   'bg-rose-400',
+  'text-blue-400':   'bg-blue-400',
+  'text-teal-400':   'bg-teal-400',
+  'text-orange-400': 'bg-orange-400',
+  'text-cyan-400':   'bg-cyan-400',
+  'text-pink-400':   'bg-pink-400',
+  'text-indigo-400': 'bg-indigo-400',
+  'text-slate-400':  'bg-slate-400',
+}
+
 interface ProtocolBarProps {
   name: string
   percentage: number
@@ -14,9 +35,7 @@ interface ProtocolBarProps {
 export function ProtocolBar({ name, percentage, apy, color, reasoning }: ProtocolBarProps) {
   const [expanded, setExpanded] = useState(false)
 
-  // Derive bg color from the text color class for the fill bar
-  // e.g. "text-sky-400" -> "bg-sky-400"
-  const fillColor = color.replace('text-', 'bg-')
+  const fillColor = TEXT_TO_BG[color] ?? 'bg-slate-400'
 
   return (
     <div className="space-y-1.5">
