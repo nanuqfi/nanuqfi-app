@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { ArrowLeft, ArrowRight, BookOpen } from 'lucide-react'
 import { GlassCard } from '@/components/ui/glass-card'
 import { Badge, MockDataBadge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -305,6 +306,12 @@ export default function VaultsPage() {
 
   return (
     <div className="space-y-12">
+      {/* Breadcrumb */}
+      <Link href="/app" className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-300 transition-colors cursor-pointer">
+        <ArrowLeft className="w-3.5 h-3.5" />
+        Back to Dashboard
+      </Link>
+
       {/* Section 1 — Comparison Table */}
       <section className="space-y-6">
         <div>
@@ -330,6 +337,33 @@ export default function VaultsPage() {
 
       {/* Section 3 — Guardrails Summary */}
       <GuardrailsSummary />
+
+      {/* Section 4 — Cross-links */}
+      <section className="grid sm:grid-cols-2 gap-4">
+        <Link
+          href="/app/activity"
+          className="group flex items-center justify-between p-5 rounded-2xl border border-white/[0.04] bg-white/[0.015] hover:border-sky-500/20 hover:bg-sky-500/[0.03] transition-all duration-300 cursor-pointer"
+        >
+          <div>
+            <p className="text-sm font-semibold text-white">View AI Decisions</p>
+            <p className="text-xs text-slate-500 mt-0.5">See the reasoning behind every allocation</p>
+          </div>
+          <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-sky-400 transition-colors" />
+        </Link>
+        <Link
+          href="/strategy"
+          className="group flex items-center justify-between p-5 rounded-2xl border border-white/[0.04] bg-white/[0.015] hover:border-white/[0.08] transition-all duration-300 cursor-pointer"
+        >
+          <div>
+            <p className="text-sm font-semibold text-white flex items-center gap-1.5">
+              <BookOpen className="w-3.5 h-3.5 text-slate-500" />
+              Strategy Docs
+            </p>
+            <p className="text-xs text-slate-500 mt-0.5">How the protocol works under the hood</p>
+          </div>
+          <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 transition-colors" />
+        </Link>
+      </section>
     </div>
   )
 }
