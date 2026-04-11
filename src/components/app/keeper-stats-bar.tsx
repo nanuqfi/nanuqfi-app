@@ -3,6 +3,16 @@
 import { GlassCard } from '@/components/ui/glass-card'
 import { useKeeperHealth } from '@/hooks/use-keeper-api'
 
+function formatUptime(seconds: number): string {
+  const d = Math.floor(seconds / 86400)
+  const h = Math.floor((seconds % 86400) / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+
+  if (d > 0) return `${d}d ${h}h`
+  if (h > 0) return `${h}h ${m}m`
+  return `${m}m`
+}
+
 interface StatItemProps {
   label: string
   value: string
@@ -37,7 +47,7 @@ export function KeeperStatsBar() {
     ? `${((completed / total) * 100).toFixed(1)}%`
     : '--'
   const uptimeValue = data?.uptime
-    ? `${Math.floor(data.uptime / 86400)}d`
+    ? formatUptime(data.uptime)
     : '--'
 
   if (loading) {
