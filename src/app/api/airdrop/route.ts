@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Connection, Keypair, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { Connection, Keypair, PublicKey, LAMPORTS_PER_SOL, SystemProgram, Transaction } from '@solana/web3.js'
 import { getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token'
 import { readFileSync } from 'node:fs'
 
 const ALLOWED_AMOUNTS = new Set([100, 1000, 100000])
 const USDC_DECIMALS = 6
-const SOL_AIRDROP_AMOUNT = 0.1 * LAMPORTS_PER_SOL
+const SOL_AIRDROP_AMOUNT = 0.01 * LAMPORTS_PER_SOL
 
 // Rate limiting: 1 airdrop per wallet per 10 minutes
 const RATE_LIMIT_MS = 600_000
@@ -107,11 +107,24 @@ export async function POST(request: NextRequest) {
       mintAmount,
     )
 
-    // Airdrop SOL for fees (best-effort — devnet faucet may rate-limit)
+    // Transfer SOL for tx fees (devnet faucet is broken, send from our wallet)
     try {
-      await connection.requestAirdrop(walletPubkey, SOL_AIRDROP_AMOUNT)
+      const solBalance = await connection.getBalance(walletPubkey)
+      if (solBalance < SOL_AIRDROP_AMOUNT) {
+        const transferIx = SystemProgram.transfer({
+          fromPubkey: mintAuthority.publicKey,
+          toPubkey: walletPubkey,
+          lamports: SOL_AIRDROP_AMOUNT,
+        })
+        const { blockhash } = await connection.getLatestBlockhash()
+        const tx = new Transaction().add(transferIx)
+        tx.recentBlockhash = blockhash
+        tx.feePayer = mintAuthority.publicKey
+        tx.sign(mintAuthority)
+        await connection.sendRawTransaction(tx.serialize())
+      }
     } catch {
-      // Ignore — user may already have SOL, or faucet is rate-limited
+      // Best-effort — user may already have enough SOL
     }
 
     // Get updated balance
