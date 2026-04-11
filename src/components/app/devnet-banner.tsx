@@ -18,9 +18,17 @@ export function DevnetBanner() {
         </button>
       </div>
       {showGuide && (
-        <div className="fixed inset-x-0 top-8 z-[55] pt-2">
-          <OnboardingGuide onClose={() => setShowGuide(false)} />
-        </div>
+        <>
+          {/* Backdrop — dims content behind guide, click to close */}
+          <div
+            className="fixed inset-0 top-8 z-[54] bg-slate-950/80 backdrop-blur-sm"
+            onClick={() => setShowGuide(false)}
+            aria-hidden="true"
+          />
+          <div className="fixed inset-x-0 top-8 z-[55] pt-2">
+            <OnboardingGuide onClose={() => setShowGuide(false)} />
+          </div>
+        </>
       )}
     </>
   )
