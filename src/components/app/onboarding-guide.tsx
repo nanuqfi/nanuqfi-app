@@ -72,7 +72,7 @@ export function OnboardingGuide({ onClose }: OnboardingGuideProps) {
   const stepActive = (s: Step) => s === step
 
   return (
-    <div className="mx-4 sm:mx-6 lg:mx-8 mt-2 mb-4 max-w-[1440px] mx-auto">
+    <div>
       <GlassCard className="p-6 relative overflow-hidden">
         {/* Close button */}
         <button
