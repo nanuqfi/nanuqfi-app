@@ -35,7 +35,7 @@ const RISK_LEVEL_MAP: Record<string, number> = {
   aggressive: 2,
 }
 
-const validRiskLevels: RiskLevel[] = ['moderate', 'aggressive']
+const validRiskLevels: RiskLevel[] = ['conservative', 'moderate', 'aggressive']
 
 const PROTOCOL_COLORS: Record<string, string> = {
   'kamino-lending': 'text-sky-400',

@@ -125,10 +125,13 @@ function parseAllocator(raw: Uint8Array | ArrayBuffer): AllocatorAccount {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
   let offset = ANCHOR_DISCRIMINATOR_SIZE
 
+  offset += 1 // skip version byte
   const admin = readPubkey(bytes, offset); offset += 32
   const keeperAuthority = readPubkey(bytes, offset); offset += 32
   const totalTvl = readU64(view, offset); offset += 8
   const halted = bytes[offset] === 1; offset += 1
+  // Skip protocol_whitelist vec (4 byte length + N * 32 bytes)
+  const whitelistLen = view.getUint32(offset, true); offset += 4 + whitelistLen * 32
   const bump = bytes[offset]!
 
   return { admin, keeperAuthority, totalTvl, halted, bump }
@@ -138,6 +141,10 @@ function parseRiskVault(raw: Uint8Array | ArrayBuffer): RiskVaultAccount {
   const bytes = toBytes(raw)
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
   let offset = ANCHOR_DISCRIMINATOR_SIZE
+
+  // Detect v0 vs v1 layout: v1 accounts are larger (221 bytes) due to version + max_single_deposit fields
+  const hasVersion = bytes.length > 215
+  if (hasVersion) { offset += 1 } // skip version byte
 
   const allocator = readPubkey(bytes, offset); offset += 32
   const riskLevel = bytes[offset]!; offset += 1
@@ -167,6 +174,7 @@ function parseRiskVault(raw: Uint8Array | ArrayBuffer): RiskVaultAccount {
   const maxLeverageBps = readU16(view, offset); offset += 2
   const redemptionPeriodSlots = readU64(view, offset); offset += 8
   const depositCap = readU64(view, offset); offset += 8
+  if (hasVersion) { offset += 8 } // skip max_single_deposit (v1 only)
   const bump = bytes[offset]!
 
   const sharePrice =
