@@ -69,6 +69,7 @@ test.describe('Onboarding flow', () => {
   // ── 3. Full airdrop flow ──────────────────────────────────────────────────
 
   test('full onboarding flow through airdrop returns success', async ({ page }) => {
+    test.setTimeout(60_000) // wallet modal interaction needs extra time in CI
     await mockWallet(page)
     await mockAirdropSuccess(page, 1000)
 
