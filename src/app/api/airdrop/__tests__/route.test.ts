@@ -17,8 +17,9 @@ vi.mock('@solana/web3.js', async () => {
     ...actual,
     Connection: vi.fn().mockImplementation(function () {
       return {
-        requestAirdrop: vi.fn().mockResolvedValue('MockSolAirdropSig'),
-        confirmTransaction: vi.fn().mockResolvedValue({ value: { err: null } }),
+        getBalance: vi.fn().mockResolvedValue(0),
+        getLatestBlockhash: vi.fn().mockResolvedValue({ blockhash: 'MockBlockhash123' }),
+        sendRawTransaction: vi.fn().mockResolvedValue('MockSolTransferSig'),
         getTokenAccountBalance: vi.fn().mockResolvedValue({
           value: { uiAmountString: '1000.00' },
         }),
@@ -26,10 +27,6 @@ vi.mock('@solana/web3.js', async () => {
     }),
   }
 })
-
-// Note: node:fs native bindings cannot be reliably intercepted for named ESM imports
-// in vitest. Instead, the test keypair file is pre-written to /tmp/test-keypair.json
-// in the beforeAll setup below.
 
 // Import route once — mocks are stable across all tests in this file
 let POST: (req: Request) => Promise<Response>
@@ -75,8 +72,40 @@ describe('POST /api/airdrop', () => {
     expect(response.status).toBe(400)
   })
 
+  it('rejects missing wallet', async () => {
+    const request = new Request('http://localhost:3000/api/airdrop', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: 100 }),
+    })
+
+    const response = await POST(request)
+    expect(response.status).toBe(400)
+  })
+
+  it('rejects invalid wallet address', async () => {
+    const request = new Request('http://localhost:3000/api/airdrop', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ wallet: 'not-a-real-pubkey!!!', amount: 100 }),
+    })
+
+    const response = await POST(request)
+    expect(response.status).toBe(400)
+  })
+
+  it('rejects invalid JSON body', async () => {
+    const request = new Request('http://localhost:3000/api/airdrop', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: 'not json',
+    })
+
+    const response = await POST(request)
+    expect(response.status).toBe(400)
+  })
+
   it('returns 503 when keypair not configured', async () => {
-    // Temporarily unset the keypair env var for this test
     const saved = process.env.MINT_AUTHORITY_KEYPAIR
     process.env.MINT_AUTHORITY_KEYPAIR = ''
 
@@ -89,5 +118,20 @@ describe('POST /api/airdrop', () => {
     const response = await POST(request)
     process.env.MINT_AUTHORITY_KEYPAIR = saved
     expect(response.status).toBe(503)
+  })
+
+  it('accepts all allowed amounts (100, 1000, 100000)', async () => {
+    for (const amount of [100, 1000, 100000]) {
+      const request = new Request('http://localhost:3000/api/airdrop', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ wallet: Keypair.generate().publicKey.toBase58(), amount }),
+      })
+
+      const response = await POST(request)
+      const data = await response.json()
+      expect(response.status).toBe(200)
+      expect(data.success).toBe(true)
+    }
   })
 })
