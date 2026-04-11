@@ -199,7 +199,7 @@ export function OnboardingGuide({ onClose }: OnboardingGuideProps) {
                 <p className="text-sm text-red-400">{airdropError}</p>
               )}
               <p className="text-xs text-slate-500">
-                We&apos;ll also send you 2 devnet SOL for transaction fees.
+                We&apos;ll also send you 0.1 devnet SOL for transaction fees.
                 {' '}If transactions fail later, visit{' '}
                 <a href="https://faucet.solana.com" target="_blank" rel="noopener noreferrer" className="text-sky-400 hover:underline">
                   faucet.solana.com

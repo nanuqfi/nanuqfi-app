@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs'
 
 const ALLOWED_AMOUNTS = new Set([100, 1000, 100000])
 const USDC_DECIMALS = 6
-const SOL_AIRDROP_AMOUNT = 2 * LAMPORTS_PER_SOL
+const SOL_AIRDROP_AMOUNT = 0.1 * LAMPORTS_PER_SOL
 
 // Rate limiting: 1 airdrop per wallet per 10 minutes
 const RATE_LIMIT_MS = 600_000
