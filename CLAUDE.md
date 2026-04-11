@@ -12,14 +12,15 @@
 **Tech Stack:** Next.js 16 (App Router), React 19, Tailwind CSS 4, TypeScript, Vitest
 **Deployment:** Docker → VPS reclabs3, port 9001
 **Domains:** nanuqfi.com (marketing + app) + app.nanuqfi.com (alias)
-**Tests:** 62 passing (8 UI primitives + 14 YieldEstimator + 6 PortfolioSummary + 8 VaultCard + 14 mock-data + 12 errors)
+**Tests:** 165 passing — 141 unit (Vitest + jsdom) + 24 E2E (Playwright)
 **Design System:** Pendle glassmorphism + Ethena data UX hybrid (spec: `docs/superpowers/specs/2026-04-07-ui-revamp-design.md`)
 
 **Key Commands:**
 ```bash
 pnpm dev                        # local dev server (http://localhost:3000)
 pnpm build                      # production build (standalone for Docker)
-pnpm test                       # run tests (62 tests, Vitest + jsdom)
+pnpm test                       # run unit tests (141 tests, Vitest + jsdom)
+pnpm test:e2e                   # run E2E tests (24 tests, Playwright)
 pnpm lint                       # ESLint
 ```
 
@@ -67,6 +68,9 @@ src/components/
     decision-detail.tsx   # Full AI reasoning panel
     keeper-stats-bar.tsx  # Aggregate keeper performance metrics
     ai-context.tsx        # Inline one-liner reasoning text
+    onboarding-guide.tsx  # 4-step judge onboarding modal (wallet + airdrop + deposit + explore)
+    devnet-banner.tsx     # Devnet banner with onboarding trigger
+    wallet-guard.tsx      # Wallet-connection gate for protected app sections
   marketing/              # Marketing homepage sections
     hero.tsx              # Full viewport hero with gradient text + routing animations
     how-it-works.tsx      # 3-step connected cards
@@ -96,7 +100,7 @@ CSS utilities defined in `globals.css`: `.glass`, `.glass-elevated`, `.tabular-n
 | Path | Description |
 |------|-------------|
 | `src/components/ui/` | 8 shared UI primitives (GlassCard, Button, Badge, etc.) |
-| `src/components/app/` | 12 app-specific components |
+| `src/components/app/` | 15 app-specific components |
 | `src/components/marketing/` | 7 marketing homepage sections |
 | `src/providers/solana-provider.tsx` | Wallet adapter + connection provider |
 | `src/hooks/use-allocator.ts` | On-chain data hooks (PDAs, balances, positions) |
@@ -105,6 +109,11 @@ CSS utilities defined in `globals.css`: `.glass`, `.glass-elevated`, `.tabular-n
 | `src/lib/errors.ts` | Anchor error code → human message + wallet rejection detection |
 | `src/lib/mock-data.ts` | Mock data + formatting utilities (formatUsd, formatApy) |
 | `src/app/globals.css` | Design system tokens + glassmorphism utilities + animations |
+| `src/app/api/airdrop/route.ts` | Test USDC faucet for devnet (judge onboarding) |
+| `src/app/api/rpc/route.ts` | Server-side RPC proxy (hides Helius API key) |
+| `src/components/app/onboarding-guide.tsx` | 4-step judge onboarding modal |
+| `src/components/app/devnet-banner.tsx` | Devnet banner with onboarding trigger |
+| `e2e/` | Playwright E2E suite (10 spec files, 24 tests) |
 | `docs/brand-guidelines.md` | Brand colors, typography, spacing, motion, voice |
 | `docs/superpowers/specs/2026-04-07-ui-revamp-design.md` | UI revamp design spec |
 | `docs/superpowers/mockups/` | AI Designer HTML mockups (hero, dashboard, vault detail) |
