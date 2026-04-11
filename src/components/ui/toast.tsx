@@ -134,7 +134,7 @@ function ToastItem({
         type="button"
         aria-label="Dismiss notification"
         onClick={() => setExiting(true)}
-        className="shrink-0 text-slate-500 hover:text-slate-300 transition-colors"
+        className="shrink-0 text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
       >
         <X className="h-4 w-4" />
       </button>

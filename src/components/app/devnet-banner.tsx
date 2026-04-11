@@ -12,7 +12,7 @@ export function DevnetBanner() {
         ⚠ Devnet Mode — Transactions use test USDC, not real funds
         <button
           onClick={() => setShowGuide(!showGuide)}
-          className="text-amber-300 hover:text-amber-200 underline underline-offset-2 transition-colors ml-2"
+          className="text-amber-300 hover:text-amber-200 underline underline-offset-2 transition-colors ml-2 cursor-pointer"
         >
           {showGuide ? 'Hide guide' : 'New here? Get started →'}
         </button>

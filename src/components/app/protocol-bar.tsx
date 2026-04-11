@@ -50,7 +50,7 @@ export function ProtocolBar({ name, percentage, apy, color, reasoning }: Protoco
               aria-label={`${expanded ? 'Hide' : 'Show'} allocation reasoning for ${name}`}
               aria-expanded={expanded}
               onClick={() => setExpanded(!expanded)}
-              className="flex items-center gap-0.5 text-[11px] text-slate-500 hover:text-slate-300 transition-colors"
+              className="flex items-center gap-0.5 text-[11px] text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
             >
               why {percentage.toFixed(1)}%?
               <ChevronDown

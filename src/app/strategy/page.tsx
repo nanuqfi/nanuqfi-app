@@ -651,7 +651,7 @@ export default function StrategyPage() {
                 type="button"
                 onClick={() => setActiveTab(id)}
                 className={[
-                  'px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap',
+                  'px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer',
                   activeTab === id
                     ? 'bg-slate-700 text-white shadow-sm ring-1 ring-white/10'
                     : 'text-slate-400 hover:text-white hover:bg-slate-800/50',

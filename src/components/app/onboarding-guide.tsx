@@ -77,7 +77,7 @@ export function OnboardingGuide({ onClose }: OnboardingGuideProps) {
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors cursor-pointer"
           aria-label="Close onboarding guide"
         >
           <ChevronUp className="h-5 w-5" />
@@ -121,7 +121,7 @@ export function OnboardingGuide({ onClose }: OnboardingGuideProps) {
               <p className="text-xs text-slate-500">This ensures you use test tokens, not real funds.</p>
               <button
                 onClick={() => setStep(2)}
-                className="px-4 py-2 bg-sky-500/10 text-sky-400 border border-sky-500/30 rounded-lg hover:bg-sky-500/20 transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-sky-500/10 text-sky-400 border border-sky-500/30 rounded-lg hover:bg-sky-500/20 transition-colors flex items-center gap-2 cursor-pointer"
               >
                 I&apos;ve switched to Devnet <ArrowRight className="h-4 w-4" />
               </button>
@@ -142,7 +142,7 @@ export function OnboardingGuide({ onClose }: OnboardingGuideProps) {
                   <p className="text-sm text-slate-400">Click below to connect your Phantom or Solflare wallet.</p>
                   <button
                     onClick={() => setVisible(true)}
-                    className="px-5 py-3 bg-sky-500/10 text-sky-400 border border-sky-500/30 rounded-lg hover:bg-sky-500/20 transition-colors flex items-center gap-2 text-base font-medium"
+                    className="px-5 py-3 bg-sky-500/10 text-sky-400 border border-sky-500/30 rounded-lg hover:bg-sky-500/20 transition-colors flex items-center gap-2 text-base font-medium cursor-pointer"
                   >
                     <Wallet className="h-5 w-5" /> Connect Wallet
                   </button>
@@ -179,7 +179,7 @@ export function OnboardingGuide({ onClose }: OnboardingGuideProps) {
                     key={amount}
                     onClick={() => handleAirdrop(amount)}
                     disabled={airdropStatus === 'loading'}
-                    className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors text-white font-mono text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors text-white font-mono text-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                   >
                     {airdropStatus === 'loading' ? (
                       <Loader2 className="h-4 w-4 animate-spin" />

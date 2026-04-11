@@ -83,7 +83,7 @@ export function Nav() {
               type="button"
               onClick={() => disconnect()}
               aria-label={`Disconnect wallet ${truncateAddress(publicKey.toBase58())}`}
-              className="flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-2 text-sm font-medium text-slate-200 border border-white/5 hover:bg-slate-700 transition-colors"
+              className="flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-2 text-sm font-medium text-slate-200 border border-white/5 hover:bg-slate-700 transition-colors cursor-pointer"
             >
               <span className="h-2 w-2 rounded-full bg-emerald-400" aria-hidden="true" />
               {truncateAddress(publicKey.toBase58())}
@@ -92,7 +92,7 @@ export function Nav() {
             <button
               type="button"
               onClick={() => setVisible(true)}
-              className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-500 transition-colors"
+              className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white hover:bg-sky-500 transition-colors cursor-pointer"
             >
               Connect Wallet
             </button>
@@ -105,7 +105,7 @@ export function Nav() {
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav-menu"
             onClick={() => setMobileOpen(prev => !prev)}
-            className="sm:hidden flex items-center justify-center h-9 w-9 rounded-lg border border-white/5 bg-slate-800/60 text-slate-400 hover:text-slate-200 transition-colors"
+            className="sm:hidden flex items-center justify-center h-9 w-9 rounded-lg border border-white/5 bg-slate-800/60 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
           >
             {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>

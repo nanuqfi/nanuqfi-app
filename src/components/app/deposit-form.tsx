@@ -240,7 +240,7 @@ export function DepositForm({
           type="button"
           onClick={() => handleModeChange('deposit')}
           className={[
-            'flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-150',
+            'flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-150 cursor-pointer',
             mode === 'deposit'
               ? 'bg-white/10 text-white shadow-sm'
               : 'text-slate-500 hover:text-white',
@@ -252,7 +252,7 @@ export function DepositForm({
           type="button"
           onClick={() => handleModeChange('withdraw')}
           className={[
-            'flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-150',
+            'flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-150 cursor-pointer',
             mode === 'withdraw'
               ? 'bg-white/10 text-white shadow-sm'
               : 'text-slate-500 hover:text-white',
@@ -290,7 +290,7 @@ export function DepositForm({
                   setValidationError(null)
                 }}
                 disabled={loading}
-                className="px-3 py-1.5 bg-white/5 text-slate-300 border border-white/10 rounded-lg hover:bg-white/10 transition-colors text-xs font-mono disabled:opacity-50"
+                className="px-3 py-1.5 bg-white/5 text-slate-300 border border-white/10 rounded-lg hover:bg-white/10 transition-colors text-xs font-mono disabled:opacity-50 cursor-pointer"
               >
                 ${preset.toLocaleString()}
               </button>
@@ -318,7 +318,7 @@ export function DepositForm({
             type="button"
             onClick={handleMax}
             disabled={loading}
-            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/5 text-sky-400 font-mono text-xs px-2.5 py-1 rounded-md border border-white/5 hover:bg-white/10 transition-colors disabled:opacity-50"
+            className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/5 text-sky-400 font-mono text-xs px-2.5 py-1 rounded-md border border-white/5 hover:bg-white/10 transition-colors disabled:opacity-50 cursor-pointer"
           >
             MAX
           </button>
@@ -372,7 +372,7 @@ export function DepositForm({
         type="button"
         onClick={handleSubmit}
         disabled={isDisabled}
-        className="w-full py-4 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 font-semibold text-lg border border-sky-500/30 shadow-[0_0_20px_rgba(14,165,233,0.15)] hover:shadow-[0_0_30px_rgba(14,165,233,0.3)] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full py-4 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 font-semibold text-lg border border-sky-500/30 shadow-[0_0_20px_rgba(14,165,233,0.15)] hover:shadow-[0_0_30px_rgba(14,165,233,0.3)] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
       >
         {loading ? (
           <>

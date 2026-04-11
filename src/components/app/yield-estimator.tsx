@@ -58,7 +58,7 @@ export function YieldEstimator({
             aria-pressed={activePreset === amount}
             onClick={() => { setSelectedAmount(amount); setActivePreset(amount) }}
             className={[
-              'px-3 py-1.5 rounded-lg text-xs font-medium font-mono transition-colors focus-visible:ring-2 focus-visible:ring-sky-500/50 focus-visible:ring-offset-1 focus-visible:ring-offset-slate-900 outline-none',
+              'px-3 py-1.5 rounded-lg text-xs font-medium font-mono transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-sky-500/50 focus-visible:ring-offset-1 focus-visible:ring-offset-slate-900 outline-none',
               activePreset === amount
                 ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30'
                 : 'text-slate-400 border border-white/5 hover:text-white hover:bg-white/5',

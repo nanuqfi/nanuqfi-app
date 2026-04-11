@@ -37,7 +37,7 @@ export function TimeRangeSelector({
           type="button"
           onClick={() => handleSelect(range)}
           className={[
-            'px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150',
+            'px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 cursor-pointer',
             active === range
               ? 'bg-slate-700 text-white shadow-sm ring-1 ring-white/10'
               : 'text-slate-400 hover:text-white hover:bg-slate-800',
