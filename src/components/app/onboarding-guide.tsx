@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 import { GlassCard } from '@/components/ui/glass-card'
@@ -29,6 +30,7 @@ export function OnboardingGuide({ onClose }: OnboardingGuideProps) {
   // Auto-advance Step 2 → 3 when wallet connects
   useEffect(() => {
     if (connected && publicKey && step === 2) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: setState on wallet connection transition
       setStep(3)
     }
   }, [connected, publicKey, step])
@@ -217,19 +219,19 @@ export function OnboardingGuide({ onClose }: OnboardingGuideProps) {
             <div className="ml-11 space-y-3">
               <p className="text-sm text-slate-400">Head to a vault and deposit your test USDC to start earning yield.</p>
               <div className="flex gap-3">
-                <a
+                <Link
                   href="/app/vaults/moderate"
                   className="px-5 py-3 bg-sky-500/10 text-sky-400 border border-sky-500/30 rounded-lg hover:bg-sky-500/20 transition-colors flex items-center gap-2 font-medium"
                 >
                   <Coins className="h-5 w-5" /> Moderate Vault
                   <span className="text-xs text-slate-500 ml-1">(recommended)</span>
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/app/vaults/aggressive"
                   className="px-5 py-3 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg hover:bg-amber-500/20 transition-colors flex items-center gap-2 font-medium"
                 >
                   <Coins className="h-5 w-5" /> Aggressive Vault
-                </a>
+                </Link>
               </div>
               <p className="text-xs text-slate-500">Use the preset $100 or $1,000 buttons on the vault page for a quick deposit.</p>
             </div>

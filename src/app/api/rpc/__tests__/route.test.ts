@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // Mock fetch globally
-const mockFetch = vi.fn()
+const mockFetch = vi.fn<[...unknown[]], Promise<Response>>()
 vi.stubGlobal('fetch', mockFetch)
 
 describe('RPC proxy route', () => {
@@ -26,7 +26,7 @@ describe('RPC proxy route', () => {
       body: requestBody,
     })
 
-    const response = await POST(request as any)
+    const response = await POST(request as unknown as Request)
     const data = await response.json()
 
     expect(response.status).toBe(200)
@@ -49,7 +49,7 @@ describe('RPC proxy route', () => {
       body: '{}',
     })
 
-    const response = await POST(request as any)
+    const response = await POST(request as unknown as Request)
     expect(response.status).toBe(503)
   })
 
@@ -61,7 +61,7 @@ describe('RPC proxy route', () => {
       body: JSON.stringify({ jsonrpc: '2.0', method: 'getHealth', id: 1 }),
     })
 
-    const response = await POST(request as any)
+    const response = await POST(request as unknown as Request)
     const data = await response.json()
 
     expect(response.status).toBe(400)
@@ -77,7 +77,7 @@ describe('RPC proxy route', () => {
       body: 'not-valid-json{{{',
     })
 
-    const response = await POST(request as any)
+    const response = await POST(request as unknown as Request)
     const data = await response.json()
 
     expect(response.status).toBe(400)
@@ -95,7 +95,7 @@ describe('RPC proxy route', () => {
       body: JSON.stringify({ jsonrpc: '2.0', method: 'getBalance', id: 2 }),
     })
 
-    const response = await POST(request as any)
+    const response = await POST(request as unknown as Request)
     const data = await response.json()
 
     expect(response.status).toBe(502)

@@ -37,6 +37,7 @@ function NetworkGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (connected) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- async: setState runs after await, not synchronously
       checkNetwork()
     } else {
       setWrongNetwork(false)

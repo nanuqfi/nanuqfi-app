@@ -41,7 +41,6 @@ export function reportError(error: unknown, context: ErrorContext = {}): void {
 
   if (process.env.NODE_ENV !== 'production' || !SENTRY_DSN) {
     // Development / no-DSN: structured console output for traceability.
-    // eslint-disable-next-line no-console
     console.error('[NanuqFi Error]', {
       domain,
       message: err.message,
@@ -56,7 +55,6 @@ export function reportError(error: unknown, context: ErrorContext = {}): void {
   // Sentry.captureException(err, { extra: { domain, user, ...extra } })
 
   // Fallback until Sentry is wired — never silently drop errors.
-  // eslint-disable-next-line no-console
   console.error('[NanuqFi Error]', domain, err.message)
 }
 
@@ -68,13 +66,11 @@ export function reportWarning(message: string, context: ErrorContext = {}): void
   const { domain = 'unknown', extra } = context
 
   if (process.env.NODE_ENV !== 'production' || !SENTRY_DSN) {
-    // eslint-disable-next-line no-console
     console.warn('[NanuqFi Warning]', { domain, message, ...extra })
     return
   }
 
   // TODO: replace with Sentry.captureMessage after integration:
   // Sentry.captureMessage(message, { level: 'warning', extra: { domain, ...extra } })
-  // eslint-disable-next-line no-console
   console.warn('[NanuqFi Warning]', domain, message)
 }
