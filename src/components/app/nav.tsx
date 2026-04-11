@@ -38,9 +38,7 @@ export function Nav() {
       <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Left — Logo */}
         <Link href="/app" className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-white/10 to-transparent border border-white/10 shadow-[0_0_15px_rgba(14,165,233,0.3)]">
-            <span className="text-sm font-bold text-white">N</span>
-          </div>
+          <img src="/assets/logo.png" alt="NanuqFi" width={32} height={32} className="h-8 w-8 rounded-lg" />
           <span className="text-lg font-semibold">
             <span className="text-white">Nanuq</span>
             <span className="text-sky-500">Fi</span>
