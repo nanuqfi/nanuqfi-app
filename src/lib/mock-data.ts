@@ -39,6 +39,14 @@ export interface YieldSource {
 // On-chain TVL and keeper API data take priority when available.
 export const mockVaults: Vault[] = [
   {
+    riskLevel: 'conservative',
+    tvl: 150,
+    apy: 0.042,
+    drawdown: 0.002,
+    weights: { 'kamino-lending': 70, 'marginfi-lending': 25, 'lulo-lending': 5 },
+    guardrails: { maxDrawdown: 2, currentDrawdown: 0.2, maxPerp: 0, currentPerp: 0 },
+  },
+  {
     riskLevel: 'moderate',
     tvl: 200,
     apy: 0.065,

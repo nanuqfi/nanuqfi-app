@@ -168,23 +168,6 @@ function VaultColumn({ vault }: { vault: Vault }) {
   )
 }
 
-// ─── Conservative Placeholder (no hooks, no RPC calls) ─────────────────────
-
-function ConservativePlaceholder() {
-  return (
-    <GlassCard
-      tier="conservative"
-      className="relative flex flex-col p-0 overflow-hidden"
-    >
-      <div className="bg-gradient-to-b from-emerald-500/10 to-transparent px-6 pt-5 pb-4">
-        <Badge tier="conservative" />
-      </div>
-      <div className="flex-1 flex items-center justify-center py-20">
-        <span className="text-sm font-medium text-slate-400 uppercase tracking-wider">Coming Soon</span>
-      </div>
-    </GlassCard>
-  )
-}
 
 // ─── Protocol Allocation Map ────────────────────────────────────────────────
 
@@ -283,26 +266,8 @@ function GuardrailsSummary() {
 
 // ─── Page ───────────────────────────────────────────────────────────────────
 
-// Build the full vault set: mock data for active tiers, placeholder for conservative
-function getVaultSet(): Vault[] {
-  return VAULT_ORDER.map(level => {
-    const existing = mockVaults.find(v => v.riskLevel === level)
-    if (existing) return existing
-
-    // Conservative vault placeholder (not yet active in mock data)
-    return {
-      riskLevel: level,
-      tvl: 0,
-      apy: 0.021,
-      drawdown: 0.002,
-      weights: { 'kamino-lending': 60, 'marginfi-lending': 30, 'lulo-lending': 10 },
-      guardrails: { maxDrawdown: 2, currentDrawdown: 0.2, maxPerp: 0, currentPerp: 0 },
-    }
-  })
-}
-
 export default function VaultsPage() {
-  const vaults = getVaultSet()
+  const vaults = VAULT_ORDER.map(level => mockVaults.find(v => v.riskLevel === level)!)
 
   return (
     <div className="space-y-12">
@@ -322,13 +287,9 @@ export default function VaultsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {vaults.map(vault =>
-            vault.riskLevel === 'conservative' ? (
-              <ConservativePlaceholder key={vault.riskLevel} />
-            ) : (
-              <VaultColumn key={vault.riskLevel} vault={vault} />
-            )
-          )}
+          {vaults.map(vault => (
+            <VaultColumn key={vault.riskLevel} vault={vault} />
+          ))}
         </div>
       </section>
 
