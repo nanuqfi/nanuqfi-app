@@ -54,11 +54,7 @@ export default function VaultDetailPage() {
     return (
       <div className="space-y-4 text-center py-20">
         <h1 className="text-2xl font-bold text-slate-200">Vault Not Found</h1>
-        <p className="text-slate-400">
-          {riskLevel === 'conservative'
-            ? 'Conservative vault is not available during hackathon.'
-            : 'Invalid risk level.'}
-        </p>
+        <p className="text-slate-400">Invalid risk level.</p>
         <Link
           href="/app/vaults"
           className="inline-flex items-center gap-1.5 text-sm text-sky-400 hover:text-sky-300 transition-colors"
