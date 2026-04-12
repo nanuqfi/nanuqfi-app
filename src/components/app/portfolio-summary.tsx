@@ -7,6 +7,7 @@ import { GlassCard } from '@/components/ui/glass-card'
 import { YieldEstimator } from '@/components/app/yield-estimator'
 import { useAllocatorState, useRiskVault } from '@/hooks/use-allocator'
 import { useKeeperHealth, useVaultData } from '@/hooks/use-keeper-api'
+import { aggregateVaultStats } from '@/lib/protocol-aggregation'
 import {
   mockVaults,
   formatUsd,
@@ -35,7 +36,8 @@ function useMinutesAgo(timestampMs: number | undefined): number | null {
 interface PortfolioSummaryProps {
   isConnected: boolean
   positionsLoading: boolean
-  userModValue: number  // current value (shares * sharePrice), not cost basis
+  userConValue: number  // current value (shares * sharePrice), not cost basis
+  userModValue: number
   userAggValue: number
   walletBalance?: number
 }
@@ -43,6 +45,7 @@ interface PortfolioSummaryProps {
 export function PortfolioSummary({
   isConnected,
   positionsLoading,
+  userConValue,
   userModValue,
   userAggValue,
   walletBalance,
@@ -50,21 +53,27 @@ export function PortfolioSummary({
   const { setVisible } = useWalletModal()
   const router = useRouter()
 
-  // Protocol data (always fetched)
+  // Protocol data — all 3 vaults (always fetched)
   const allocator = useAllocatorState()
+  const conOnChain = useRiskVault(0)
   const modOnChain = useRiskVault(1)
   const aggOnChain = useRiskVault(2)
+  const conKeeper = useVaultData('conservative')
   const modKeeper = useVaultData('moderate')
   const aggKeeper = useVaultData('aggressive')
   const health = useKeeperHealth()
 
   const hasPosition = isConnected && !positionsLoading
-    && (userModValue + userAggValue) > 0
+    && (userConValue + userModValue + userAggValue) > 0
 
-  // Protocol TVL
+  // Per-vault TVL (on-chain > keeper > mock)
+  const conMock = mockVaults.find(v => v.riskLevel === 'conservative')
   const modMock = mockVaults.find(v => v.riskLevel === 'moderate')
   const aggMock = mockVaults.find(v => v.riskLevel === 'aggressive')
 
+  const conTvl = conOnChain.data
+    ? Number(conOnChain.data.totalAssets) / 1e6
+    : conKeeper.data?.tvl ?? conMock?.tvl ?? 0
   const modTvl = modOnChain.data
     ? Number(modOnChain.data.totalAssets) / 1e6
     : modKeeper.data?.tvl ?? modMock?.tvl ?? 0
@@ -72,22 +81,24 @@ export function PortfolioSummary({
     ? Number(aggOnChain.data.totalAssets) / 1e6
     : aggKeeper.data?.tvl ?? aggMock?.tvl ?? 0
 
+  const vaultTvlSum = conTvl + modTvl + aggTvl
   const protocolTvl = allocator.data
     ? Number(allocator.data.totalTvl) / 1e6
-    : (modTvl + aggTvl) > 0
-      ? modTvl + aggTvl
-      : getTotalTvl()
+    : vaultTvlSum > 0 ? vaultTvlSum : getTotalTvl()
 
-  // Weighted APY
+  // TVL-weighted APY across all 3 vaults
+  const conApy = normalizeApy(conKeeper.data?.apy ?? conMock?.apy ?? 0)
   const modApy = normalizeApy(modKeeper.data?.apy ?? modMock?.apy ?? 0)
   const aggApy = normalizeApy(aggKeeper.data?.apy ?? aggMock?.apy ?? 0)
-  const totalTvlForWeight = modTvl + aggTvl
-  const apy = totalTvlForWeight > 0
-    ? (modApy * modTvl + aggApy * aggTvl) / totalTvlForWeight
-    : getWeightedApy()
+  const vaultApyStats = aggregateVaultStats([
+    { tvl: conTvl, apy: conApy },
+    { tvl: modTvl, apy: modApy },
+    { tvl: aggTvl, apy: aggApy },
+  ])
+  const apy = vaultApyStats.totalTvl > 0 ? vaultApyStats.weightedApy : getWeightedApy()
 
   // User TVL and earnings (values passed as props from parent)
-  const userTvl = userModValue + userAggValue
+  const userTvl = userConValue + userModValue + userAggValue
   const userDailyEarnings = userTvl * apy / 365
 
   // AI Pulse

@@ -32,6 +32,7 @@ vi.mock('@/hooks/use-keeper-api', () => ({
 const defaultProps = {
   isConnected: false,
   positionsLoading: false,
+  userConValue: 0,
   userModValue: 0,
   userAggValue: 0,
 }
@@ -115,6 +116,36 @@ describe('PortfolioSummary', () => {
     )
     expect(screen.getByText(/Protocol TVL/i)).toBeDefined()
     expect(screen.getByRole('button', { name: /Start Earning/i })).toBeDefined()
+  })
+
+  it('state 3: Your Value includes conservative vault deposits', () => {
+    render(
+      <PortfolioSummary
+        {...defaultProps}
+        isConnected={true}
+        positionsLoading={false}
+        userConValue={100}
+        userModValue={210}
+        userAggValue={50}
+      />
+    )
+    // Total = 100 + 210 + 50 = 360
+    expect(screen.getByText('$360')).toBeDefined()
+  })
+
+  it('state 3: hasPosition is true when only conservative vault has funds', () => {
+    render(
+      <PortfolioSummary
+        {...defaultProps}
+        isConnected={true}
+        positionsLoading={false}
+        userConValue={50}
+        userModValue={0}
+        userAggValue={0}
+      />
+    )
+    expect(screen.getByText(/Your Value/i)).toBeDefined()
+    expect(screen.getByText('$50')).toBeDefined()
   })
 
   it('state 1 (disconnected): does NOT render "Your Value" or "Daily Earnings"', () => {

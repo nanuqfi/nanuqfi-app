@@ -53,15 +53,20 @@ export default function DashboardPage() {
   const isConnected = !!publicKey
 
   // User position + vault data (single source for both PortfolioSummary and VaultCards)
+  const conPosition = useUserPosition(0)
   const modPosition = useUserPosition(1)
   const aggPosition = useUserPosition(2)
+  const conOnChain = useRiskVault(0)
   const modOnChain = useRiskVault(1)
   const aggOnChain = useRiskVault(2)
   const usdcBalance = useUsdcBalance()
 
-  const positionsLoading = isConnected && (modPosition.loading || aggPosition.loading)
+  const positionsLoading = isConnected && (conPosition.loading || modPosition.loading || aggPosition.loading)
 
   // Current value (shares * sharePrice), not cost basis (depositedUsdc)
+  const userConValue = conPosition.data && conOnChain.data
+    ? Number(conPosition.data.shares) * conOnChain.data.sharePrice / 1e6
+    : 0
   const userModValue = modPosition.data && modOnChain.data
     ? Number(modPosition.data.shares) * modOnChain.data.sharePrice / 1e6
     : 0
@@ -106,6 +111,7 @@ export default function DashboardPage() {
       <PortfolioSummary
         isConnected={isConnected}
         positionsLoading={positionsLoading}
+        userConValue={userConValue}
         userModValue={userModValue}
         userAggValue={userAggValue}
         walletBalance={walletBalance}
