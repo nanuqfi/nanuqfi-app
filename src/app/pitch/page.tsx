@@ -162,7 +162,7 @@ export default function PitchPage() {
                 className="group flex items-center justify-center gap-2 rounded-xl bg-sky-500/15 border border-sky-500/30 px-6 py-3 font-medium text-white shadow-[0_0_20px_rgba(14,165,233,0.2)] backdrop-blur-md transition-all hover:bg-sky-500/20 hover:shadow-[0_0_30px_rgba(14,165,233,0.4)]"
               >
                 <PlayCircle className="h-5 w-5 text-sky-300" />
-                Watch 3-min Demo
+                Watch 6-min Demo
               </a>
               <Link
                 href="/app"
@@ -180,11 +180,11 @@ export default function PitchPage() {
           <section id="demo" className="scroll-mt-24">
             <div className="mb-10 flex flex-col items-center text-center">
               <h2 className="mb-3 text-3xl font-bold text-white">
-                See it in 3 minutes
+                See it in 6 minutes
               </h2>
               <p className="max-w-xl text-slate-400">
-                Full walkthrough: marketing → dashboard → vaults → keeper API → on-chain
-                programs.
+                Full walkthrough: marketing → dashboard → vaults & deposit flow
+                → keeper API → on-chain program → build & tests.
               </p>
             </div>
 
