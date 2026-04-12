@@ -218,8 +218,8 @@ export async function buildWithdrawInstruction(
   const userUsdc = await getAssociatedTokenAddress(USDC_MINT, userWallet)
   const userShares = await getAssociatedTokenAddress(shareMint, userWallet)
   const vaultUsdc = await getAssociatedTokenAddress(USDC_MINT, allocator, true)
-  // Treasury USDC must match on-chain treasury.usdc_token_account — not a derived ATA
-  const treasuryUsdc = treasuryUsdcAccount ?? await getAssociatedTokenAddress(USDC_MINT, treasury, true)
+  // Treasury USDC is the allocator PDA's ATA (same account as vaultUsdc on devnet)
+  const treasuryUsdc = treasuryUsdcAccount ?? await getAssociatedTokenAddress(USDC_MINT, allocator, true)
 
   const discriminator = await getDiscriminator('withdraw')
 
