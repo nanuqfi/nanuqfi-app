@@ -54,7 +54,7 @@ interface KeeperHookResult<T> {
 
 // ─── Generic Fetcher ─────────────────────────────────────────────────────────
 
-async function fetchKeeper<T>(path: string): Promise<T> {
+async function fetchKeeper<T>(path: string): Promise<T | null> {
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), 10_000)
 
@@ -62,6 +62,8 @@ async function fetchKeeper<T>(path: string): Promise<T> {
     const res = await fetch(`${KEEPER_API}${path}`, {
       signal: controller.signal,
     })
+    // 404 = endpoint not yet available (vault data not published) — treat as null, not error
+    if (res.status === 404) return null
     if (!res.ok) {
       throw new Error(`Keeper API ${res.status}: ${res.statusText}`)
     }
