@@ -3,6 +3,10 @@
 import { useState, useCallback } from 'react'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { Transaction, type PublicKey } from '@solana/web3.js'
+import {
+  createAssociatedTokenAccountIdempotentInstruction,
+  getAssociatedTokenAddress,
+} from '@solana/spl-token'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnection } from '@solana/wallet-adapter-react'
 import { GlassCard } from '@/components/ui/glass-card'
@@ -140,10 +144,23 @@ export function DepositForm({
         shareMint,
       )
 
+      // Create the user's share ATA if missing (first-time depositors).
+      // Idempotent — no-op when the ATA already exists. Must precede the
+      // deposit ix because the allocator program treats user_shares as a
+      // required Account<TokenAccount> and fails AccountNotInitialized.
+      const userSharesAta = await getAssociatedTokenAddress(shareMint, publicKey)
+      const createShareAtaIx = createAssociatedTokenAccountIdempotentInstruction(
+        publicKey,
+        userSharesAta,
+        publicKey,
+        shareMint,
+      )
+
       const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash()
       const tx = new Transaction()
       tx.recentBlockhash = blockhash
       tx.feePayer = publicKey
+      tx.add(createShareAtaIx)
       tx.add(instruction)
       const signature = await sendTransaction(tx, connection, { skipPreflight: true })
 
