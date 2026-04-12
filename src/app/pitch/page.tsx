@@ -659,6 +659,90 @@ export default function PitchPage() {
           </section>
         </FadeIn>
 
+        {/* 9b. HACKATHON NOTES */}
+        <FadeIn>
+          <section>
+            <div className="mb-8">
+              <h2 className="mb-2 text-3xl font-bold text-white">
+                On the hackathon requirements
+              </h2>
+              <p className="text-slate-400">
+                Three framings for the Ranger Build-a-Bear judges.
+              </p>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              {/* Framing 1: devnet is on-chain */}
+              <div className="flex flex-col gap-4 rounded-xl border border-sky-500/20 bg-sky-500/5 p-6">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs uppercase tracking-widest text-sky-400">
+                    1. Devnet = on-chain
+                  </span>
+                </div>
+                <p className="text-sm leading-relaxed text-slate-300">
+                  Solana devnet is a real public cluster. All deposits,
+                  withdrawals, rebalances, and program state are verifiable
+                  through Solscan with <code className="rounded bg-black/40 px-1.5 py-0.5 font-mono text-xs text-sky-200">?cluster=devnet</code>. Same
+                  primitives, no mainnet liquidity — which is exactly why we
+                  chose it for pre-audit deployment.
+                </p>
+                <a
+                  href={`https://solscan.io/account/${ALLOCATOR_PID}?cluster=devnet`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-sky-400 hover:text-sky-300"
+                >
+                  Solscan devnet <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+
+              {/* Framing 2: APY is selection */}
+              <div className="flex flex-col gap-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-6">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs uppercase tracking-widest text-emerald-400">
+                    2. APY is protocol selection
+                  </span>
+                </div>
+                <p className="text-sm leading-relaxed text-slate-300">
+                  Current 6.7% reflects a conservative menu — Kamino, Marginfi,
+                  Lulo — all straight USDC lending that passes every
+                  disqualifying-yield-source filter (no LP, no junior tranche,
+                  no leveraged looping). Adding one compliant higher-yield
+                  backend via the <code className="rounded bg-black/40 px-1.5 py-0.5 font-mono text-xs text-emerald-200">YieldBackend</code> interface clears 10%+
+                  with a single-file change. We optimized for{' '}
+                  <span className="font-mono text-emerald-400">11.76 Sharpe</span>{' '}
+                  and zero drawdown over raw APY.
+                </p>
+              </div>
+
+              {/* Framing 3: build window documented */}
+              <div className="flex flex-col gap-4 rounded-xl border border-amber-500/20 bg-amber-500/5 p-6">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs uppercase tracking-widest text-amber-400">
+                    3. Build window documented
+                  </span>
+                </div>
+                <p className="text-sm leading-relaxed text-slate-300">
+                  Program deployed to devnet on April 11 (after finalizing 850+
+                  tests). The public repo carries{' '}
+                  <span className="font-mono text-amber-200">150 commits</span>{' '}
+                  across strategy engine, Anchor program, adaptor, and
+                  frontend during March 9 – April 6. On-chain activity starts
+                  post-deploy; development is fully auditable in Git.
+                </p>
+                <a
+                  href="https://github.com/nanuqfi/nanuqfi/commits/main"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300"
+                >
+                  GitHub history <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+            </div>
+          </section>
+        </FadeIn>
+
         {/* 10. RESOURCES */}
         <FadeIn>
           <section>
