@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, ExternalLink, Wallet, TrendingUp, Clock } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ExternalLink, Wallet, TrendingUp, Clock, Info } from 'lucide-react'
 import { GlassCard } from '@/components/ui/glass-card'
 import { Badge, MockDataBadge } from '@/components/ui/badge'
 import { YieldChart } from '@/components/app/yield-chart'
@@ -269,13 +269,25 @@ function VaultDetailContent({
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-[11px] text-slate-500 uppercase tracking-widest mb-1">Deposited</p>
+                  <div className="flex items-center gap-1 mb-1 group relative">
+                    <p className="text-[11px] text-slate-500 uppercase tracking-widest">Cost Basis</p>
+                    <Info className="h-3 w-3 text-slate-600" />
+                    <span className="absolute bottom-full left-0 mb-1 hidden group-hover:block bg-slate-800 text-slate-300 text-[10px] px-2 py-1 rounded whitespace-nowrap border border-white/10 z-10">
+                      Total USDC deposited historically
+                    </span>
+                  </div>
                   <p className="text-lg font-bold font-mono text-white">
                     {formatUsd(Number(userPosition.data.depositedUsdc) / 1e6)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[11px] text-slate-500 uppercase tracking-widest mb-1">Current Value</p>
+                  <div className="flex items-center gap-1 mb-1 group relative">
+                    <p className="text-[11px] text-slate-500 uppercase tracking-widest">Market Value</p>
+                    <Info className="h-3 w-3 text-slate-600" />
+                    <span className="absolute bottom-full right-0 mb-1 hidden group-hover:block bg-slate-800 text-slate-300 text-[10px] px-2 py-1 rounded whitespace-nowrap border border-white/10 z-10">
+                      Current value based on share price
+                    </span>
+                  </div>
                   <p className="text-lg font-bold font-mono text-sky-400">
                     {formatUsd(userValue)}
                   </p>
