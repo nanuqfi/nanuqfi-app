@@ -197,6 +197,9 @@ function parseUserPosition(raw: Uint8Array | ArrayBuffer): UserPositionAccount {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
   let offset = ANCHOR_DISCRIMINATOR_SIZE
 
+  // v1 accounts (130 bytes) have a version byte; v0 (129 bytes) don't
+  if (bytes.length >= 130) { offset += 1 }
+
   const user = readPubkey(bytes, offset); offset += 32
   const riskVault = readPubkey(bytes, offset); offset += 32
   const shares = readU64(view, offset); offset += 8
