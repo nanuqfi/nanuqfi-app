@@ -9,6 +9,7 @@ import { ProtocolBar } from '@/components/app/protocol-bar'
 import { GuardrailCard } from '@/components/app/guardrail-card'
 import { useVaultData } from '@/hooks/use-keeper-api'
 import { useRiskVault } from '@/hooks/use-allocator'
+import { aggregateProtocolAllocations } from '@/lib/protocol-aggregation'
 import {
   mockVaults,
   mockYields,
@@ -172,32 +173,41 @@ function VaultColumn({ vault }: { vault: Vault }) {
 // ─── Protocol Allocation Map ────────────────────────────────────────────────
 
 function ProtocolAllocationMap() {
-  // Aggregate weights and TVL across all vaults
-  const protocolTotals: Record<string, { totalWeight: number; totalDollars: number; count: number }> = {}
+  // Live data: call hooks per vault. Data cascade mirrors VaultColumn:
+  // on-chain TVL > keeper TVL > mock TVL, keeper weights > mock weights.
+  const conservativeKeeper = useVaultData('conservative')
+  const moderateKeeper = useVaultData('moderate')
+  const aggressiveKeeper = useVaultData('aggressive')
+  const conservativeOnChain = useRiskVault(0)
+  const moderateOnChain = useRiskVault(1)
+  const aggressiveOnChain = useRiskVault(2)
 
-  for (const vault of mockVaults) {
-    const entries = Object.entries(vault.weights)
-    for (const [slug, weight] of entries) {
-      if (!protocolTotals[slug]) {
-        protocolTotals[slug] = { totalWeight: 0, totalDollars: 0, count: 0 }
-      }
-      protocolTotals[slug].totalWeight += Number(weight)
-      protocolTotals[slug].totalDollars += vault.tvl * (Number(weight) / 100)
-      protocolTotals[slug].count += 1
-    }
-  }
+  const snapshots = [
+    { keeper: conservativeKeeper, onChain: conservativeOnChain, mock: mockVaults[0]! },
+    { keeper: moderateKeeper, onChain: moderateOnChain, mock: mockVaults[1]! },
+    { keeper: aggressiveKeeper, onChain: aggressiveOnChain, mock: mockVaults[2]! },
+  ]
 
-  // Normalize weights to sum to 100
-  const totalWeight = Object.values(protocolTotals).reduce((s, p) => s + p.totalWeight, 0)
-  const protocols = Object.entries(protocolTotals)
-    .map(([slug, data]) => ({
-      slug,
-      name: sourceDisplayName(slug),
-      percentage: totalWeight > 0 ? (data.totalWeight / totalWeight) * 100 : 0,
-      dollars: data.totalDollars,
-      apy: getProtocolApy(slug),
-    }))
-    .sort((a, b) => b.percentage - a.percentage)
+  const vaultSnapshots = snapshots.map(({ keeper, onChain, mock }) => ({
+    tvl: onChain.data
+      ? Number(onChain.data.totalAssets) / 1e6
+      : keeper.data?.tvl ?? mock.tvl,
+    weights: keeper.data?.weights ?? mock.weights,
+  }))
+
+  const protocols = aggregateProtocolAllocations(vaultSnapshots).map(p => ({
+    ...p,
+    name: sourceDisplayName(p.slug),
+    apy: getProtocolApy(p.slug),
+  }))
+
+  const isLoading =
+    conservativeKeeper.loading ||
+    moderateKeeper.loading ||
+    aggressiveKeeper.loading ||
+    conservativeOnChain.loading ||
+    moderateOnChain.loading ||
+    aggressiveOnChain.loading
 
   return (
     <section className="space-y-5">
@@ -209,19 +219,31 @@ function ProtocolAllocationMap() {
       </div>
 
       <GlassCard className="p-6 space-y-5">
-        {protocols.map(p => (
-          <div key={p.slug} className="space-y-1">
-            <ProtocolBar
-              name={p.name}
-              percentage={p.percentage}
-              apy={p.apy}
-              color={protocolColors[p.slug] ?? 'text-slate-400'}
-            />
-            <p className="text-right font-mono text-xs text-slate-500">
-              {formatUsd(p.dollars)} deployed
-            </p>
-          </div>
-        ))}
+        {isLoading && protocols.length === 0 ? (
+          <>
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-full" />
+          </>
+        ) : protocols.length === 0 ? (
+          <p className="text-center text-sm text-slate-500 py-4">
+            No capital deployed yet — be the first depositor.
+          </p>
+        ) : (
+          protocols.map(p => (
+            <div key={p.slug} className="space-y-1">
+              <ProtocolBar
+                name={p.name}
+                percentage={p.percentage}
+                apy={p.apy}
+                color={protocolColors[p.slug] ?? 'text-slate-400'}
+              />
+              <p className="text-right font-mono text-xs text-slate-500">
+                {formatUsd(p.dollars)} deployed
+              </p>
+            </div>
+          ))
+        )}
       </GlassCard>
     </section>
   )
