@@ -14,6 +14,10 @@ const RPC_URL = typeof window !== 'undefined'
   ? `${window.location.origin}/api/rpc`
   : (process.env.HELIUS_RPC_URL ?? DEVNET_RPC_FALLBACK)
 
+// /api/rpc is HTTP-only — point the WS subscription at a real devnet WS
+// to avoid spam errors from failed wss://nanuqfi.com/api/rpc connections.
+const WS_ENDPOINT = 'wss://api.devnet.solana.com'
+
 // ─── Network Guard ────────────────────────────────────────────────────────────
 
 /**
@@ -73,7 +77,7 @@ export function SolanaProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => { setMounted(true) }, [])
 
   return (
-    <ConnectionProvider endpoint={RPC_URL}>
+    <ConnectionProvider endpoint={RPC_URL} config={{ wsEndpoint: WS_ENDPOINT, commitment: 'confirmed' }}>
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           <NetworkGuard>
