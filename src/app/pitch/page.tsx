@@ -39,6 +39,7 @@ import { GlassCard } from '@/components/ui/glass-card'
 const ADAPTOR_PID = 'HsNnmuB18pA2U24K4Stc1yan67Cx96gmvGRqBUqRFWwY'
 const ALLOCATOR_PID = '2QtJ5kmxLuW2jYCFpJMtzZ7PCnKdoMwkeueYoDUi5z5P'
 const VIDEO_URL = 'https://nanuqfi.com/cdn/videos/demo.mp4'
+const POSTER_URL = 'https://nanuqfi.com/cdn/images/demo-poster.jpg'
 
 const CHAPTERS = [
   { time: 10, label: 'Landing Page', stamp: '00:10' },
@@ -59,11 +60,34 @@ export default function PitchPage() {
     el.play().catch(() => {})
   }
 
-  const copyPid = () => {
-    navigator.clipboard.writeText(ADAPTOR_PID).then(() => {
+  const copyPid = async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(ADAPTOR_PID)
+      } else {
+        // Fallback for non-secure contexts or older browsers
+        const ta = document.createElement('textarea')
+        ta.value = ADAPTOR_PID
+        ta.style.position = 'fixed'
+        ta.style.left = '-9999px'
+        document.body.appendChild(ta)
+        ta.select()
+        document.execCommand('copy')
+        document.body.removeChild(ta)
+      }
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
-    })
+    } catch {
+      // Last resort: select the code element so user can manually copy
+      const code = document.querySelector<HTMLElement>('code[data-pid]')
+      if (code) {
+        const range = document.createRange()
+        range.selectNodeContents(code)
+        const sel = window.getSelection()
+        sel?.removeAllRanges()
+        sel?.addRange(range)
+      }
+    }
   }
 
   return (
@@ -177,6 +201,7 @@ export default function PitchPage() {
                 controls
                 preload="metadata"
                 playsInline
+                poster={POSTER_URL}
               >
                 <source src={VIDEO_URL} type="video/mp4" />
                 Your browser does not support video playback.
@@ -551,7 +576,10 @@ export default function PitchPage() {
                   Adaptor Program ID
                 </span>
                 <div className="flex items-center">
-                  <code className="w-full select-all break-all rounded-l-lg border border-white/10 bg-[#080B11] px-4 py-3 font-mono text-sm text-sky-200 md:w-64">
+                  <code
+                    data-pid
+                    className="w-full select-all break-all rounded-l-lg border border-white/10 bg-[#080B11] px-4 py-3 font-mono text-sm text-sky-200 md:w-64"
+                  >
                     {ADAPTOR_PID}
                   </code>
                   <button
