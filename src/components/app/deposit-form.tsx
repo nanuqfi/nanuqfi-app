@@ -145,7 +145,7 @@ export function DepositForm({
       tx.recentBlockhash = blockhash
       tx.feePayer = publicKey
       tx.add(instruction)
-      const signature = await sendTransaction(tx, connection)
+      const signature = await sendTransaction(tx, connection, { skipPreflight: true })
 
       toast('Confirming transaction...', 'info')
       await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, 'confirmed')
@@ -196,7 +196,7 @@ export function DepositForm({
         tx.add(withdrawIx)
       }
 
-      const signature = await sendTransaction(tx, connection)
+      const signature = await sendTransaction(tx, connection, { skipPreflight: true })
 
       toast('Confirming transaction...', 'info')
       await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, 'confirmed')

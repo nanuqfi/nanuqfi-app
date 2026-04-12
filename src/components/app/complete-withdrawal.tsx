@@ -37,7 +37,7 @@ export function CompleteWithdrawal({
       tx.recentBlockhash = blockhash
       tx.feePayer = publicKey
       tx.add(ix)
-      const signature = await sendTransaction(tx, connection)
+      const signature = await sendTransaction(tx, connection, { skipPreflight: true })
       toast('Confirming withdrawal...', 'info')
       await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, 'confirmed')
       toast('Withdrawal complete! USDC returned to your wallet.', 'success')
