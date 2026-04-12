@@ -144,13 +144,14 @@ export function useKeeperHealth(): KeeperHookResult<KeeperHealthData> {
 
 /**
  * Vault data from keeper perspective — TVL, APY, weights, drawdown.
- * Currently a no-op: keeper doesn't expose per-vault endpoint yet.
- * Frontend falls back to on-chain data via useRiskVault and mock data.
+ * Polls /v1/vaults/:riskLevel every 30s. On-chain TVL is still the
+ * source of truth (useRiskVault) — this feed enriches the dashboard
+ * with keeper-computed APY and current weight allocations.
  */
 export function useVaultData(
-  _riskLevel: string
+  riskLevel: string
 ): KeeperHookResult<VaultData> {
-  return { data: null, loading: false, error: null, isStale: false }
+  return useKeeperData<VaultData>(`/v1/vaults/${riskLevel}`)
 }
 
 // ─── Raw Decision Transform ─────────────────────────────────────────────────
