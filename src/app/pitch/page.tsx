@@ -41,10 +41,12 @@ const ALLOCATOR_PID = '2QtJ5kmxLuW2jYCFpJMtzZ7PCnKdoMwkeueYoDUi5z5P'
 const VIDEO_URL = 'https://nanuqfi.com/cdn/videos/demo.mp4'
 
 const CHAPTERS = [
-  { time: 0, label: 'Landing Page', stamp: '00:00' },
-  { time: 45, label: 'Dashboard', stamp: '00:45' },
-  { time: 90, label: 'Vaults', stamp: '01:30' },
-  { time: 140, label: 'Keeper API', stamp: '02:20' },
+  { time: 10, label: 'Landing Page', stamp: '00:10' },
+  { time: 35, label: 'Dashboard', stamp: '00:35' },
+  { time: 60, label: 'Vaults & Deposit Flow', stamp: '01:00' },
+  { time: 180, label: 'Keeper API', stamp: '03:00' },
+  { time: 225, label: 'On-chain Program', stamp: '03:45' },
+  { time: 255, label: 'Build & Tests', stamp: '04:15' },
 ]
 
 export default function PitchPage() {
@@ -181,7 +183,7 @@ export default function PitchPage() {
               </video>
             </GlassCard>
 
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
               {CHAPTERS.map((c) => (
                 <button
                   key={c.time}
