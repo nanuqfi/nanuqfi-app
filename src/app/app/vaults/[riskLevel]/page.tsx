@@ -314,6 +314,8 @@ function VaultDetailContent({
                   riskLevelNum={riskLevelNum}
                   shareMint={onChain.data.shareMint}
                   pendingShares={userPosition.data.pendingWithdrawalShares}
+                  withdrawRequestSlot={userPosition.data.withdrawRequestSlot}
+                  redemptionPeriodSlots={onChain.data.redemptionPeriodSlots}
                   onSuccess={() => {
                     onChain.refresh()
                     userPosition.refresh()
