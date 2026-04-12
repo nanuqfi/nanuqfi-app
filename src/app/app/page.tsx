@@ -18,7 +18,7 @@ import {
   type RiskLevel,
 } from '@/lib/mock-data'
 
-const ACTIVE_RISK_LEVELS: RiskLevel[] = ['moderate', 'aggressive']
+const ACTIVE_RISK_LEVELS: RiskLevel[] = ['conservative', 'moderate', 'aggressive']
 
 interface VaultWithMeta {
   vault: Vault
@@ -78,17 +78,26 @@ export default function DashboardPage() {
     ? Number(usdcBalance.data) / 1e6
     : undefined
 
+  const { vault: conservativeVault, isMockData: conIsMock } = useVaultWithFallback('conservative')
   const { vault: moderateVault, isMockData: modIsMock } = useVaultWithFallback('moderate')
   const { vault: aggressiveVault, isMockData: aggIsMock } = useVaultWithFallback('aggressive')
 
-  const vaults: Record<string, Vault> = {
+  const vaults: Record<RiskLevel, Vault> = {
+    conservative: conservativeVault,
     moderate: moderateVault,
     aggressive: aggressiveVault,
   }
 
-  const mockFlags: Record<string, boolean> = {
+  const mockFlags: Record<RiskLevel, boolean> = {
+    conservative: conIsMock,
     moderate: modIsMock,
     aggressive: aggIsMock,
+  }
+
+  const userValues: Record<RiskLevel, number> = {
+    conservative: userConValue,
+    moderate: userModValue,
+    aggressive: userAggValue,
   }
 
   const decisionsHook = useAllDecisions()
@@ -123,12 +132,12 @@ export default function DashboardPage() {
       {/* Vault Cards */}
       <section>
         <h3 className="text-lg font-semibold text-white mb-4">Active Strategies</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {ACTIVE_RISK_LEVELS.map(level => (
             <VaultCard
               key={level}
-              vault={vaults[level]!}
-              deposited={isConnected ? (level === 'moderate' ? userModValue : userAggValue) : undefined}
+              vault={vaults[level]}
+              deposited={isConnected ? userValues[level] : undefined}
               isConnected={isConnected}
               isMockData={mockFlags[level]}
             />
