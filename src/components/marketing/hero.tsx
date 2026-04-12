@@ -4,8 +4,35 @@ import Link from 'next/link'
 import { ArrowRight, BookOpen, Github, Sparkles } from 'lucide-react'
 import { FadeIn } from '@/components/ui/fade-in'
 import { AnimatedCounter } from '@/components/ui/animated-counter'
+import { useVaultData } from '@/hooks/use-keeper-api'
+import { aggregateVaultStats } from '@/lib/protocol-aggregation'
+import { mockVaults, normalizeApy } from '@/lib/mock-data'
+
+// Fallback stats from mock data — used until keeper responds on first render
+// (or if keeper is unreachable). Keeper returns decimal APY already; the mock
+// values are also decimals, so no normalization needed.
+const MOCK_FALLBACK = aggregateVaultStats(
+  mockVaults.map(v => ({ tvl: v.tvl, apy: v.apy }))
+)
 
 export function Hero() {
+  const conservative = useVaultData('conservative')
+  const moderate = useVaultData('moderate')
+  const aggressive = useVaultData('aggressive')
+
+  const keeperSnapshots = [conservative, moderate, aggressive]
+    .map(r => r.data)
+    .filter((d): d is NonNullable<typeof d> => d !== null)
+    .map(d => ({ tvl: d.tvl, apy: normalizeApy(d.apy) }))
+
+  const stats =
+    keeperSnapshots.length > 0
+      ? aggregateVaultStats(keeperSnapshots)
+      : MOCK_FALLBACK
+
+  const displayTvl = Math.round(stats.totalTvl)
+  const displayApy = stats.weightedApy * 100
+
   return (
     <section className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden">
       {/* --- Background layers --- */}
@@ -123,7 +150,7 @@ export function Hero() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-10">
               <StatCard label="Total Value Locked">
                 <AnimatedCounter
-                  end={260}
+                  end={displayTvl}
                   prefix="$"
                   className="text-3xl lg:text-4xl font-bold text-white tracking-tight"
                 />
@@ -132,7 +159,7 @@ export function Hero() {
               <StatCard label="Weighted APY" pulse>
                 <span className="flex items-baseline gap-1">
                   <AnimatedCounter
-                    end={14.2}
+                    end={displayApy}
                     decimals={1}
                     className="text-3xl lg:text-4xl font-bold text-white tracking-tight"
                   />

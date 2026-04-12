@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { aggregateProtocolAllocations } from './protocol-aggregation'
+import {
+  aggregateProtocolAllocations,
+  aggregateVaultStats,
+} from './protocol-aggregation'
 
 describe('aggregateProtocolAllocations', () => {
   it('aggregates dollars by protocol across vaults (TVL-weighted)', () => {
@@ -47,6 +50,31 @@ describe('aggregateProtocolAllocations', () => {
 
   it('returns empty array for empty vaults array', () => {
     expect(aggregateProtocolAllocations([])).toEqual([])
+  })
+
+  it('aggregateVaultStats computes total TVL and TVL-weighted APY', () => {
+    const stats = aggregateVaultStats([
+      { tvl: 100, apy: 0.04 },
+      { tvl: 300, apy: 0.08 },
+    ])
+    expect(stats.totalTvl).toBe(400)
+    // (100*0.04 + 300*0.08) / 400 = (4 + 24) / 400 = 0.07
+    expect(stats.weightedApy).toBeCloseTo(0.07, 4)
+  })
+
+  it('aggregateVaultStats returns zero APY when total TVL is 0', () => {
+    const stats = aggregateVaultStats([
+      { tvl: 0, apy: 0.04 },
+      { tvl: 0, apy: 0.08 },
+    ])
+    expect(stats.totalTvl).toBe(0)
+    expect(stats.weightedApy).toBe(0)
+  })
+
+  it('aggregateVaultStats returns zeros for empty input', () => {
+    const stats = aggregateVaultStats([])
+    expect(stats.totalTvl).toBe(0)
+    expect(stats.weightedApy).toBe(0)
   })
 
   it('handles vaults with identical weights (real keeper scenario)', () => {
