@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ExternalLink, Wallet, TrendingUp, Clock } from 'lucide-react'
 import { GlassCard } from '@/components/ui/glass-card'
 import { Badge, MockDataBadge } from '@/components/ui/badge'
 import { YieldChart } from '@/components/app/yield-chart'
@@ -260,6 +260,53 @@ function VaultDetailContent({
 
         {/* Right Column (sticky) */}
         <div className="col-span-5 space-y-6 mt-8 lg:mt-0 sticky top-36">
+          {/* Your Position */}
+          {userHasPosition && onChain.data && userPosition.data && (
+            <GlassCard className="p-5 border-sky-500/10">
+              <div className="flex items-center gap-2 mb-4">
+                <Wallet className="h-4 w-4 text-sky-400" />
+                <h3 className="text-sm font-semibold text-white">Your Position</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[11px] text-slate-500 uppercase tracking-widest mb-1">Deposited</p>
+                  <p className="text-lg font-bold font-mono text-white">
+                    {formatUsd(Number(userPosition.data.depositedUsdc) / 1e6)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] text-slate-500 uppercase tracking-widest mb-1">Current Value</p>
+                  <p className="text-lg font-bold font-mono text-sky-400">
+                    {formatUsd(userValue)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] text-slate-500 uppercase tracking-widest mb-1">Shares</p>
+                  <p className="text-sm font-mono text-slate-300">
+                    {(Number(userPosition.data.shares) / 1e6).toLocaleString('en-US', { maximumFractionDigits: 2 })}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] text-slate-500 uppercase tracking-widest mb-1">Est. Daily</p>
+                  <div className="flex items-center gap-1">
+                    <TrendingUp className="h-3 w-3 text-emerald-400" />
+                    <p className="text-sm font-mono text-emerald-400">
+                      +{formatUsd(userValue * apy / 365)}/d
+                    </p>
+                  </div>
+                </div>
+              </div>
+              {userPosition.data.pendingWithdrawalShares > 0n && (
+                <div className="mt-3 pt-3 border-t border-white/5 flex items-center gap-2">
+                  <Clock className="h-3 w-3 text-amber-400" />
+                  <p className="text-xs text-amber-400">
+                    Pending withdrawal: {(Number(userPosition.data.pendingWithdrawalShares) / 1e6).toFixed(2)} shares
+                  </p>
+                </div>
+              )}
+            </GlassCard>
+          )}
+
           {/* Deposit Form */}
           <DepositForm
             riskLevel={riskLevel}
