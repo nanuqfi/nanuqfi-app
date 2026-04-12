@@ -246,9 +246,11 @@ export function useKeeperDecisions(
 
   const data = useMemo(() => {
     if (!raw.data) return null
-    // Deduplicate by timestamp within vault
+    // API returns oldest → newest. Consumers slice(0, N) expecting newest-first,
+    // so sort desc here to match that contract (mirrors useAllDecisions).
+    const sorted = [...raw.data].sort((a, b) => b.timestamp - a.timestamp)
     const seen = new Set<number>()
-    return raw.data
+    return sorted
       .filter(d => {
         if (seen.has(d.timestamp)) return false
         seen.add(d.timestamp)
