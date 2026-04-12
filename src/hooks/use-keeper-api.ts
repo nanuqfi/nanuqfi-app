@@ -147,11 +147,26 @@ export function useKeeperHealth(): KeeperHookResult<KeeperHealthData> {
  * Polls /v1/vaults/:riskLevel every 30s. On-chain TVL is still the
  * source of truth (useRiskVault) — this feed enriches the dashboard
  * with keeper-computed APY and current weight allocations.
+ *
+ * Keeper returns weights in basis points (Σ = 10_000). Display layer
+ * treats weights as percent (mockVaults uses 0–100), so we divide here.
  */
 export function useVaultData(
   riskLevel: string
 ): KeeperHookResult<VaultData> {
-  return useKeeperData<VaultData>(`/v1/vaults/${riskLevel}`)
+  const raw = useKeeperData<VaultData>(`/v1/vaults/${riskLevel}`)
+
+  const data = useMemo(() => {
+    if (!raw.data) return null
+    const weights = raw.data.weights ?? {}
+    const percentWeights: Record<string, number> = {}
+    for (const [name, bps] of Object.entries(weights)) {
+      percentWeights[name] = bps / 100
+    }
+    return { ...raw.data, weights: percentWeights }
+  }, [raw.data])
+
+  return { ...raw, data }
 }
 
 // ─── Raw Decision Transform ─────────────────────────────────────────────────
