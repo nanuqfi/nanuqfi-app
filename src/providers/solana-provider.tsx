@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect, useCallback } from 'react'
 import { ConnectionProvider, WalletProvider, useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'
-import { SolflareWalletAdapter } from '@solana/wallet-adapter-wallets'
+import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets'
 
 import '@solana/wallet-adapter-react-ui/styles.css'
 import { DEVNET_GENESIS_HASH, DEVNET_RPC_FALLBACK } from '@/lib/network-config'
@@ -64,8 +64,8 @@ function NetworkGuard({ children }: { children: React.ReactNode }) {
 export function SolanaProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false)
 
-  // Phantom auto-registers as a Standard Wallet — no explicit adapter needed
   const wallets = useMemo(() => [
+    new PhantomWalletAdapter(),
     new SolflareWalletAdapter(),
   ], [])
 
