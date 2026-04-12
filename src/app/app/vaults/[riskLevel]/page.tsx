@@ -11,6 +11,7 @@ import { ProtocolBar } from '@/components/app/protocol-bar'
 import { GuardrailCard } from '@/components/app/guardrail-card'
 import { DecisionFeedItem } from '@/components/app/decision-feed-item'
 import { DepositForm } from '@/components/app/deposit-form'
+import { CompleteWithdrawal } from '@/components/app/complete-withdrawal'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useRiskVault, useUserPosition, useUsdcBalance } from '@/hooks/use-allocator'
 import { useVaultData, useKeeperDecisions } from '@/hooks/use-keeper-api'
@@ -309,12 +310,16 @@ function VaultDetailContent({
                 </div>
               </div>
               {userPosition.data.pendingWithdrawalShares > 0n && (
-                <div className="mt-3 pt-3 border-t border-white/5 flex items-center gap-2">
-                  <Clock className="h-3 w-3 text-amber-400" />
-                  <p className="text-xs text-amber-400">
-                    Pending withdrawal: {(Number(userPosition.data.pendingWithdrawalShares) / 1e6).toFixed(2)} shares
-                  </p>
-                </div>
+                <CompleteWithdrawal
+                  riskLevelNum={riskLevelNum}
+                  shareMint={onChain.data.shareMint}
+                  pendingShares={userPosition.data.pendingWithdrawalShares}
+                  onSuccess={() => {
+                    onChain.refresh()
+                    userPosition.refresh()
+                    usdcBalance.refresh()
+                  }}
+                />
               )}
             </GlassCard>
           )}
