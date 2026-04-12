@@ -324,7 +324,7 @@ export default function PitchPage() {
             <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
               <div>
                 <h2 className="mb-2 text-3xl font-bold text-white">
-                  This isn't a mockup
+                  This isn&apos;t a mockup
                 </h2>
                 <p className="text-slate-400">
                   Live metrics from current devnet deployment.
@@ -354,7 +354,7 @@ export default function PitchPage() {
         <FadeIn>
           <section>
             <h2 className="mb-3 text-3xl font-bold text-white">
-              Don't trust us, verify.
+              Don&apos;t trust us, verify.
             </h2>
             <p className="mb-8 max-w-2xl text-slate-400">
               We backtested our router against 469 days of real on-chain data
@@ -537,7 +537,7 @@ export default function PitchPage() {
                 </div>
                 <p className="text-sm leading-relaxed text-slate-400">
                   NanuqFi is deployed as a dedicated Ranger Earn adaptor — a
-                  yield-routing primitive that plugs into Ranger's strategy
+                  yield-routing primitive that plugs into Ranger&apos;s strategy
                   framework. Integration tests passing:{' '}
                   <span className="font-mono text-emerald-400">8/8</span> on
                   devnet.
@@ -621,10 +621,10 @@ export default function PitchPage() {
             </div>
 
             <p className="mx-auto mt-6 max-w-3xl text-center text-sm font-medium text-slate-400">
-              "We built production-complete logic. What is{' '}
+              &ldquo;We built production-complete logic. What is{' '}
               <span className="text-amber-400">NOT</span> yet complete is the
               external validation required to protect user money. That is the
-              standard mainnet requires."
+              standard mainnet requires.&rdquo;
             </p>
           </section>
         </FadeIn>
