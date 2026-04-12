@@ -160,7 +160,7 @@ function VaultColumn({ vault }: { vault: Vault }) {
       <div className="px-6 pb-6 pt-2">
         <Link href={`/app/vaults/${vault.riskLevel}`} className="block">
           <Button variant="primary" size="md" className="w-full">
-            Deposit
+            Get started
           </Button>
         </Link>
       </div>

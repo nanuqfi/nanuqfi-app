@@ -78,7 +78,7 @@ export function VaultCard({ vault, deposited, confidence, isConnected, isMockDat
             </div>
           ) : (
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
-              <span className="text-xs text-emerald-400 font-medium">Deposit →</span>
+              <span className="text-xs text-emerald-400 font-medium">Get started →</span>
               <span className="text-xs text-slate-400">
                 Earn {formatApy(apy)}
               </span>
@@ -105,7 +105,7 @@ export function VaultCard({ vault, deposited, confidence, isConnected, isMockDat
             {hasPosition ? (
               <span className="text-white">Details &rarr;</span>
             ) : (
-              <span className="text-white">Deposit &rarr;</span>
+              <span className="text-white">Get started &rarr;</span>
             )}
           </span>
         </div>
