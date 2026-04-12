@@ -30,6 +30,15 @@ const ERROR_MAP: Record<number, string> = {
   6021: 'Insufficient liquid USDC — keeper is freeing funds',
   6022: 'Protocol operation failed — try again',
   6023: 'Deposit exceeds vault cap',
+  6024: 'Position has non-zero shares — withdraw first',
+  6025: 'Pending withdrawal exists — complete it first',
+  6026: 'Arithmetic underflow',
+  6027: 'Deposit too small (minimum 1 USDC for first deposit)',
+  6028: 'Protocol not whitelisted',
+  6029: 'Whitelist is full (max 8 protocols)',
+  6030: 'Protocol not found in whitelist',
+  6031: 'Redemption period too short',
+  6032: 'Deposit exceeds per-transaction limit',
 }
 
 /**
@@ -42,6 +51,15 @@ export function parseAllocatorError(error: unknown): string {
 
   const code = extractErrorCode(error)
   if (code !== null && ERROR_MAP[code]) return ERROR_MAP[code]!
+
+  // Wallet adapter errors that aren't user rejections (e.g., Phantom internal issues)
+  if (typeof error === 'object' && error !== null) {
+    const msg = String((error as Record<string, unknown>).message ?? '')
+    if (msg.includes('WalletSendTransactionError') || msg.includes('Unexpected error')) {
+      return 'Wallet error — refresh page and try again.'
+    }
+  }
+
   return 'Transaction failed. Please try again.'
 }
 
