@@ -144,12 +144,13 @@ export function useKeeperHealth(): KeeperHookResult<KeeperHealthData> {
 
 /**
  * Vault data from keeper perspective — TVL, APY, weights, drawdown.
- * Polls every 30s.
+ * Currently a no-op: keeper doesn't expose per-vault endpoint yet.
+ * Frontend falls back to on-chain data via useRiskVault and mock data.
  */
 export function useVaultData(
-  riskLevel: string
+  _riskLevel: string
 ): KeeperHookResult<VaultData> {
-  return useKeeperData<VaultData>(`/v1/vaults/${riskLevel}`)
+  return { data: null, loading: false, error: null, isStale: false }
 }
 
 // ─── Raw Decision Transform ─────────────────────────────────────────────────
