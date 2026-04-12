@@ -152,6 +152,8 @@ export function DepositForm({
 
       toast('Deposit confirmed!', 'success')
       setAmount('')
+      // Wait for RPC to propagate before refreshing
+      await new Promise((r) => setTimeout(r, 1500))
       onSuccess?.()
     } catch (err) {
       const message = parseAllocatorError(err)
@@ -208,6 +210,8 @@ export function DepositForm({
       }
 
       setAmount('')
+      // Wait for RPC to propagate before refreshing
+      await new Promise((r) => setTimeout(r, 1500))
       onSuccess?.()
     } catch (err) {
       const message = parseAllocatorError(err)

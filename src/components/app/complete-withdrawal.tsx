@@ -41,6 +41,8 @@ export function CompleteWithdrawal({
       toast('Confirming withdrawal...', 'info')
       await connection.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, 'confirmed')
       toast('Withdrawal complete! USDC returned to your wallet.', 'success')
+      // Wait a moment for RPC to propagate the new state before refreshing
+      await new Promise((r) => setTimeout(r, 1500))
       onSuccess?.()
     } catch (err) {
       const message = parseAllocatorError(err)

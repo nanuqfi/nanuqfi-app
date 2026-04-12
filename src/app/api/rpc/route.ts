@@ -6,6 +6,7 @@ const ALLOWED_METHODS = new Set([
   'getSignatureStatuses', 'getMinimumBalanceForRentExemption',
   'sendTransaction', 'simulateTransaction', 'getRecentPrioritizationFees',
   'getMultipleAccounts', 'getProgramAccounts', 'getBlockHeight',
+  'getGenesisHash', 'getEpochInfo', 'getVersion', 'getHealth', 'getFeeForMessage',
 ])
 
 export async function POST(request: NextRequest) {
