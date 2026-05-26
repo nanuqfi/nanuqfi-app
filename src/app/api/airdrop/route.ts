@@ -20,11 +20,11 @@ setInterval(() => {
 }, 300_000).unref()
 
 export async function POST(request: NextRequest) {
-  const keypairPath = process.env.MINT_AUTHORITY_KEYPAIR
+  const keypairEnv = process.env.MINT_AUTHORITY_KEYPAIR
   const rpcUrl = process.env.HELIUS_RPC_URL
   const usdcMintAddr = process.env.NEXT_PUBLIC_USDC_MINT
 
-  if (!keypairPath || !rpcUrl || !usdcMintAddr) {
+  if (!keypairEnv || !rpcUrl || !usdcMintAddr) {
     return NextResponse.json(
       { success: false, error: 'Airdrop not configured' },
       { status: 503 },
@@ -81,8 +81,10 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // Load mint authority keypair
-    const keypairData = JSON.parse(readFileSync(keypairPath, 'utf-8'))
+    // Load mint authority keypair from env: inline JSON array, or filesystem path
+    const trimmed = keypairEnv.trim()
+    const keypairJson = trimmed.startsWith('[') ? trimmed : readFileSync(keypairEnv, 'utf-8')
+    const keypairData = JSON.parse(keypairJson)
     const mintAuthority = Keypair.fromSecretKey(new Uint8Array(keypairData))
 
     const connection = new Connection(rpcUrl, 'confirmed')
