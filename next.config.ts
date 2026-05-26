@@ -18,6 +18,22 @@ const nextConfig: NextConfig = {
       },
     ]
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.nanuqfi.com' }],
+        destination: 'https://nanuqfi.com/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'app.nanuqfi.com' }],
+        destination: 'https://nanuqfi.com/app/:path*',
+        permanent: true,
+      },
+    ]
+  },
 };
 
 export default nextConfig;
