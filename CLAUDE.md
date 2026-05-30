@@ -10,15 +10,15 @@
 ## Quick Reference
 
 **Tech Stack:** Next.js 16 (App Router), React 19, Tailwind CSS 4, TypeScript, Vitest
-**Deployment:** Docker → VPS reclabs3, port 9001
-**Domains:** nanuqfi.com (marketing + app) + app.nanuqfi.com (alias)
+**Deployment:** Vercel (`rectors-projects/nanuqfi-app`) — auto-deploy on push to `main` via GitHub App
+**Domains:** `nanuqfi.com` (apex, primary) + `www.nanuqfi.com` (308 → apex) + `app.nanuqfi.com` (308 → `nanuqfi.com/app`, path preserved)
 **Tests:** 165 passing — 141 unit (Vitest + jsdom) + 24 E2E (Playwright)
 **Design System:** Pendle glassmorphism + Ethena data UX hybrid (spec: `docs/superpowers/specs/2026-04-07-ui-revamp-design.md`)
 
 **Key Commands:**
 ```bash
 pnpm dev                        # local dev server (http://localhost:3000)
-pnpm build                      # production build (standalone for Docker)
+pnpm build                      # production build
 pnpm test                       # run unit tests (141 tests, Vitest + jsdom)
 pnpm test:e2e                   # run E2E tests (24 tests, Playwright)
 pnpm lint                       # ESLint
@@ -151,4 +151,4 @@ Withdraw uses two-phase: `buildRequestWithdrawInstruction` → `buildWithdrawIns
 
 ---
 
-**Last Updated:** 2026-04-10
+**Last Updated:** 2026-05-27
