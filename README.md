@@ -2,7 +2,7 @@
 
 <img src="assets/header.svg" alt="NanuqFi App — Yield Dashboard + Marketing" width="800"/>
 
-[![CI/Deploy](https://github.com/nanuqfi/nanuqfi-app/actions/workflows/deploy.yml/badge.svg)](https://github.com/nanuqfi/nanuqfi-app/actions/workflows/deploy.yml)
+[![CI](https://github.com/nanuqfi/nanuqfi-app/actions/workflows/ci.yml/badge.svg)](https://github.com/nanuqfi/nanuqfi-app/actions/workflows/ci.yml)
 ![Tests](https://img.shields.io/badge/tests-97-brightgreen)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black)
 ![React](https://img.shields.io/badge/React-19-61dafb)
@@ -87,7 +87,7 @@ src/components/
 ```bash
 pnpm install
 pnpm dev          # http://localhost:3000
-pnpm build        # production build (standalone output)
+pnpm build        # production build
 pnpm test         # 97 tests (Vitest + jsdom)
 pnpm lint         # ESLint
 ```
@@ -98,10 +98,10 @@ pnpm lint         # ESLint
 
 | | |
 |---|---|
-| Runtime | Docker (standalone Next.js) |
-| Port | 9001 |
-| Domains | `nanuqfi.com` (primary) + `app.nanuqfi.com` (alias) |
-| CI/CD | GitHub Actions -> GHCR -> VPS auto-deploy on push to main |
+| Host | Vercel (`rectors-projects/nanuqfi-app`) |
+| Domains | `nanuqfi.com` (apex, primary) + `www.nanuqfi.com` (308 -> apex) + `app.nanuqfi.com` (308 -> `nanuqfi.com/app`, path preserved) |
+| CI/CD | Push to `main` -> Vercel auto-deploy via GitHub App. `ci.yml` workflow runs build + lint + e2e as a pre-merge gate. |
+| CDN | `public/cdn/` inline -- demo video + poster served at `nanuqfi.com/cdn/*` |
 
 `nanuqfi-web` (former marketing site) is retired and archived. Marketing is consolidated into this repository at `/`.
 
